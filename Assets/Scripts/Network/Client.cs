@@ -9,37 +9,44 @@ namespace Network
 {
     public class Client : MonoBehaviour
     {
-        private static string ip = "26.158.168.172";
+        public string ip = "26.158.168.172";
         private Thread thread;
 
-        private static void Init()
+        private void Init()
         {
-            byte[] bytes = new byte[1024];  
-  
             try
             {
                 IPHostEntry host = Dns.GetHostEntry(ip);
-                IPAddress ipAddress = host.AddressList[0];
-                
-                Debug.Log("IPs = " + host.AddressList);
-                
-                IPEndPoint endPoint = new IPEndPoint(ipAddress, 11000);
+                IPAddress ipAddress = null;
+
+                foreach (var address in host.AddressList)
+                    if (address.MapToIPv4().ToString() == ip)
+                        ipAddress = host.AddressList[5];
+
+                if (ipAddress == null)
+                {
+                    Debug.LogError("IP address was not bound");
+                    return;
+                }
+
+                IPEndPoint endPoint = new IPEndPoint(ipAddress, 1024);
        
                 Socket socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 socket.Connect(endPoint);  
       
-                Debug.Log("Socket connected to {0}" + socket.RemoteEndPoint);
+                Debug.Log("Socket connected to " + socket.RemoteEndPoint);
       
-                    // Encode the data string into a byte array.    
+                // Encode the data string into a byte array.    
                 byte[] msg = Encoding.ASCII.GetBytes("This is a test<EOF>");  
       
-                    // Send the data through the socket.    
+                // Send the data through the socket.    
                 int bytesSent = socket.Send(msg);  
       
-                    // Receive the response from the remote device.    
+                byte[] bytes = new byte[1024];
+                // Receive the response from the remote device.    
                 int bytesRec = socket.Receive(bytes);
                 
-                Debug.Log("Echoed test = {0}" + Encoding.ASCII.GetString(bytes, 0, bytesRec));
+                Debug.Log("Echoed test = " + Encoding.ASCII.GetString(bytes, 0, bytesRec));
       
                 // Release the socket.
                 socket.Shutdown(SocketShutdown.Both);
@@ -47,7 +54,7 @@ namespace Network
             }
             catch (Exception e)
             {
-                Debug.Log(e.ToString());
+                Debug.LogError(e.ToString());
             }
         }
         
@@ -55,7 +62,7 @@ namespace Network
         {
             Debug.Log("Starting client");
 
-            thread = new Thread(Init);
+            thread = new Thread(Init) {IsBackground = true};
             thread.Start();
         }
 
