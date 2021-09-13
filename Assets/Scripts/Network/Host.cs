@@ -31,7 +31,6 @@ namespace Network
                 }
 
                 IPEndPoint endPoint = new IPEndPoint(ipAddress, 1024);
-                 
                 Socket socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 socket.Bind(endPoint);
                 socket.Listen(2);
@@ -43,13 +42,14 @@ namespace Network
                     
                     socket.BeginAccept(result =>
                     {
-                        Debug.Log("Connection received");
                         reset.Set();
                         
                         Socket handler = socket.EndAccept(result);
-                        ClientState clientState = new ClientState {socket = handler};
+                        StateObject stateObject = new StateObject {socket = handler};
                         
-                        handler.BeginReceive(clientState.buffer, 0, ClientState.BufferSize, 0, HandleClient, clientState);
+                        Debug.Log("Connection received from " + handler.RemoteEndPoint); 
+                        
+                        handler.BeginReceive(stateObject.buffer, 0, StateObject.BufferSize, 0, HandleClient, stateObject);
                     }, socket);
                     
                     reset.WaitOne();
@@ -63,19 +63,19 @@ namespace Network
 
         private static void HandleClient(IAsyncResult result) 
         {
-            ClientState clientState = (ClientState) result.AsyncState;
-            Socket handler = clientState.socket;
+            StateObject stateObject = (StateObject) result.AsyncState;
+            Socket handler = stateObject.socket;
             int bytesRead = handler.EndReceive(result);
 
             if (bytesRead <= 0) return;
             
-            clientState.sb.Append(Encoding.ASCII.GetString(clientState.buffer, 0, bytesRead));
-            String content = clientState.sb.ToString();
+            stateObject.sb.Append(Encoding.ASCII.GetString(stateObject.buffer, 0, bytesRead));
+            String content = stateObject.sb.ToString();
             
             //TODO aqui vai lidar com as mensagens
             
             if (content.IndexOf("<EOF>", StringComparison.Ordinal) > -1) {
-                Debug.Log("<-: " + content);
+                Debug.Log("<- " + content);
 
                 byte[] byteData = Encoding.ASCII.GetBytes(content);
                 handler.BeginSend(byteData, 0, byteData.Length, 0, ar =>
@@ -94,13 +94,13 @@ namespace Network
             } 
             else 
             {
-                handler.BeginReceive(clientState.buffer, 0, ClientState.BufferSize, 0, HandleClient, clientState);
+                handler.BeginReceive(stateObject.buffer, 0, StateObject.BufferSize, 0, HandleClient, stateObject);
             }
         }
-        
+
         void Awake()
         {
-            Debug.Log("Starting host");
+            Debug.Log("Starting host...");
 
             thread = new Thread(Init) {IsBackground = true};
             thread.Start();
@@ -109,13 +109,6 @@ namespace Network
         private void OnDisable()
         {
             thread.Abort();
-        }
-        
-        private class ClientState {
-            public Socket socket;
-            public const int BufferSize = 1024;
-            public byte[] buffer = new byte[BufferSize];
-            public StringBuilder sb = new StringBuilder();  
         }
 
     }
