@@ -1,25 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
-using Cards;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-public class Controller : MonoBehaviour
+namespace Cards
 {
-    public Card card;
-    public MeshRenderer picture;
-    public TextMeshPro name;
-    
-    void Start()
+    public class Controller : MonoBehaviour
     {
-        picture.GetComponent<Renderer>().material.mainTexture = card.texture;
-        name.text = card.name;
-    }
+        public Card card;
+        public MeshRenderer picture;
+        public TextMeshPro text;
+    
+        void Start()
+        {
+            picture.GetComponent<Renderer>().material.mainTexture = card.texture;
+            text.text = card.text;
+        }
 
-    void Update()
-    {
+        void Update()
+        {
         
-    }
+        }
     
+    }
 }

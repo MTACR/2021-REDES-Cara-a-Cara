@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -11,6 +9,7 @@ namespace Network
 {
     public class Host : MonoBehaviour
     {
+        public string ip = "localhost";
 
         void Awake()
         {
@@ -20,16 +19,16 @@ namespace Network
             trd.Start();
         }
 
-        private static void Init()
+        private void Init()
         {
-            IPHostEntry host = Dns.GetHostEntry("localhost");
-            IPAddress ip = host.AddressList[0];
-            IPEndPoint localEndPoint = new IPEndPoint(ip, 2560);
+            IPHostEntry host = Dns.GetHostEntry(ip);
+            IPAddress ipAddress = host.AddressList[0];
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 2560);
 
             try
             {
                 // Create a Socket that will use Tcp protocol      
-                Socket listener = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 // A Socket must be associated with an endpoint using the Bind method  
                 listener.Bind(localEndPoint);
                 // Specify how many requests a Socket can listen before it gives Server busy response.  

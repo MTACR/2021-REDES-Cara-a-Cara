@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -11,7 +9,8 @@ namespace Network
 {
     public class Client : MonoBehaviour
     {
-        // Start is called before the first frame update
+        public string ip = "localhost";
+
         void Awake()
         {
             Debug.Log("Starting client");
@@ -20,7 +19,7 @@ namespace Network
             trd.Start();
         }
 
-        private static void Init()
+        private void Init()
         {
             byte[] bytes = new byte[1024];  
   
@@ -30,12 +29,12 @@ namespace Network
                 // Get Host IP Address that is used to establish a connection  
                 // In this case, we get one IP address of localhost that is IP : 127.0.0.1  
                 // If a host has multiple addresses, you will get a list of addresses  
-                IPHostEntry host = Dns.GetHostEntry("localhost");
-                IPAddress ip = host.AddressList[0];
-                IPEndPoint remoteEP = new IPEndPoint(ip, 2560);
+                IPHostEntry host = Dns.GetHostEntry(ip);
+                IPAddress ipAddress = host.AddressList[0];
+                IPEndPoint remoteEP = new IPEndPoint(ipAddress, 2560);
       
                 // Create a TCP/IP  socket.    
-                Socket sender = new Socket(ip.AddressFamily,
+                Socket sender = new Socket(ipAddress.AddressFamily,
                     SocketType.Stream, ProtocolType.Tcp);
       
                 // Connect the socket to the remote endpoint. Catch any errors.    
