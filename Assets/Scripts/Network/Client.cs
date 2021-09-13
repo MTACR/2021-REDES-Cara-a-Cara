@@ -9,17 +9,10 @@ namespace Network
 {
     public class Client : MonoBehaviour
     {
-        public string ip = "localhost";
+        private static string ip = "186.208.27.75";
+        private Thread thread;
 
-        void Awake()
-        {
-            Debug.Log("Starting client");
-
-            Thread trd = new Thread(Init);
-            trd.Start();
-        }
-
-        private void Init()
+        private static void Init()
         {
             byte[] bytes = new byte[1024];  
   
@@ -80,5 +73,19 @@ namespace Network
                 Console.WriteLine(e.ToString());
             }
         }
+        
+        void Awake()
+        {
+            Debug.Log("Starting client");
+
+            thread = new Thread(Init);
+            thread.Start();
+        }
+
+        private void OnDisable()
+        {
+            thread.Abort();
+        }
+        
     }
 }

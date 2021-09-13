@@ -9,19 +9,11 @@ namespace Network
 {
     public class Host : MonoBehaviour
     {
-        public string ip = "localhost";
+        private Thread thread;
 
-        void Awake()
+        private static void Init()
         {
-            Debug.Log("Starting host");
-
-            Thread trd = new Thread(Init);
-            trd.Start();
-        }
-
-        private void Init()
-        {
-            IPHostEntry host = Dns.GetHostEntry(ip);
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());//Dns.GetHostEntry(ip);
             IPAddress ipAddress = host.AddressList[0];
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 2560);
 
@@ -32,7 +24,7 @@ namespace Network
                 // A Socket must be associated with an endpoint using the Bind method  
                 listener.Bind(localEndPoint);
                 // Specify how many requests a Socket can listen before it gives Server busy response.  
-                // We will listen 10 requests at a time  
+                // We will listen 10 requests at a time
                 listener.Listen(10);
 
                 Debug.Log("Waiting for a connection...");
@@ -64,6 +56,19 @@ namespace Network
             {
                 Debug.Log(e.ToString());
             }
+        }
+        
+        void Awake()
+        {
+            Debug.Log("Starting host");
+            
+            thread = new Thread(Init);
+            thread.Start();
+        }
+        
+        private void OnDisable()
+        {
+            thread.Abort();
         }
 
     }

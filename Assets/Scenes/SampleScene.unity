@@ -1056,7 +1056,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1383446730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1195,4 +1195,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 11400000, guid: 082f73c6eb27dce4e8ee5964e00f1bba, type: 2}
   picture: {fileID: 1329259960}
-  name: {fileID: 937962175}
+  text: {fileID: 937962175}
