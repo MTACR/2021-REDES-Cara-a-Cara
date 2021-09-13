@@ -13,22 +13,21 @@ namespace Network
 
         private static void Init()
         {
-            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());//Dns.GetHostEntry(ip);
-            IPAddress ipAddress = host.AddressList[0];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 2560);
-
             try
             {
-                // Create a Socket that will use Tcp protocol      
-                Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                // A Socket must be associated with an endpoint using the Bind method  
-                listener.Bind(localEndPoint);
-                // Specify how many requests a Socket can listen before it gives Server busy response.  
-                // We will listen 10 requests at a time
-                listener.Listen(10);
+                IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+                IPAddress ipAddress = host.AddressList[0];
+                
+                Debug.Log("IPs = " + host.AddressList);
+                
+                IPEndPoint endPoint = new IPEndPoint(ipAddress, 11000);
+                 
+                Socket socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                socket.Bind(endPoint);
+                socket.Listen(2);
 
                 Debug.Log("Waiting for a connection...");
-                Socket handler = listener.Accept();
+                Socket handler = socket.Accept();
 
                 // Incoming data from the client.    
                 string data = null;
