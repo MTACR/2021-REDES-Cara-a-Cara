@@ -31,11 +31,11 @@ namespace Network
                 // In this case, we get one IP address of localhost that is IP : 127.0.0.1  
                 // If a host has multiple addresses, you will get a list of addresses  
                 IPHostEntry host = Dns.GetHostEntry("localhost");
-                IPAddress ipAddress = host.AddressList[0];
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
+                IPAddress ip = host.AddressList[0];
+                IPEndPoint remoteEP = new IPEndPoint(ip, 2560);
       
                 // Create a TCP/IP  socket.    
-                Socket sender = new Socket(ipAddress.AddressFamily,
+                Socket sender = new Socket(ip.AddressFamily,
                     SocketType.Stream, ProtocolType.Tcp);
       
                 // Connect the socket to the remote endpoint. Catch any errors.    
@@ -45,7 +45,7 @@ namespace Network
                     sender.Connect(remoteEP);  
       
                     Debug.Log("Socket connected to {0}" +  
-                        sender.RemoteEndPoint.ToString());  
+                        sender.RemoteEndPoint.ToString());
       
                     // Encode the data string into a byte array.    
                     byte[] msg = Encoding.ASCII.GetBytes("This is a test<EOF>");  
@@ -54,32 +54,31 @@ namespace Network
                     int bytesSent = sender.Send(msg);  
       
                     // Receive the response from the remote device.    
-                    int bytesRec = sender.Receive(bytes);  
-                    Debug.Log("Echoed test = {0}" +  
-                        Encoding.ASCII.GetString(bytes, 0, bytesRec));  
+                    int bytesRec = sender.Receive(bytes);
+                    Debug.Log("Echoed test = {0}" +
+                        Encoding.ASCII.GetString(bytes, 0, bytesRec));
       
-                    // Release the socket.    
-                    sender.Shutdown(SocketShutdown.Both);  
-                    sender.Close();  
+                    // Release the socket.
+                    sender.Shutdown(SocketShutdown.Both);
+                    sender.Close();
       
-                }  
-                catch (ArgumentNullException ane)  
+                }
+                catch (ArgumentNullException ane)
                 {  
-                    Debug.Log("ArgumentNullException : {0}" + ane.ToString());  
-                }  
-                catch (SocketException se)  
-                {  
-                    Debug.Log("SocketException : {0}" + se.ToString());  
-                }  
-                catch (Exception e)  
-                {  
-                    Debug.Log("Unexpected exception : {0}" + e.ToString());  
-                }  
-      
-            }  
-            catch (Exception e)  
-            {  
-                Console.WriteLine(e.ToString());  
+                    Debug.Log("ArgumentNullException : {0}" + ane.ToString());
+                }
+                catch (SocketException se)
+                {
+                    Debug.Log("SocketException : {0}" + se.ToString());
+                }
+                catch (Exception e)
+                {
+                    Debug.Log("Unexpected exception : {0}" + e.ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
             }
         }
     }

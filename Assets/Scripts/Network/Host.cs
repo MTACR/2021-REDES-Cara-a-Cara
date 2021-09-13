@@ -23,13 +23,13 @@ namespace Network
         private static void Init()
         {
             IPHostEntry host = Dns.GetHostEntry("localhost");
-            IPAddress ipAddress = host.AddressList[0];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 11000);
+            IPAddress ip = host.AddressList[0];
+            IPEndPoint localEndPoint = new IPEndPoint(ip, 2560);
 
             try
             {
                 // Create a Socket that will use Tcp protocol      
-                Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                Socket listener = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 // A Socket must be associated with an endpoint using the Bind method  
                 listener.Bind(localEndPoint);
                 // Specify how many requests a Socket can listen before it gives Server busy response.  
