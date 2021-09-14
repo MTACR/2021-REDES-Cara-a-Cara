@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     public string player_name = "player";
     private Client client;
     private bool myTurn = true;
+    public GameObject scrollView;
+    public GameObject message;
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +29,12 @@ public class GameManager : MonoBehaviour
             byte[] message = SenderParser.ParseTimeUp((byte) interval);
             client.Send(message);
         }
+
+
+        if (Input.GetKey(KeyCode.E))
+            Instantiate(message, scrollView.transform);
+
+
     }
 
     public void ShowCards()

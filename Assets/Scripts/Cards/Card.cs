@@ -12,11 +12,13 @@ namespace Cards
         private bool isVisible;
         private float cooldown;
         private int ID { get; set; }
+        private Client client;
 
         private void Start()
         {
             animator = GetComponent<Animator>();
             cooldown = Time.time;
+            client = FindObjectOfType<Client>();
         }
 
         public void Setup(CardModel card, int id)
@@ -49,7 +51,7 @@ namespace Cards
             
             cooldown = Time.time + 0.7f;
             Flip();
-            FindObjectOfType<Client>().Send(ID + " " + isVisible);
+            client.Send(SenderParser.ParseCardOp(ID, isVisible ? CardOpType.Up : CardOpType.Down));
         }
 
         public void Flip()

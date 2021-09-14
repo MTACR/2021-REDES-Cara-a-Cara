@@ -18,6 +18,7 @@ namespace Network
         private Action onStart;
         private Action onError;
         private Action<string> onConnection;
+        private TasksDispatcher dispatcher;
         public bool isReady { get; private set; }
 
         private void Init()
@@ -34,7 +35,7 @@ namespace Network
                 if (ipAddress == null)
                 {
                     Debug.LogError("IP address not bound");
-                    TasksDispatcher.Instance.Schedule(delegate
+                    dispatcher.Schedule(delegate
                     {
                         onError();
                     });
@@ -51,7 +52,7 @@ namespace Network
                     
                     Debug.Log("Waiting for connection...");
                     
-                    TasksDispatcher.Instance.Schedule(delegate
+                    dispatcher.Schedule(delegate
                     {
                         onStart();
                     });
@@ -64,7 +65,7 @@ namespace Network
 
                         Debug.Log("Connection received from " + socket.RemoteEndPoint);
                         
-                        TasksDispatcher.Instance.Schedule(delegate
+                        dispatcher.Schedule(delegate
                         {
                             onConnection(socket.RemoteEndPoint.ToString());
                         });
@@ -76,7 +77,7 @@ namespace Network
                 {
                     socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                     
-                    TasksDispatcher.Instance.Schedule(delegate
+                    dispatcher.Schedule(delegate
                     {
                         onStart();
                     });
@@ -89,7 +90,7 @@ namespace Network
                             
                         Debug.Log("Connected to " + socket.RemoteEndPoint);
                         
-                        TasksDispatcher.Instance.Schedule(delegate
+                        dispatcher.Schedule(delegate
                         {
                             onConnection(socket.RemoteEndPoint.ToString());
                         });
@@ -106,7 +107,7 @@ namespace Network
             {
                 Debug.LogError(e.ToString());
                 isReady = false;
-                TasksDispatcher.Instance.Schedule(delegate
+                dispatcher.Schedule(delegate
                 {
                     onError();
                 });
@@ -118,7 +119,7 @@ namespace Network
             if (socket == null)
             {
                 Debug.LogError("Client socket is null");
-                TasksDispatcher.Instance.Schedule(delegate
+                dispatcher.Schedule(delegate
                 {
                     onError();
                 });
@@ -138,7 +139,7 @@ namespace Network
                 {
                     Debug.LogError(e.ToString());
                     isReady = false;
-                    TasksDispatcher.Instance.Schedule(delegate
+                    dispatcher.Schedule(delegate
                     {
                         onError();
                     });
@@ -164,10 +165,8 @@ namespace Network
             int i = Convert.ToInt32(data.Substring(0, 1));
             bool b = Convert.ToBoolean(data.Substring(2));
 
-            TasksDispatcher.Instance.Schedule(delegate
+            dispatcher.Schedule(delegate
             {
-                Debug.Log(i + " " + b);
-            
                 FindObjectOfType<DeckOpponent>().Flip(i, b);
             });
             
@@ -188,6 +187,7 @@ namespace Network
         void Awake()
         {
             DontDestroyOnLoad(this);
+            dispatcher = TasksDispatcher.Instance;
         }
 
         private void OnDisable()

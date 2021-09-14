@@ -16,11 +16,11 @@ public class SenderParser {
     }
 
     //<character_id: Integer, OpCode: Integer>
-    public static byte[] ParseCardOp(byte characterId, CardOpType cardOpType) {
+    public static byte[] ParseCardOp(int characterId, CardOpType cardOpType) {
         int length = 1 + 1 + 1;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.CardOp;
-        messageByte[1] =        characterId;
+        messageByte[1] = (byte) characterId;
         messageByte[2] = (byte) cardOpType;
 
         return messageByte;
