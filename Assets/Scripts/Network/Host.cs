@@ -22,7 +22,7 @@ namespace Network
 
                 foreach (var address in host.AddressList)
                     if (address.MapToIPv4().ToString() == ip)
-                        ipAddress = host.AddressList[5];
+                        ipAddress = address;
 
                 if (ipAddress == null)
                 {
