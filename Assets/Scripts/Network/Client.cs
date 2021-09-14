@@ -11,6 +11,7 @@ namespace Network
     {
         public string ip = "26.158.168.172";
         private Thread thread;
+        private Socket socket;
         private static readonly ManualResetEvent reset = new ManualResetEvent(false);
 
         private void Init()
@@ -26,29 +27,32 @@ namespace Network
 
                 if (ipAddress == null)
                 {
-                    Debug.LogError("IP address was not bound");
+                    Debug.LogError("IP address not bound");
                     return;
                 }
 
                 IPEndPoint endPoint = new IPEndPoint(ipAddress, 1024);
-                Socket socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
                 socket.BeginConnect(endPoint, result =>
                 {
-                    try {
+                    try
+                    {
                         reset.Set();
                         socket.EndConnect(result);
   
                         Debug.Log("Connected to " + socket.RemoteEndPoint);
                         
-                        StateObject state = new StateObject {socket = socket};
+                        StateObject state = new StateObject();
                         
-                        Send(socket, "TESTE <EOF>");
+                        Send("TESTE <EOF>");
                         
                         socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
-                    } catch (Exception e) {  
-                        Console.WriteLine(e.ToString());  
-                    }  
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                    }
                 }, socket);
 
                 reset.WaitOne();
@@ -63,38 +67,44 @@ namespace Network
             }
         }
         
-        private static void Send(Socket client, String data) 
+        public void Send(String data)
         {
+            if (socket == null)
+            {
+                Debug.LogError("Client socket is null");
+                return;
+            }
+                
             byte[] byteData = Encoding.ASCII.GetBytes(data);  
   
-            client.BeginSend(byteData, 0, byteData.Length, SocketFlags.None, result =>
+            socket.BeginSend(byteData, 0, byteData.Length, SocketFlags.None, result =>
             {
                 try 
                 {
-                    client.EndSend(result);
+                    socket.EndSend(result);
                     Debug.Log("-> " + data);
   
-                    reset.Set();  
+                    reset.Set();
                 } 
                 catch (Exception e) 
                 {  
                     Debug.LogError(e.ToString());  
                 }
-            }, client);  
+            }, socket);
         }
 
-        private static void ReceiveCallback(IAsyncResult result) 
+        private void ReceiveCallback(IAsyncResult result) 
         {  
             try 
             {
                 StateObject state = (StateObject) result.AsyncState;  
-                Socket client = state.socket;  
+                //Socket client = state.socket;  
                 
-                int bytesRead = client.EndReceive(result);  
+                int bytesRead = socket.EndReceive(result);  
                 if (bytesRead > 0)
                 {
                     state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
-                    client.BeginReceive(state.buffer,0,StateObject.BufferSize, 0, ReceiveCallback, state);  
+                    socket.BeginReceive(state.buffer,0,StateObject.BufferSize, 0, ReceiveCallback, state);  
                 } 
                 else 
                 {
@@ -118,6 +128,8 @@ namespace Network
         void Awake()
         {
             Debug.Log("Starting client...");
+            
+            DontDestroyOnLoad(this);
 
             thread = new Thread(Init) {IsBackground = true};
             thread.Start();

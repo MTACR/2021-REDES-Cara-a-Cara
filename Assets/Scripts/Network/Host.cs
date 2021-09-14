@@ -11,6 +11,7 @@ namespace Network
     {
         public string ip = "26.158.168.172";
         private Thread thread;
+        private Socket socket;
         private static readonly ManualResetEvent reset = new ManualResetEvent(false);
 
         private void Init()
@@ -31,26 +32,26 @@ namespace Network
                 }
 
                 IPEndPoint endPoint = new IPEndPoint(ipAddress, 1024);
-                Socket socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                socket.Bind(endPoint);
-                socket.Listen(2);
+                Socket handler = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                handler.Bind(endPoint);
+                handler.Listen(1);
 
                 while (true)
                 {
                     Debug.Log("Waiting for a connection...");
                     reset.Reset();
                     
-                    socket.BeginAccept(result =>
+                    handler.BeginAccept(result =>
                     {
                         reset.Set();
                         
-                        Socket handler = socket.EndAccept(result);
-                        StateObject stateObject = new StateObject {socket = handler};
+                        socket = handler.EndAccept(result);
+                        StateObject stateObject = new StateObject();
                         
-                        Debug.Log("Connection received from " + handler.RemoteEndPoint); 
+                        Debug.Log("Connection received from " + socket.RemoteEndPoint); 
                         
-                        handler.BeginReceive(stateObject.buffer, 0, StateObject.BufferSize, 0, HandleClient, stateObject);
-                    }, socket);
+                        socket.BeginReceive(stateObject.buffer, 0, StateObject.BufferSize, 0, HandleClient, stateObject);
+                    }, handler);
                     
                     reset.WaitOne();
                 }
@@ -61,46 +62,70 @@ namespace Network
             }
         }
 
-        private static void HandleClient(IAsyncResult result) 
+        private void HandleClient(IAsyncResult result) 
         {
+            if (socket == null)
+            {
+                Debug.LogError("Host socket is null");
+                return;
+            }
+            
             StateObject stateObject = (StateObject) result.AsyncState;
-            Socket handler = stateObject.socket;
-            int bytesRead = handler.EndReceive(result);
+            //Socket socket = stateObject.socket;
+            int bytesRead = socket.EndReceive(result);
 
             if (bytesRead <= 0) return;
             
             stateObject.sb.Append(Encoding.ASCII.GetString(stateObject.buffer, 0, bytesRead));
-            String content = stateObject.sb.ToString();
+            String data = stateObject.sb.ToString();
             
             //TODO aqui vai lidar com as mensagens
             
-            if (content.IndexOf("<EOF>", StringComparison.Ordinal) > -1) {
-                Debug.Log("<- " + content);
-
-                byte[] byteData = Encoding.ASCII.GetBytes(content);
-                handler.BeginSend(byteData, 0, byteData.Length, 0, ar =>
-                {
-                    try
-                    {
-                        handler.EndSend(ar);
-                        handler.Shutdown(SocketShutdown.Both);
-                        handler.Close();
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogError(e.ToString());
-                    }
-                }, handler);
-            } 
+            if (data.IndexOf("<EOF>", StringComparison.Ordinal) > -1) 
+            {
+                
+                
+                Send(data);
+            }
             else 
             {
-                handler.BeginReceive(stateObject.buffer, 0, StateObject.BufferSize, 0, HandleClient, stateObject);
+                socket.BeginReceive(stateObject.buffer, 0, StateObject.BufferSize, 0, HandleClient, stateObject);
             }
+        }
+
+        private void Send(String data)
+        {
+            if (socket == null)
+            {
+                Debug.LogError("Host socket is null");
+                return;
+            }
+            
+            byte[] byteData = Encoding.ASCII.GetBytes(data);
+            
+            socket.BeginSend(byteData, 0, byteData.Length, SocketFlags.None, result =>
+            {
+                try
+                {
+                    socket.EndSend(result);
+                    //socket.Shutdown(SocketShutdown.Both);
+                    //socket.Close();
+                    Debug.Log("<- " + data);
+                    
+                    reset.Set();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e.ToString());
+                }
+            }, socket);
         }
 
         void Awake()
         {
             Debug.Log("Starting host...");
+            
+            DontDestroyOnLoad(this);
 
             thread = new Thread(Init) {IsBackground = true};
             thread.Start();

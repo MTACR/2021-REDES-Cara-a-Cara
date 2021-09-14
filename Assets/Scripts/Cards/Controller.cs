@@ -1,7 +1,5 @@
-using System;
-using System.Collections;
+using Network;
 using TMPro;
-using UnityEditor.Animations;
 using UnityEngine;
 
 namespace Cards
@@ -13,6 +11,8 @@ namespace Cards
         private Animator animator;
         private bool isVisible;
         private float cooldown;
+        private int id;
+        private int ID => id;
 
         private void Start()
         {
@@ -21,9 +21,10 @@ namespace Cards
             isVisible = true;
         }
 
-        public void Setup(Card card)
+        public void Setup(Card card, int id)
         {
             this.name = card.name;
+            this.id = id;
             picture.GetComponent<Renderer>().material.mainTexture = card.texture;
             text.text = card.name;
             transform.GetChild(0).name = card.name;
@@ -38,10 +39,14 @@ namespace Cards
             
             if (!Physics.Raycast(ray, out hit)) return;
 
-            if (!hit.collider.gameObject.name.Equals(this.name) || !(cooldown < Time.time)) return;
+            Controller c = hit.collider.gameObject.transform.parent.GetComponent<Controller>();
+
+            if (!c) return;
+            if (!c.name.Equals(this.name) || c.ID != id || !(cooldown < Time.time)) return;
             
             cooldown = Time.time + 0.7f;
             Flip();
+            FindObjectOfType<Client>().Send(id+ " " + isVisible + " <EOF>");
         }
 
         public void Flip()

@@ -5,7 +5,7 @@ namespace Network
 {
     public class StateObject
     {
-        public Socket socket;
+        //public Socket socket;
         public const int BufferSize = 1024;
         public byte[] buffer = new byte[BufferSize];
         public StringBuilder sb = new StringBuilder();
