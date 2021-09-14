@@ -157,6 +157,30 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c939103acd03f4940b7f81e94bd3dff8, type: 2}
   - {fileID: 11400000, guid: ba260df707a5a6a489a258681dcf07cb, type: 2}
   - {fileID: 11400000, guid: a0d6469b190d72d48a06bfc0ad58771e, type: 2}
+  - {fileID: 11400000, guid: 4bb8552c5329f5042bef002ac2c6939f, type: 2}
+  - {fileID: 11400000, guid: 494d918c31beedf46907b7024967a631, type: 2}
+  - {fileID: 11400000, guid: 5903223d0ff05ff4b8c5013ceb49a2d5, type: 2}
+  - {fileID: 11400000, guid: 1dd5a90391d36904fa9d33f8eacdcc17, type: 2}
+  - {fileID: 11400000, guid: 73a7165f4941b5840bfcfc022a502ffc, type: 2}
+  - {fileID: 11400000, guid: 1bae23ea425991f45bc62fc510a674b9, type: 2}
+  - {fileID: 11400000, guid: 196e22e683dc8f74ca18874f5debdc3d, type: 2}
+  - {fileID: 11400000, guid: abfdbb4772bfea54495cca2e22c37607, type: 2}
+  - {fileID: 11400000, guid: b311970bdc93ce74dbaf068c9e106fed, type: 2}
+  - {fileID: 11400000, guid: 0554bfb88dd9e8e44a9a15f43dbfa187, type: 2}
+  - {fileID: 11400000, guid: 7f661b06b73fd5f44899c471169faf6e, type: 2}
+  - {fileID: 11400000, guid: 83c1d323a7b43ef4ba2df5e5895d98cb, type: 2}
+  - {fileID: 11400000, guid: 7068db73e03d77d4ca2ea645dfef8cb9, type: 2}
+  - {fileID: 11400000, guid: 422caa5c5f1828246a0f744f4699f351, type: 2}
+  - {fileID: 11400000, guid: c8d6f607224fd2d4bbd7049a432f2972, type: 2}
+  - {fileID: 11400000, guid: dd606805ce9c6c540891b02b6df14948, type: 2}
+  - {fileID: 11400000, guid: 45764532f23ec0745b38b2466a308ca1, type: 2}
+  - {fileID: 11400000, guid: 65add42f3492b4c4f802d3acc83284d5, type: 2}
+  - {fileID: 11400000, guid: f27f0487fb3b57149b5f8faad8407ca9, type: 2}
+  - {fileID: 11400000, guid: cbb8f18e5e2fd9b49afa4c697b48f07a, type: 2}
+  - {fileID: 11400000, guid: cc69768d07c80484c8d541debb1f26ed, type: 2}
+  - {fileID: 11400000, guid: 164c690dbdddb34499d199c2d52132e8, type: 2}
+  - {fileID: 11400000, guid: cfb78f86a33da244680f6fcb02c11a38, type: 2}
+  - {fileID: 11400000, guid: f489b5fe9f199f44f98fcb3ab3553752, type: 2}
   prefab: {fileID: 3976790605818281999, guid: 3bfca862f2b6afb438b59774bc3ef9c6, type: 3}
 --- !u!4 &70428082
 Transform:
@@ -281,7 +305,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &333910141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -689,7 +713,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1383446730
 MonoBehaviour:
   m_ObjectHideFlags: 0

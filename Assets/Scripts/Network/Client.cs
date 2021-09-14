@@ -135,6 +135,8 @@ namespace Network
 
         private void OnDisable()
         {
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Close();
             thread.Abort();
         }
         
