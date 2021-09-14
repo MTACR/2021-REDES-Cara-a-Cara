@@ -1,10 +1,16 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Callbacks
 {
     public class TaskManager : MonoBehaviour
     {
         private TasksDispatcher dispatcher;
+
+        private void Awake()
+        {
+            DontDestroyOnLoad(this);
+        }
 
         private void Start()
         {

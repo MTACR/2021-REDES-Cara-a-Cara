@@ -18,9 +18,9 @@ namespace Cards
             int j = 0;
             foreach (var c in models)
             {
-                Card card = Instantiate(prefab).GetComponent<Card>();
+                Card card = Instantiate(prefab, transform).GetComponent<Card>();
                 card.Setup(c, i);
-                card.transform.position = new Vector3((i % 7f) * 6f - 30f, j * 8f, 0f);
+                card.transform.position += new Vector3((i % 7f) * 7.5f, j * 9f, 0f);
                 cards[i++] = card;
 
                 if (i % 7 == 0)
@@ -36,6 +36,14 @@ namespace Cards
                 int r = Random.Range(i, array.Count);
                 array[i] = array[r];
                 array[r] = tmp;
+            }
+        }
+
+        public void FlipAll()
+        {
+            foreach (var card in cards)
+            {
+                card.Flip();
             }
         }
         

@@ -11,20 +11,18 @@ namespace Cards
         private Animator animator;
         private bool isVisible;
         private float cooldown;
-        private int id;
-        private int ID => id;
+        private int ID { get; set; }
 
         private void Start()
         {
             animator = GetComponent<Animator>();
             cooldown = Time.time;
-            isVisible = true;
         }
 
         public void Setup(CardModel card, int id)
         {
             this.name = card.name;
-            this.id = id;
+            this.ID = id;
             picture.GetComponent<Renderer>().material.mainTexture = card.texture;
             text.text = card.name;
             transform.GetChild(0).name = card.name;
@@ -32,7 +30,7 @@ namespace Cards
         
         public void Setup(int id)
         {
-            this.id = id;
+            this.ID = id;
         }
 
         void Update()
@@ -47,14 +45,14 @@ namespace Cards
             Card c = hit.collider.gameObject.transform.parent.GetComponent<Card>();
 
             if (!c) return;
-            if (!c.name.Equals(this.name) || c.ID != id || !(cooldown < Time.time)) return;
+            if (!c.name.Equals(this.name) || c.ID != ID || !(cooldown < Time.time)) return;
             
             cooldown = Time.time + 0.7f;
             Flip();
-            FindObjectOfType<Client>().Send(id+ " " + isVisible);
+            FindObjectOfType<Client>().Send(ID + " " + isVisible);
         }
 
-        private void Flip()
+        public void Flip()
         {
             animator.Play(isVisible ? "card_down" : "card_up");
             isVisible = !isVisible;

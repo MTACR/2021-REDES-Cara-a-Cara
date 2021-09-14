@@ -15,7 +15,7 @@ namespace Cards
             {
                 Card card = Instantiate(prefab, transform).GetComponent<Card>();
                 card.Setup(i);
-                card.transform.position += new Vector3((i % 7f) * 3f, j * 4f, 0f);
+                card.transform.position += new Vector3((i % 7f) * 2f, j * 2.75f, 0f);
                 cards[i] = card;
                 
                 if ((i + 1) % 7 == 0)
