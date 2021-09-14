@@ -12,7 +12,7 @@ namespace Network
         public string ip = "26.158.168.172";
         private Thread thread;
         private Socket socket;
-        private static readonly ManualResetEvent reset = new ManualResetEvent(false);
+        //private static readonly ManualResetEvent reset = new ManualResetEvent(false);
 
         private void Init()
         {
@@ -38,14 +38,14 @@ namespace Network
                 {
                     try
                     {
-                        reset.Set();
+                        //reset.Set();
                         socket.EndConnect(result);
   
                         Debug.Log("Connected to " + socket.RemoteEndPoint);
                         
                         StateObject state = new StateObject();
                         
-                        Send("TESTE <EOF>");
+                        //Send("TESTE <EOF>");
                         
                         socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
                     }
@@ -54,8 +54,8 @@ namespace Network
                         Console.WriteLine(e.ToString());
                     }
                 }, socket);
-
-                reset.WaitOne();
+                
+                //reset.WaitOne();
 
                 /* Release the socket.
                 socket.Shutdown(SocketShutdown.Both);
@@ -82,9 +82,9 @@ namespace Network
                 try 
                 {
                     socket.EndSend(result);
-                    Debug.Log("-> " + data);
+                    Debug.Log("Client -> " + data);
   
-                    reset.Set();
+                    //reset.Set();
                 } 
                 catch (Exception e) 
                 {  
@@ -94,35 +94,51 @@ namespace Network
         }
 
         private void ReceiveCallback(IAsyncResult result) 
-        {  
-            try 
+        {
+            if (socket == null)
             {
-                StateObject state = (StateObject) result.AsyncState;  
+                Debug.LogError("Client socket is null");
+                return;
+            }
+
+            StateObject state = (StateObject) result.AsyncState; 
+            int bytesRead = socket.EndReceive(result);
+            
+            Debug.Log("Client <- :: " + bytesRead + " bytes");
+            
+            if (bytesRead <= 0) return;
+            
+            String data = Encoding.ASCII.GetString(state.buffer, 0, bytesRead);
+            Debug.Log("Client <- " + data);
+                
+            socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
                 //Socket client = state.socket;  
                 
-                int bytesRead = socket.EndReceive(result);  
+                /*int bytesRead = socket.EndReceive(result);  
                 if (bytesRead > 0)
                 {
                     state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
                     socket.BeginReceive(state.buffer,0,StateObject.BufferSize, 0, ReceiveCallback, state);  
-                } 
-                else 
+                }
+                else
                 {
                     if (state.sb.Length > 1)
                     {  
                         //não sei pra q serve isso
                         //response = state.sb.ToString();
-                        
-                        Debug.Log("-> " + Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
+
+                        String data = Encoding.ASCII.GetString(state.buffer, 0, bytesRead);
+                        Debug.Log("-> " + data);
+
+                        if (data.StartsWith("CRD_OP"))
+                        {
+                            int id = Convert.ToInt32(data.Substring(7, 8));
+                        }
+
                     }
                     
-                    reset.Set();  
-                }
-            } 
-            catch (Exception e) 
-            {  
-                Console.WriteLine(e.ToString());  
-            }  
+                    reset.Set();
+                }*/
         } 
 
         void Awake()

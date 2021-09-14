@@ -12,7 +12,7 @@ namespace Network
         public string ip = "26.158.168.172";
         private Thread thread;
         private Socket socket;
-        private static readonly ManualResetEvent reset = new ManualResetEvent(false);
+        //private static readonly ManualResetEvent reset = new ManualResetEvent(false);
 
         private void Init()
         {
@@ -36,24 +36,25 @@ namespace Network
                 handler.Bind(endPoint);
                 handler.Listen(1);
 
+                Debug.Log("Waiting for a connection...");
+                
                 while (true)
                 {
-                    Debug.Log("Waiting for a connection...");
-                    reset.Reset();
+                    //reset.Reset();
                     
                     handler.BeginAccept(result =>
                     {
-                        reset.Set();
+                        //reset.Set();
                         
                         socket = handler.EndAccept(result);
-                        StateObject stateObject = new StateObject();
+                        StateObject state = new StateObject();
                         
                         Debug.Log("Connection received from " + socket.RemoteEndPoint); 
                         
-                        socket.BeginReceive(stateObject.buffer, 0, StateObject.BufferSize, 0, HandleClient, stateObject);
+                        socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
                     }, handler);
                     
-                    reset.WaitOne();
+                    //reset.WaitOne();
                 }
             }
             catch (Exception e)
@@ -62,38 +63,43 @@ namespace Network
             }
         }
 
-        private void HandleClient(IAsyncResult result) 
+        private void ReceiveCallback(IAsyncResult result) 
         {
             if (socket == null)
             {
                 Debug.LogError("Host socket is null");
                 return;
             }
-            
-            StateObject stateObject = (StateObject) result.AsyncState;
-            //Socket socket = stateObject.socket;
-            int bytesRead = socket.EndReceive(result);
 
+            StateObject state = (StateObject) result.AsyncState;
+            int bytesRead = socket.EndReceive(result);
+            
+            Debug.Log("Host <- :: " + bytesRead + " bytes");
+            
             if (bytesRead <= 0) return;
             
-            stateObject.sb.Append(Encoding.ASCII.GetString(stateObject.buffer, 0, bytesRead));
-            String data = stateObject.sb.ToString();
+            String data = Encoding.ASCII.GetString(state.buffer, 0, bytesRead);
+            Debug.Log("Host <- " + data);
             
+            socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
             //TODO aqui vai lidar com as mensagens
+            
+            /*if (data.StartsWith("CRD_OP"))
+            {
+                int id = Convert.ToInt32(data.Substring(7, 8));
+            }
             
             if (data.IndexOf("<EOF>", StringComparison.Ordinal) > -1) 
             {
-                
-                
                 Send(data);
             }
-            else 
+            else
             {
-                socket.BeginReceive(stateObject.buffer, 0, StateObject.BufferSize, 0, HandleClient, stateObject);
-            }
+                socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
+            }*/
         }
 
-        private void Send(String data)
+        public void Send(String data)
         {
             if (socket == null)
             {
@@ -110,9 +116,9 @@ namespace Network
                     socket.EndSend(result);
                     //socket.Shutdown(SocketShutdown.Both);
                     //socket.Close();
-                    Debug.Log("<- " + data);
+                    Debug.Log("Host -> " + data);
                     
-                    reset.Set();
+                    //reset.Set();
                 }
                 catch (Exception e)
                 {

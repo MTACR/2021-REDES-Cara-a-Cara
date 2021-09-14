@@ -6,19 +6,19 @@ namespace Cards
 {
     public class Deck : MonoBehaviour
     {
-        public Card[] objs;
+        public CardModel[] models;
         public GameObject prefab;
-        private Controller[] cards;
+        private Card[] cards;
 
         private void Start()
         {
-            Shuffle(objs);
-            cards = new Controller[objs.Length];
+            Shuffle(models);
+            cards = new Card[models.Length];
             int i = 0;
             int j = 0;
-            foreach (var c in objs)
+            foreach (var c in models)
             {
-                Controller card = Instantiate(prefab).GetComponent<Controller>();
+                Card card = Instantiate(prefab).GetComponent<Card>();
                 card.Setup(c, i);
                 card.transform.position = new Vector3((i % 7f) * 7.5f - 30f, j * 10f, 0f);
                 cards[i++] = card;
@@ -28,11 +28,11 @@ namespace Cards
             }
         }
         
-        private static void Shuffle(IList<Card> array)
+        private static void Shuffle(IList<CardModel> array)
         {
             for (int i = 0; i < array.Count; i++)
             {
-                Card tmp = array[i];
+                CardModel tmp = array[i];
                 int r = Random.Range(i, array.Count);
                 array[i] = array[r];
                 array[r] = tmp;
