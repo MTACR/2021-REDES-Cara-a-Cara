@@ -12,5 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c41391964dd33044b947741c14ad6c51, type: 3}
   m_Name: Andre du Bois
   m_EditorClassIdentifier: 
-  text: "Andr\xE9 Du Bois"
-  texture: {fileID: 2800000, guid: 638f09692b624a443a037606241dc70d, type: 3}
+  texture: {fileID: 2800000, guid: 4f33f2e7369cd0f4fb7a30c6381f3e7c, type: 3}

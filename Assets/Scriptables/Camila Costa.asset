@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c41391964dd33044b947741c14ad6c51, type: 3}
-  m_Name: Simone Costa
+  m_Name: Camila Costa
   m_EditorClassIdentifier: 
-  texture: {fileID: 2800000, guid: 42803a4dc524dc541b55e17b8a1800f1, type: 3}
+  texture: {fileID: 2800000, guid: a181fcda878c54449a09e8583b2d5119, type: 3}
