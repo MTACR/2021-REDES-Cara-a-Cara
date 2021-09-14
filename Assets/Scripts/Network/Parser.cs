@@ -13,14 +13,19 @@ public class Parser {
                 ConnectionOpParse(currentState, futureState);
                 break;
             case 1: //CARD_OP
+                CardOpParse(currentState, futureState);
                 break;
             case 2: //MATCH_STATUS
+                StatusOpParse(currentState, futureState);
                 break;
             case 3: //TIME_UP
+                TimeUpParse(currentState, futureState);
                 break;
             case 4: //QUESTION
+                QuestionParse(currentState, futureState);
                 break;
             case 5: //QUESTION_ANSR
+                QuestionAnswerParse(currentState, futureState);
                 break;
             default:
                 break;
@@ -35,19 +40,19 @@ public class Parser {
         string sentText = Encoding.Default.GetString(sentMessage);
         switch (opType) {
             case 0: //REQUEST
-                System.Console.WriteLine($"{sender_name} sent a request: {sentText}");
+                Debug.Log($"{sender_name} sent a request: {sentText}");
                 //TODO
                 break;
             case 1: //POSITIVE
-                System.Console.WriteLine($"{sender_name} accepted your request: {sentText}");
+                Debug.Log($"{sender_name} accepted your request: {sentText}");
                 //TODO
                 break;
             case 2: //NEGATIVE
-                System.Console.WriteLine($"{sender_name} declined your request: {sentText}");
+                Debug.Log($"{sender_name} declined your request: {sentText}");
                 //TODO
                 break;
             case 3: //DISCONNECT
-                System.Console.WriteLine($"{sender_name} disconnected: {sentText}");
+                Debug.Log($"{sender_name} disconnected: {sentText}");
                 //TODO
                 break;
             default:
@@ -60,23 +65,92 @@ public class Parser {
         byte opCode = futureState.buffer[2];
         switch (opCode) {
             case 0: //CHOOSE
-                System.Console.WriteLine($"{characterId} was chosen");
+                Debug.Log($"{characterId} was chosen");
                 //TODO
                 break;
             case 1: //GUESS
-                System.Console.WriteLine($"{characterId} was guessed");
+                Debug.Log($"{characterId} was guessed");
                 //TODO
                 break;
             case 2: //UP
-                System.Console.WriteLine($"{characterId} was raised");
+                Debug.Log($"{characterId} was raised");
                 //TODO
                 break;
             case 3: //DOWN
-                System.Console.WriteLine($"{characterId} was lowered");
+                Debug.Log($"{characterId} was lowered");
                 //TODO
                 break;
             default:
                 break;
         }
+    }
+
+    public void StatusOpParse(StateObject currentState, StateObject futureState) {
+        byte status = futureState.buffer[1];
+        switch (status) {
+            case 0: //START
+                Debug.Log($"Match was started");
+                //TODO
+                break;
+            case 1: //WIN
+                Debug.Log($"Match was won");
+                //TODO
+                break;
+            case 2: //UP
+                Debug.Log($"Match was lost");
+                //TODO
+                break;
+            case 3: //TIE
+                Debug.Log($"Match was tied");
+                //TODO
+                break;
+            case 5: //END
+                Debug.Log($"Match was ended");
+                //TODO
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void TimeUpParse(StateObject currentState, StateObject futureState) {
+        byte time = futureState.buffer[1];
+
+        Debug.Log($"{time}s passed");
+        //TODO
+    }
+
+    public void QuestionParse(StateObject currentState, StateObject futureState) {
+        byte[] sender = futureState.buffer.Skip(1).Take(20).ToArray();
+        string sender_name = Encoding.Default.GetString(sender);
+        byte[] questionMessage = futureState.buffer.Skip(21).Take(100).ToArray();
+        string questionText = Encoding.Default.GetString(questionMessage);
+
+        Debug.Log($"{sender_name} asked {questionText}");
+        //TODO
+    }
+
+    public void QuestionAnswerParse(StateObject currentState, StateObject futureState) {
+        byte[] sender = futureState.buffer.Skip(1).Take(20).ToArray();
+        string sender_name = Encoding.Default.GetString(sender);
+        byte agreement = futureState.buffer[22];
+        byte[] answerMessage = futureState.buffer.Skip(22).Take(100).ToArray();
+        string answernText = Encoding.Default.GetString(answerMessage);
+
+        string agreementText;
+        switch (agreement) {
+            case 0: //CONFIRMED
+                agreementText = "confirmed";
+                break;
+            case 1: //DENIED
+                agreementText = "denied";
+                break;
+            default://NEITHER
+                agreementText = "left uncler";
+                break;
+        }
+
+        Debug.Log($"{sender_name} {agreementText}: {answernText}");
+        //TODO
     }
 }
