@@ -14,7 +14,11 @@ namespace Network
         public string ip = "26.158.168.172";
         private Thread thread;
         private Socket socket;
-        public bool isHost;
+        private bool isHost;
+        private Action onStart;
+        private Action onError;
+        private Action<string> onConnection;
+        public bool isReady { get; private set; }
 
         private void Init()
         {
@@ -30,6 +34,10 @@ namespace Network
                 if (ipAddress == null)
                 {
                     Debug.LogError("IP address not bound");
+                    TasksDispatcher.Instance.Schedule(delegate
+                    {
+                        onError();
+                    });
                     return;
                 }
 
@@ -41,12 +49,20 @@ namespace Network
                     handler.Bind(endPoint);
                     handler.Listen(1);
                     
+                    Debug.Log("Waiting for connection...");
+                    
+                    TasksDispatcher.Instance.Schedule(delegate
+                    {
+                        onStart();
+                    });
+                    
                     handler.BeginAccept(result =>
                     {
                         socket = handler.EndAccept(result);
                         StateObject state = new StateObject();
-                        
-                        Debug.Log("Connection received from " + socket.RemoteEndPoint); 
+                        isReady = true;
+
+                        Debug.Log("Connection received from " + socket.RemoteEndPoint);
                         
                         socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
                     }, handler);
@@ -57,19 +73,13 @@ namespace Network
 
                     socket.BeginConnect(endPoint, result =>
                     {
-                        try
-                        {
-                            socket.EndConnect(result);
-                            StateObject state = new StateObject();
+                        socket.EndConnect(result);
+                        StateObject state = new StateObject();
+                        isReady = true;
                             
-                            Debug.Log("Connected to " + socket.RemoteEndPoint);
+                        Debug.Log("Connected to " + socket.RemoteEndPoint);
                             
-                            socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e.ToString());
-                        }
+                        socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
                     }, socket);
                 }
 
@@ -80,6 +90,11 @@ namespace Network
             catch (Exception e)
             {
                 Debug.LogError(e.ToString());
+                isReady = false;
+                TasksDispatcher.Instance.Schedule(delegate
+                {
+                    onError();
+                });
             }
         }
         
@@ -88,6 +103,10 @@ namespace Network
             if (socket == null)
             {
                 Debug.LogError("Client socket is null");
+                TasksDispatcher.Instance.Schedule(delegate
+                {
+                    onError();
+                });
                 return;
             }
             
@@ -103,6 +122,11 @@ namespace Network
                 catch (Exception e) 
                 {
                     Debug.LogError(e.ToString());
+                    isReady = false;
+                    TasksDispatcher.Instance.Schedule(delegate
+                    {
+                        onError();
+                    });
                 }
             }, socket);
         }
@@ -135,20 +159,29 @@ namespace Network
             socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
         }
 
-        void Awake()
+        public void StartClient(bool isHost, Action onWaitng, Action<string> onConnection, Action onError)
         {
+            this.isHost = isHost;
+            this.onStart = onWaitng;
+            this.onConnection = onConnection;
+            this.onError = onError;
             Debug.Log("Starting client...");
-            
-            DontDestroyOnLoad(this);
-
             thread = new Thread(Init) {IsBackground = true};
             thread.Start();
         }
 
+        void Awake()
+        {
+            DontDestroyOnLoad(this);
+        }
+
         private void OnDisable()
         {
-            socket.Shutdown(SocketShutdown.Both);
-            socket.Close();
+            if (socket != null)
+            {
+                socket.Shutdown(SocketShutdown.Both);
+                socket.Close();
+            }
             thread.Abort();
         }
         
