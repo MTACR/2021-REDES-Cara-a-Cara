@@ -8,23 +8,23 @@ using UnityEngine;
 public class Parser {
     public void ParseMessage(StateObject currentState, StateObject futureState) {
         byte messageType = futureState.buffer[0]; 
-        switch(messageType) {
-            case 0: //CONNECTION_OP
+        switch((MessageType) messageType) {
+            case MessageType.ConnectionOp: //CONNECTION_OP
                 ConnectionOpParse(currentState, futureState);
                 break;
-            case 1: //CARD_OP
+            case MessageType.CardOp: //CARD_OP
                 CardOpParse(currentState, futureState);
                 break;
-            case 2: //MATCH_STATUS
+            case MessageType.Status: //MATCH_STATUS
                 StatusOpParse(currentState, futureState);
                 break;
-            case 3: //TIME_UP
+            case MessageType.TimeUp: //TIME_UP
                 TimeUpParse(currentState, futureState);
                 break;
-            case 4: //QUESTION
+            case MessageType.Question: //QUESTION
                 QuestionParse(currentState, futureState);
                 break;
-            case 5: //QUESTION_ANSR
+            case MessageType.Answer: //QUESTION_ANSR
                 QuestionAnswerParse(currentState, futureState);
                 break;
             default:
@@ -38,20 +38,20 @@ public class Parser {
         string sender_name = Encoding.Default.GetString(sender);
         byte[] sentMessage = futureState.buffer.Skip(22).Take(100).ToArray();
         string sentText = Encoding.Default.GetString(sentMessage);
-        switch (opType) {
-            case 0: //REQUEST
+        switch ((ConnectionType) opType) {
+            case ConnectionType.Request: //REQUEST
                 Debug.Log($"{sender_name} sent a request: {sentText}");
                 //TODO
                 break;
-            case 1: //POSITIVE
+            case ConnectionType.Positive: //POSITIVE
                 Debug.Log($"{sender_name} accepted your request: {sentText}");
                 //TODO
                 break;
-            case 2: //NEGATIVE
+            case ConnectionType.Negative: //NEGATIVE
                 Debug.Log($"{sender_name} declined your request: {sentText}");
                 //TODO
                 break;
-            case 3: //DISCONNECT
+            case ConnectionType.Disconnect: //DISCONNECT
                 Debug.Log($"{sender_name} disconnected: {sentText}");
                 //TODO
                 break;
@@ -63,20 +63,20 @@ public class Parser {
     public void CardOpParse(StateObject currentState, StateObject futureState) {
         byte characterId = futureState.buffer[1];
         byte opCode = futureState.buffer[2];
-        switch (opCode) {
-            case 0: //CHOOSE
+        switch ((CardOpType) opCode) {
+            case CardOpType.Choose: //CHOOSE
                 Debug.Log($"{characterId} was chosen");
                 //TODO
                 break;
-            case 1: //GUESS
+            case CardOpType.Guess: //GUESS
                 Debug.Log($"{characterId} was guessed");
                 //TODO
                 break;
-            case 2: //UP
+            case CardOpType.Up: //UP
                 Debug.Log($"{characterId} was raised");
                 //TODO
                 break;
-            case 3: //DOWN
+            case CardOpType.Down: //DOWN
                 Debug.Log($"{characterId} was lowered");
                 //TODO
                 break;
@@ -87,24 +87,24 @@ public class Parser {
 
     public void StatusOpParse(StateObject currentState, StateObject futureState) {
         byte status = futureState.buffer[1];
-        switch (status) {
-            case 0: //START
+        switch ((Status) status) {
+            case Status.Start: //START
                 Debug.Log($"Match was started");
                 //TODO
                 break;
-            case 1: //WIN
+            case Status.Win: //WIN
                 Debug.Log($"Match was won");
                 //TODO
                 break;
-            case 2: //UP
+            case Status.Lose: //LOSE          
                 Debug.Log($"Match was lost");
                 //TODO
                 break;
-            case 3: //TIE
+            case Status.Tie: //TIE
                 Debug.Log($"Match was tied");
                 //TODO
                 break;
-            case 5: //END
+            case Status.End: //END
                 Debug.Log($"Match was ended");
                 //TODO
                 break;
@@ -138,11 +138,11 @@ public class Parser {
         string answernText = Encoding.Default.GetString(answerMessage);
 
         string agreementText;
-        switch (agreement) {
-            case 0: //CONFIRMED
+        switch ((Answer) agreement) {
+            case Answer.Confirm: //CONFIRMED
                 agreementText = "confirmed";
                 break;
-            case 1: //DENIED
+            case Answer.Deny: //DENIED
                 agreementText = "denied";
                 break;
             default://NEITHER
