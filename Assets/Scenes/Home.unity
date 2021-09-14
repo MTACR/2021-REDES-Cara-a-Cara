@@ -775,7 +775,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   client: {fileID: 1525371441}
   loading: {fileID: 1632865923}
-  waiting: {fileID: 1206329045}
+  subtext: {fileID: 1206329047}
 --- !u!1 &1093502130
 GameObject:
   m_ObjectHideFlags: 0
@@ -1193,12 +1193,12 @@ GameObject:
   - component: {fileID: 1206329048}
   - component: {fileID: 1206329047}
   m_Layer: 5
-  m_Name: Waiting
+  m_Name: Subtext
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1206329046
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1238,7 +1238,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Waiting for opponent
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}

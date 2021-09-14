@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Network;
 using TMPro;
@@ -11,23 +12,32 @@ namespace UI
 
         public Client client;
         public GameObject loading;
-        public GameObject waiting;
-
+        public TextMeshProUGUI subtext;
+        
         public void Host()
         {
-            TextMeshPro text = waiting.GetComponent<TextMeshPro>();
-            
             loading.SetActive(true);
-            client.StartClient(true, () => waiting.SetActive(true), ip =>
-                    text.text = "Connection from " + ip
-            , ShowError);
+            client.StartClient(true, () =>
+            {
+                subtext.text = "Waiting for opponent";
+            }, ip =>
+            {
+                subtext.text = "Connection from " + ip;
+            }, ShowError);
             StartCoroutine(LoadScene("Game"));
         }
 
         public void Join()
         {
-            //client.StartClient(false, () => { }, ShowError);
-            //StartCoroutine(LoadScene("Game"));
+            loading.SetActive(true);
+            client.StartClient(false, () =>
+            {
+                subtext.text = "Connecting to server";
+            }, ip =>
+            {
+                subtext.text = "Connected to " + ip;
+            }, ShowError);
+            StartCoroutine(LoadScene("Game"));
         }
 
         private void ShowError()

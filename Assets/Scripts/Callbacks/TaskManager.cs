@@ -13,18 +13,18 @@ namespace Callbacks
 
         private void Update()
         {
-            TasksDispatcher.Task current = dispatcher.Dequeue();
+            TasksDispatcher.Task task = dispatcher.Dequeue();
             
             float timeout = Time.realtimeSinceStartup + 0.04f;
             
-            while(current != null)
+            while(task != null)
             {
-                current();
+                task();
                 
                 if (Time.realtimeSinceStartup > timeout)
                     break;
 
-                current = dispatcher.Dequeue();
+                task = dispatcher.Dequeue();
             }
         }
         

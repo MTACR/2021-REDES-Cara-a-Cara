@@ -64,12 +64,22 @@ namespace Network
 
                         Debug.Log("Connection received from " + socket.RemoteEndPoint);
                         
+                        TasksDispatcher.Instance.Schedule(delegate
+                        {
+                            onConnection(socket.RemoteEndPoint.ToString());
+                        });
+                        
                         socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
                     }, handler);
                 }
                 else
                 {
                     socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                    
+                    TasksDispatcher.Instance.Schedule(delegate
+                    {
+                        onStart();
+                    });
 
                     socket.BeginConnect(endPoint, result =>
                     {
@@ -78,6 +88,11 @@ namespace Network
                         isReady = true;
                             
                         Debug.Log("Connected to " + socket.RemoteEndPoint);
+                        
+                        TasksDispatcher.Instance.Schedule(delegate
+                        {
+                            onConnection(socket.RemoteEndPoint.ToString());
+                        });
                             
                         socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
                     }, socket);
