@@ -107,7 +107,7 @@ namespace Network
             }, socket);
         }
 
-        private void ReceiveCallback(IAsyncResult result) 
+        private void ReceiveCallback(IAsyncResult result)
         {
             if (socket == null)
             {
