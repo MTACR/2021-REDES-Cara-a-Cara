@@ -8,15 +8,17 @@ namespace Cards
 {
     public class Controller : MonoBehaviour
     {
-        public Animator animator;
         public MeshRenderer picture;
         public TextMeshPro text;
-        private bool isVisible = true;
+        private Animator animator;
+        private bool isVisible;
         private float cooldown;
 
         private void Start()
         {
             animator = GetComponent<Animator>();
+            cooldown = Time.time;
+            isVisible = true;
         }
 
         public void Setup(Card card)
