@@ -54,10 +54,16 @@ namespace Cards
             FindObjectOfType<Client>().Send(id+ " " + isVisible);
         }
 
-        public void Flip()
+        private void Flip()
         {
             animator.Play(isVisible ? "card_down" : "card_up");
             isVisible = !isVisible;
+        }
+        
+        public void Flip(bool isVisible)
+        {
+            this.isVisible = isVisible;
+            animator.Play(isVisible ? "card_down" : "card_up");
         }
 
     }

@@ -3,6 +3,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Callbacks;
+using Cards;
 using UnityEngine;
 
 namespace Network
@@ -120,8 +122,18 @@ namespace Network
             String data = Encoding.ASCII.GetString(state.buffer, 0, bytes);
             Debug.Log("<- " + data + " :: " + bytes + " bytes");
 
+            int i = Convert.ToInt32(data.Substring(0, 1));
+            bool b = Convert.ToBoolean(data.Substring(2));
+
+            TasksDispatcher.Instance.Schedule(delegate
+            {
+                Debug.Log(i + " " + b);
+            
+                FindObjectOfType<DeckOpponent>().Flip(i, b);
+            });
+            
             socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
-        } 
+        }
 
         void Awake()
         {

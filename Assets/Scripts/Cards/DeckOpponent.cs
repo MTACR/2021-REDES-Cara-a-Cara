@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Cards
@@ -24,15 +23,11 @@ namespace Cards
             }
         }
 
-        public void Flip(int i)
+        public void Flip(int i, bool isVisible)
         {
-            cards[i].Flip();
+            Debug.Log("ASKED TO FLIP");
+            cards[i].Flip(isVisible);
         }
 
-        private void Update()
-        {
-            if (Input.GetKey(KeyCode.Alpha0))
-                Flip(0);
-        }
     }
 }
