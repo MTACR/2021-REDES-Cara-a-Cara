@@ -12,7 +12,7 @@ namespace Network
         public string ip = "26.158.168.172";
         private Thread thread;
         private Socket socket;
-        //private static readonly ManualResetEvent reset = new ManualResetEvent(false);
+        public bool isHost;
 
         private void Init()
         {
@@ -32,30 +32,44 @@ namespace Network
                 }
 
                 IPEndPoint endPoint = new IPEndPoint(ipAddress, 1024);
-                socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                socket.BeginConnect(endPoint, result =>
+                if (isHost)
                 {
-                    try
+                    Socket handler = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                    handler.Bind(endPoint);
+                    handler.Listen(1);
+                    
+                    handler.BeginAccept(result =>
                     {
-                        //reset.Set();
-                        socket.EndConnect(result);
-  
-                        Debug.Log("Connected to " + socket.RemoteEndPoint);
-                        
+                        socket = handler.EndAccept(result);
                         StateObject state = new StateObject();
                         
-                        //Send("TESTE <EOF>");
+                        Debug.Log("Connection received from " + socket.RemoteEndPoint); 
                         
                         socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
-                    }
-                    catch (Exception e)
+                    }, handler);
+                }
+                else
+                {
+                    socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+                    socket.BeginConnect(endPoint, result =>
                     {
-                        Console.WriteLine(e.ToString());
-                    }
-                }, socket);
-                
-                //reset.WaitOne();
+                        try
+                        {
+                            socket.EndConnect(result);
+                            StateObject state = new StateObject();
+                            
+                            Debug.Log("Connected to " + socket.RemoteEndPoint);
+                            
+                            socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.ToString());
+                        }
+                    }, socket);
+                }
 
                 /* Release the socket.
                 socket.Shutdown(SocketShutdown.Both);
@@ -74,21 +88,19 @@ namespace Network
                 Debug.LogError("Client socket is null");
                 return;
             }
-                
-            byte[] byteData = Encoding.ASCII.GetBytes(data);  
+            
+            byte[] bytes = Encoding.ASCII.GetBytes(data);
   
-            socket.BeginSend(byteData, 0, byteData.Length, SocketFlags.None, result =>
+            socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, result =>
             {
                 try 
                 {
                     socket.EndSend(result);
-                    Debug.Log("Client -> " + data);
-  
-                    //reset.Set();
+                    Debug.Log("-> " + data + " :: " + bytes.Length + " bytes");
                 } 
                 catch (Exception e) 
-                {  
-                    Debug.LogError(e.ToString());  
+                {
+                    Debug.LogError(e.ToString());
                 }
             }, socket);
         }
@@ -102,43 +114,13 @@ namespace Network
             }
 
             StateObject state = (StateObject) result.AsyncState; 
-            int bytesRead = socket.EndReceive(result);
+            int bytes = socket.EndReceive(result);
+            if (bytes <= 0) return;
             
-            Debug.Log("Client <- :: " + bytesRead + " bytes");
-            
-            if (bytesRead <= 0) return;
-            
-            String data = Encoding.ASCII.GetString(state.buffer, 0, bytesRead);
-            Debug.Log("Client <- " + data);
-                
+            String data = Encoding.ASCII.GetString(state.buffer, 0, bytes);
+            Debug.Log("<- " + data + " :: " + bytes + " bytes");
+
             socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
-                //Socket client = state.socket;  
-                
-                /*int bytesRead = socket.EndReceive(result);  
-                if (bytesRead > 0)
-                {
-                    state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
-                    socket.BeginReceive(state.buffer,0,StateObject.BufferSize, 0, ReceiveCallback, state);  
-                }
-                else
-                {
-                    if (state.sb.Length > 1)
-                    {  
-                        //não sei pra q serve isso
-                        //response = state.sb.ToString();
-
-                        String data = Encoding.ASCII.GetString(state.buffer, 0, bytesRead);
-                        Debug.Log("-> " + data);
-
-                        if (data.StartsWith("CRD_OP"))
-                        {
-                            int id = Convert.ToInt32(data.Substring(7, 8));
-                        }
-
-                    }
-                    
-                    reset.Set();
-                }*/
         } 
 
         void Awake()

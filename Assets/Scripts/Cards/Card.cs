@@ -51,7 +51,7 @@ namespace Cards
             
             cooldown = Time.time + 0.7f;
             Flip();
-            FindObjectOfType<Host>().Send(id+ " " + isVisible);
+            FindObjectOfType<Client>().Send(id+ " " + isVisible);
         }
 
         public void Flip()
