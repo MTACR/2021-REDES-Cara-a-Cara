@@ -11,7 +11,6 @@ namespace Callbacks
             dispatcher = TasksDispatcher.Instance;
         }
 
-
         private void Update()
         {
             TasksDispatcher.Task current = dispatcher.Dequeue();

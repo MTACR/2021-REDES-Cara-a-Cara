@@ -25,7 +25,6 @@ namespace Cards
 
         public void Flip(int i, bool isVisible)
         {
-            Debug.Log("ASKED TO FLIP");
             cards[i].Flip(isVisible);
         }
 

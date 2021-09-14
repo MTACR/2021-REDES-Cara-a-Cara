@@ -5,8 +5,8 @@ namespace Callbacks
     public class TasksDispatcher
     {
         private static TasksDispatcher instance;
-        private Queue<Task> queue;
-        private object locker;
+        private readonly Queue<Task> queue;
+        private readonly object locker;
 
         private TasksDispatcher()
         {
