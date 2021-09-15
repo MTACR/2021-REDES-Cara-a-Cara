@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using Callbacks;
 using Cards;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Network
@@ -125,15 +126,13 @@ namespace Network
                 });
                 return;
             }
-            
-            //byte[] bytes = Encoding.ASCII.GetBytes(data);
-  
+
             socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, result =>
             {
                 try 
                 {
                     socket.EndSend(result);
-                    Debug.Log("-> " + /*data*/ bytes + " :: " + bytes.Length + " bytes");
+                    Debug.Log("-> " + bytes.ToCommaSeparatedString() + " :: " + bytes.Length + " bytes");
                 } 
                 catch (Exception e) 
                 {
@@ -159,15 +158,11 @@ namespace Network
             int bytes = socket.EndReceive(result);
             if (bytes <= 0) return;
             
-            String data = Encoding.ASCII.GetString(state.buffer, 0, bytes);
-            Debug.Log("<- " + data + " :: " + bytes + " bytes");
-
-            int i = Convert.ToInt32(data.Substring(0, 1));
-            bool b = Convert.ToBoolean(data.Substring(2));
+            Debug.Log("<- " + state.buffer.ToCommaSeparatedString() + " :: " + bytes + " bytes");
 
             dispatcher.Schedule(delegate
             {
-                FindObjectOfType<DeckOpponent>().Flip(i, b);
+                FindObjectOfType<DeckOpponent>().Flip(0, true);
             });
             
             socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
@@ -179,7 +174,9 @@ namespace Network
             this.onStart = onWaitng;
             this.onConnection = onConnection;
             this.onError = onError;
+            
             Debug.Log("Starting client...");
+            
             thread = new Thread(Init) {IsBackground = true};
             thread.Start();
         }
