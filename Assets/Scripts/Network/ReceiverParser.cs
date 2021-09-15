@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Game;
 using UnityEngine;
 
 public class Parser {
@@ -73,7 +74,7 @@ public class Parser {
             case CardOpType.Guess: //GUESS
                 Debug.Log($"{characterId} was guessed");
                 TasksDispatcher.Instance.Schedule(delegate {
-                    if (UnityEngine.Object.FindObjectOfType<Deck>().isChosen(characterId)) {
+                    if (UnityEngine.Object.FindObjectOfType<Deck>().IsChosen(characterId)) {
                         byte[] messase = SenderParser.ParseStatus(Status.Win);
                         UnityEngine.Object.FindObjectOfType<Client>().Send(messase);
                         UnityEngine.Object.FindObjectOfType<GameManager>().EndMatch(Status.Lose);

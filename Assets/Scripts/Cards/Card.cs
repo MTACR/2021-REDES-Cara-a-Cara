@@ -13,6 +13,7 @@ namespace Cards
         private float cooldown;
         private int ID { get; set; }
         private Client client;
+        public CardModel model;
 
         private void Start()
         {
@@ -23,6 +24,7 @@ namespace Cards
 
         public void Setup(CardModel card, int id)
         {
+            this.model = card;
             this.name = card.name;
             this.ID = id;
             picture.GetComponent<Renderer>().material.mainTexture = card.texture;

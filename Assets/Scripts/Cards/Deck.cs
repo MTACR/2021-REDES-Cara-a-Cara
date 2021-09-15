@@ -9,7 +9,7 @@ namespace Cards
         public CardModel[] models;
         public GameObject prefab;
         private Card[] cards;
-        private int chosenCard;
+        public int chosenCard { private set; get; }
 
         private void Start()
         {
@@ -51,8 +51,14 @@ namespace Cards
             }
         }
 
-        public bool isChosen(int characterId) {
+        public bool IsChosen(int characterId) 
+        {
             return chosenCard == characterId;
+        }
+
+        public Card ChoosenCard()
+        {
+            return cards[chosenCard];
         }
         
     }

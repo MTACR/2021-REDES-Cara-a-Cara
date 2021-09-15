@@ -123,6 +123,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &38961659 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3976790605818281999, guid: 3bfca862f2b6afb438b59774bc3ef9c6, type: 3}
+  m_PrefabInstance: {fileID: 1729553232}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &70428080
 GameObject:
   m_ObjectHideFlags: 0
@@ -739,6 +744,7 @@ MonoBehaviour:
   player_name: player
   scrollView: {fileID: 1203361748}
   message: {fileID: 5067669411451148671, guid: 1fe99bb70ba7e6e4685c85bf326f88a0, type: 3}
+  myCard: {fileID: 38961659}
 --- !u!1 &302924099
 GameObject:
   m_ObjectHideFlags: 0
@@ -2541,7 +2547,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 16777215
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
