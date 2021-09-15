@@ -74,6 +74,8 @@ public class Parser {
                 Debug.Log($"{characterId} was guessed");
                 TasksDispatcher.Instance.Schedule(delegate {
                     if (UnityEngine.Object.FindObjectOfType<Deck>().isChosen(characterId)) {
+                        byte[] messase = SenderParser.ParseStatus(Status.Win);
+                        UnityEngine.Object.FindObjectOfType<Client>().Send(messase);
                         UnityEngine.Object.FindObjectOfType<GameManager>().EndMatch(Status.Lose);
                     }
                 });
@@ -103,25 +105,15 @@ public class Parser {
         switch ((Status) status) {
             case Status.Start: //START
                 Debug.Log($"Match was started");
-                //TODO
-                break;
-            case Status.Win: //WIN
-                Debug.Log($"Match was won");
-                //TODO
-                break;
-            case Status.Lose: //LOSE          
-                Debug.Log($"Match was lost");
-                //TODO
-                break;
-            case Status.Tie: //TIE
-                Debug.Log($"Match was tied");
-                //TODO
-                break;
-            case Status.End: //END
-                Debug.Log($"Match was ended");
-                //TODO
+                TasksDispatcher.Instance.Schedule(delegate {
+                    UnityEngine.Object.FindObjectOfType<GameManager>().StartMatch();
+                });
+                //TODO?
                 break;
             default:
+                TasksDispatcher.Instance.Schedule(delegate {
+                    UnityEngine.Object.FindObjectOfType<GameManager>().EndMatch((Status) status);
+                });
                 break;
         }
     }

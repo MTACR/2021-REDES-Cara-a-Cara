@@ -42,7 +42,31 @@ public class GameManager : MonoBehaviour
         FindObjectOfType<Deck>().FlipAll();
     }
 
+    public void StartMatch() {
+        //TODO
+    }
+
     public void EndMatch(Status status) {
         //TODO
+        switch ((Status) status) {
+            case Status.Win: //WIN
+                Debug.Log($"Match was won");
+                //TODO
+                break;
+            case Status.Lose: //LOSE          
+                Debug.Log($"Match was lost");
+                //TODO
+                break;
+            case Status.Tie: //TIE
+                Debug.Log($"Match was tied");
+                //TODO
+                break;
+            case Status.End: //END
+                Debug.Log($"Match was ended");
+                //TODO
+                break;
+            default:
+                break;
+        }
     }
 }
