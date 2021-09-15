@@ -43,7 +43,7 @@ public class SenderParser {
     }
 
     public byte[] ParseQuestion(string senderName, string message) {
-        int length = 1 + senderName.Length + message.Length;
+        int length = 1 + 20 + 100;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.Question;
         messageByte = OffsetStringtoByte(messageByte, senderName, 1);
@@ -52,7 +52,7 @@ public class SenderParser {
     }
 
     public byte[] ParseAnswer(string senderName, Answer answer, string response) {
-        int length = 1 + senderName.Length + 1 + response.Length;
+        int length = 1 + 20 + 1 + 100;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.Answer;
         messageByte = OffsetStringtoByte(messageByte, senderName, 1);
