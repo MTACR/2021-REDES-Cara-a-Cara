@@ -113,7 +113,7 @@ namespace Network
             }
         }
         
-        public void Send(String data)
+        public void Send(byte[] bytes)
         {
             if (socket == null)
             {
@@ -125,14 +125,14 @@ namespace Network
                 return;
             }
             
-            byte[] bytes = Encoding.ASCII.GetBytes(data);
+            //byte[] bytes = Encoding.ASCII.GetBytes(data);
   
             socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, result =>
             {
                 try 
                 {
                     socket.EndSend(result);
-                    Debug.Log("-> " + data + " :: " + bytes.Length + " bytes");
+                    Debug.Log("-> " + /*data*/ bytes + " :: " + bytes.Length + " bytes");
                 } 
                 catch (Exception e) 
                 {

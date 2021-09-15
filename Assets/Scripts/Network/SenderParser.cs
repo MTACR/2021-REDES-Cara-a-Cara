@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SenderParser {
     //<op_type: Integer, sender_name: String, message: String
-    public byte[] ParseConnection(ConnectionType opType, string senderName, string message) {
+    public static byte[] ParseConnection(ConnectionType opType, string senderName, string message) {
         int length = 1 + 1 + 20 + 100;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.ConnectionOp;
@@ -16,7 +16,7 @@ public class SenderParser {
     }
 
     //<character_id: Integer, OpCode: Integer>
-    public byte[] ParseCardOp(byte characterId, CardOpType cardOpType) {
+    public static byte[] ParseCardOp(byte characterId, CardOpType cardOpType) {
         int length = 1 + 1 + 1;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.CardOp;
@@ -26,7 +26,7 @@ public class SenderParser {
         return messageByte;
     }
 
-    public byte[] ParseStatus(Status status) {
+    public static byte[] ParseStatus(Status status) {
         int length = 1 + 1;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.Status;
@@ -34,7 +34,7 @@ public class SenderParser {
         return messageByte;
     }
 
-    public byte[] ParseStatus(byte secondsPassed) {
+    public static byte[] ParseTimeUp(byte secondsPassed) {
         int length = 1 + 1;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.TimeUp;
@@ -42,7 +42,7 @@ public class SenderParser {
         return messageByte;
     }
 
-    public byte[] ParseQuestion(string senderName, string message) {
+    public static byte[] ParseQuestion(string senderName, string message) {
         int length = 1 + 20 + 100;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.Question;
@@ -51,7 +51,7 @@ public class SenderParser {
         return messageByte;
     }
 
-    public byte[] ParseAnswer(string senderName, Answer answer, string response) {
+    public static byte[] ParseAnswer(string senderName, Answer answer, string response) {
         int length = 1 + 20 + 1 + 100;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.Answer;
@@ -61,7 +61,7 @@ public class SenderParser {
         return messageByte;
     }
 
-    private byte[] OffsetStringtoByte(byte[] messageByte, string str, int offset) {
+    private static byte[] OffsetStringtoByte(byte[] messageByte, string str, int offset) {
         for (int i = 0; i < str.Length; ++i) {
             messageByte[offset + i] = (byte)str[i];
         }
