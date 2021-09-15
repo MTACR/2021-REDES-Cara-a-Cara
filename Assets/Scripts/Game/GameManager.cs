@@ -11,6 +11,7 @@ namespace Game
         public string player_name = "player";
         private Client client;
         private bool myTurn = true;
+        private Deck deck;
         public GameObject scrollView;
         public GameObject message;
         public GameObject myCard;
@@ -19,6 +20,7 @@ namespace Game
         void Start()
         {
             client = GetComponent<Client>();
+            deck = FindObjectOfType<Deck>();
         }
 
         // Update is called once per frame
@@ -45,8 +47,14 @@ namespace Game
 
         public void SetCard()
         {
-            Deck deck = FindObjectOfType<Deck>();
             Card model = deck.ChoosenCard();
+            Card card = myCard.GetComponent<Card>();
+            card.Setup(model.model, deck.chosenCard);
+        }
+
+        public void RandomCard()
+        {
+            Card model = deck.RandomCard();
             Card card = myCard.GetComponent<Card>();
             card.Setup(model.model, deck.chosenCard);
         }

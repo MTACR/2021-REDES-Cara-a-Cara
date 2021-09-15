@@ -60,6 +60,11 @@ namespace Cards
         {
             return cards[chosenCard];
         }
+
+        public Card RandomCard()
+        {
+            return cards[Random.Range(1, cards.Length)];
+        }
         
     }
 }
