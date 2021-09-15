@@ -20,7 +20,7 @@ namespace Cards
             {
                 Card card = Instantiate(prefab, transform).GetComponent<Card>();
                 card.Setup(c, i);
-                card.transform.position += new Vector3((i % 7f) * 7.5f, j * 9f, 0f);
+                card.transform.position += new Vector3((i % 7f) * 11f, j * 15f, 0f);
                 cards[i++] = card;
 
                 if (i % 7 == 0)
