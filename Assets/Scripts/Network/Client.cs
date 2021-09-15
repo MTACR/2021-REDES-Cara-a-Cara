@@ -14,7 +14,7 @@ namespace Network
         public string ip = "26.158.168.172";
         private Thread thread;
         private Socket socket;
-        private bool isHost;
+        public bool isHost;
         private Action onStart;
         private Action onError;
         private Action<string> onConnection;
