@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-enum MessageType : byte {
+public enum MessageType : byte {
     ConnectionOp = 0,
     CardOp = 1,
     Status = 2,
@@ -10,21 +10,21 @@ enum MessageType : byte {
     Answer = 5
 }
 
-enum ConnectionType : byte {
+public enum ConnectionType : byte {
     Request = 0,
     Positive = 1,
     Negative = 2,
     Disconnect = 3
 }
 
-enum CardOpType : byte {
+public enum CardOpType : byte {
     Choose = 0,
     Guess = 1,
     Up = 2,
     Down = 3
 }
 
-enum Status : byte {
+public enum Status : byte {
     Start = 0,
     Win = 1,
     Lose = 2,
@@ -32,7 +32,7 @@ enum Status : byte {
     End = 4
 }
 
-enum Answer : byte {
+public enum Answer : byte {
     Confirm = 0,
     Deny = 1,
     Unclear = 2
