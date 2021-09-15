@@ -159,11 +159,7 @@ namespace Network
             if (bytes <= 0) return;
             
             Debug.Log("<- " + state.buffer.ToCommaSeparatedString() + " :: " + bytes + " bytes");
-
-            dispatcher.Schedule(delegate
-            {
-                FindObjectOfType<DeckOpponent>().Flip(0, true);
-            });
+            ReceiverParser.ParseMessage(state);
             
             socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
         }

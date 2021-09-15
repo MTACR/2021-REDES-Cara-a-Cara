@@ -9,42 +9,42 @@ using Object = UnityEngine.Object;
 
 namespace Network
 {
-    public class Parser
+    public static class ReceiverParser
     {
-        public void ParseMessage(StateObject currentState, StateObject futureState)
+        public static void ParseMessage(StateObject state)
         {
-            var messageType = futureState.buffer[0];
+            var messageType = state.buffer[0];
             switch ((MessageType) messageType)
             {
                 case MessageType.ConnectionOp: //CONNECTION_OP
-                    ConnectionOpParse(currentState, futureState);
+                    ConnectionOpParse(state);
                     break;
                 case MessageType.CardOp: //CARD_OP
-                    CardOpParse(currentState, futureState);
+                    CardOpParse(state);
                     break;
                 case MessageType.Status: //MATCH_STATUS
-                    StatusOpParse(currentState, futureState);
+                    StatusOpParse(state);
                     break;
                 case MessageType.TimeUp: //TIME_UP
-                    TimeUpParse(currentState, futureState);
+                    TimeUpParse(state);
                     break;
                 case MessageType.Question: //QUESTION
-                    QuestionParse(currentState, futureState);
+                    QuestionParse(state);
                     break;
                 case MessageType.Answer: //QUESTION_ANSR
-                    QuestionAnswerParse(currentState, futureState);
+                    QuestionAnswerParse(state);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private static void ConnectionOpParse(StateObject currentState, StateObject futureState)
+        private static void ConnectionOpParse(StateObject state)
         {
-            var opType = futureState.buffer[1];
-            var sender = futureState.buffer.Skip(2).Take(20).ToArray();
+            var opType = state.buffer[1];
+            var sender = state.buffer.Skip(2).Take(20).ToArray();
             var sender_name = Encoding.Default.GetString(sender);
-            var sentMessage = futureState.buffer.Skip(22).Take(100).ToArray();
+            var sentMessage = state.buffer.Skip(22).Take(100).ToArray();
             var sentText = Encoding.Default.GetString(sentMessage);
             switch ((ConnectionType) opType)
             {
@@ -69,10 +69,10 @@ namespace Network
             }
         }
 
-        private void CardOpParse(StateObject currentState, StateObject futureState)
+        private static void CardOpParse(StateObject state)
         {
-            var characterId = futureState.buffer[1];
-            var opCode = futureState.buffer[2];
+            var characterId = state.buffer[1];
+            var opCode = state.buffer[2];
             switch ((CardOpType) opCode)
             {
                 case CardOpType.Choose: //CHOOSE
@@ -113,9 +113,9 @@ namespace Network
             }
         }
 
-        private static void StatusOpParse(StateObject currentState, StateObject futureState)
+        private static void StatusOpParse(StateObject state)
         {
-            var status = futureState.buffer[1];
+            var status = state.buffer[1];
             switch ((Status) status)
             {
                 case Status.Start: //START
@@ -140,31 +140,31 @@ namespace Network
             }
         }
 
-        private static void TimeUpParse(StateObject currentState, StateObject futureState)
+        private static void TimeUpParse(StateObject state)
         {
-            var time = futureState.buffer[1];
+            var time = state.buffer[1];
 
             Debug.Log($"{time}s passed");
             //TODO
         }
 
-        private static void QuestionParse(StateObject currentState, StateObject futureState)
+        private static void QuestionParse(StateObject state)
         {
-            var sender = futureState.buffer.Skip(1).Take(20).ToArray();
+            var sender = state.buffer.Skip(1).Take(20).ToArray();
             var sender_name = Encoding.Default.GetString(sender);
-            var questionMessage = futureState.buffer.Skip(21).Take(100).ToArray();
+            var questionMessage = state.buffer.Skip(21).Take(100).ToArray();
             var questionText = Encoding.Default.GetString(questionMessage);
 
             Debug.Log($"{sender_name} asked {questionText}");
             //TODO
         }
 
-        private static void QuestionAnswerParse(StateObject currentState, StateObject futureState)
+        private static void QuestionAnswerParse(StateObject state)
         {
-            var sender = futureState.buffer.Skip(1).Take(20).ToArray();
+            var sender = state.buffer.Skip(1).Take(20).ToArray();
             var sender_name = Encoding.Default.GetString(sender);
-            var agreement = futureState.buffer[22];
-            var answerMessage = futureState.buffer.Skip(22).Take(100).ToArray();
+            var agreement = state.buffer[22];
+            var answerMessage = state.buffer.Skip(22).Take(100).ToArray();
             var answernText = Encoding.Default.GetString(answerMessage);
 
             string agreementText = (Answer) agreement switch
