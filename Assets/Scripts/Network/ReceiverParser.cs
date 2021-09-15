@@ -1,3 +1,5 @@
+using Callbacks;
+using Cards;
 using Network;
 using System.Collections;
 using System.Collections.Generic;
@@ -74,11 +76,17 @@ public class Parser {
                 break;
             case CardOpType.Up: //UP
                 Debug.Log($"{characterId} was raised");
-                //TODO
+                TasksDispatcher.Instance.Schedule(delegate {
+                    UnityEngine.Object.FindObjectOfType<DeckOpponent>().Flip(characterId, true);
+                });
+                //TODO?
                 break;
             case CardOpType.Down: //DOWN
                 Debug.Log($"{characterId} was lowered");
-                //TODO
+                TasksDispatcher.Instance.Schedule(delegate {
+                    UnityEngine.Object.FindObjectOfType<DeckOpponent>().Flip(characterId, false);
+                });
+                //TODO?
                 break;
             default:
                 break;
