@@ -9,6 +9,7 @@ namespace Cards
         public CardModel[] models;
         public GameObject prefab;
         private Card[] cards;
+        private int chosenCard;
 
         private void Start()
         {
@@ -26,6 +27,9 @@ namespace Cards
                 if (i % 7 == 0)
                     j++;
             }
+
+            chosenCard = Random.Range(1, cards.Length);
+            //TODO: highlight the chosen card
         }
         
         private static void Shuffle(IList<CardModel> array)
@@ -45,6 +49,10 @@ namespace Cards
             {
                 card.Flip();
             }
+        }
+
+        public bool isChosen(int characterId) {
+            return chosenCard == characterId;
         }
         
     }

@@ -72,7 +72,12 @@ public class Parser {
                 break;
             case CardOpType.Guess: //GUESS
                 Debug.Log($"{characterId} was guessed");
-                //TODO
+                TasksDispatcher.Instance.Schedule(delegate {
+                    if (UnityEngine.Object.FindObjectOfType<Deck>().isChosen(characterId)) {
+                        UnityEngine.Object.FindObjectOfType<GameManager>().EndMatch(Status.Lose);
+                    }
+                });
+                //TODO?
                 break;
             case CardOpType.Up: //UP
                 Debug.Log($"{characterId} was raised");

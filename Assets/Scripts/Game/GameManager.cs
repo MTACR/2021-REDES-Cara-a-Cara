@@ -41,5 +41,8 @@ public class GameManager : MonoBehaviour
     {
         FindObjectOfType<Deck>().FlipAll();
     }
-    
+
+    public void EndMatch(Status status) {
+        //TODO
+    }
 }
