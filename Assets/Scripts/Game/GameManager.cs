@@ -16,28 +16,21 @@ namespace Game
         public GameObject message;
         public GameObject myCard;
 
-        // Start is called before the first frame update
         void Start()
         {
-            client = GetComponent<Client>();
+            client = FindObjectOfType<Client>();
             deck = FindObjectOfType<Deck>();
         }
 
-        // Update is called once per frame
         void Update()
         {
             timePassed += Time.deltaTime;
+            
             if (timePassed > interval && client.isReady && client.isHost) {
                 timePassed = 0;
                 byte[] message = SenderParser.ParseTimeUp((byte) interval);
                 client.Send(message);
             }
-
-
-            if (Input.GetKey(KeyCode.E))
-                Instantiate(message, scrollView.transform);
-
-
         }
 
         public void ShowCards()
