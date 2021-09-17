@@ -6,15 +6,21 @@ namespace Callbacks
     {
         private static TasksDispatcher instance;
         private readonly Queue<Task> queue;
-        private readonly object locker;
+        private static readonly object locker = new object();
 
         private TasksDispatcher()
         {
             queue = new Queue<Task>();
-            locker = new object();
         }
 
-        public static TasksDispatcher Instance => instance ??= new TasksDispatcher();
+        public static TasksDispatcher Instance
+        {
+            get
+            {
+                lock (locker)
+                    return instance ??= new TasksDispatcher();
+            }
+        }
 
         public void Schedule(Task task)
         {

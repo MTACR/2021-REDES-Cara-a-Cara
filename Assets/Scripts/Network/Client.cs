@@ -10,17 +10,35 @@ using UnityEngine;
 
 namespace Network
 {
-    public class Client : MonoBehaviour
+    public sealed class Client
     {
         public string ip = "26.158.168.172";
         private Thread thread;
         private Socket socket;
         public bool isHost;
+        public bool isReady { get; private set; }
+        
         private Action onStart;
         private Action onError;
         private Action<string> onConnection;
-        private TasksDispatcher dispatcher;
-        public bool isReady { get; private set; }
+        
+        private readonly TasksDispatcher dispatcher;
+        private static readonly object locker = new object();  
+        private static Client instance;
+        public static Client Instance
+        {
+            get
+            {
+                lock (locker)
+                    return instance ??= new Client();
+            }
+        }
+        //Talvez não seja necessário fazer a classe thread-safe. Veremos...
+
+        private Client()
+        {
+            dispatcher = TasksDispatcher.Instance;
+        }
 
         private void Init()
         {
@@ -177,13 +195,7 @@ namespace Network
             thread.Start();
         }
 
-        void Awake()
-        {
-            DontDestroyOnLoad(this);
-            dispatcher = TasksDispatcher.Instance;
-        }
-
-        private void OnDisable()
+        public void Destroy()
         {
             if (socket != null)
             {

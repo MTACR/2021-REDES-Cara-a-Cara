@@ -19,7 +19,7 @@ namespace Cards
         {
             animator = GetComponent<Animator>();
             cooldown = Time.time;
-            client = FindObjectOfType<Client>();
+            client = Client.Instance;
         }
 
         public void Setup(CardModel card, int id)

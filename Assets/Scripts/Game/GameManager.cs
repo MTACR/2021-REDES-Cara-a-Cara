@@ -18,7 +18,7 @@ namespace Game
 
         void Start()
         {
-            client = FindObjectOfType<Client>();
+            client = Client.Instance;
             deck = FindObjectOfType<Deck>();
         }
 

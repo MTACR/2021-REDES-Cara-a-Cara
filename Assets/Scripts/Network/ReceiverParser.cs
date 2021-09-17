@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using Callbacks;
 using Cards;
+using Chat;
 using Game;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -86,7 +87,7 @@ namespace Network
                         if (Object.FindObjectOfType<Deck>().IsChosen(characterId))
                         {
                             var messase = SenderParser.ParseStatus(Status.Win);
-                            Object.FindObjectOfType<Client>().Send(messase);
+                            Client.Instance.Send(messase);
                             Object.FindObjectOfType<GameManager>().EndMatch(Status.Lose);
                         }
                     });
@@ -156,7 +157,11 @@ namespace Network
             var questionText = Encoding.Default.GetString(questionMessage);
 
             Debug.Log($"{sender_name} asked {questionText}");
-            //TODO
+            
+            TasksDispatcher.Instance.Schedule(delegate
+            {
+                Object.FindObjectOfType<ChatManager>().ShowMessage(false, sender_name, questionText);
+            });
         }
 
         private static void QuestionAnswerParse(StateObject state)
