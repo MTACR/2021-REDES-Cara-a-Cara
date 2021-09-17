@@ -15,10 +15,11 @@ namespace Network
     {
         //"26.158.168.172"
         private string ip;
-        private Thread thread;
         private Socket socket;
+        private Socket handler;
         private Action onStart;
         private Action<string> onError;
+        private Thread thread;
         private Timer timer;
         private readonly TasksDispatcher dispatcher;
         private static readonly object locker = new object();  
@@ -61,7 +62,7 @@ namespace Network
 
                 if (isHost)
                 {
-                    Socket handler = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                    handler = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                     handler.Bind(endPoint);
                     handler.Listen(1);
 
@@ -104,6 +105,7 @@ namespace Network
             catch (Exception e)
             {
                 isReady = false;
+                Debug.LogError(e.ToString());
 
                 if (e.Message.Length > 0)
                     CallError(e.Message);
@@ -158,12 +160,11 @@ namespace Network
             this.onStart = onWaitng;
             this.onError = onError;
             
-            Log("Starting client...");
-
-            timer = new Timer(10000) {Enabled = true, AutoReset = false};
-            timer.Elapsed += OnElapsed;
+            Log("Starting" + (isHost ? "host" : "client"));
             
             thread = new Thread(Init) {IsBackground = true};
+            timer = new Timer(10000) {Enabled = true, AutoReset = false};
+            timer.Elapsed += OnElapsed;
             thread.Start();
         }
 
@@ -181,18 +182,16 @@ namespace Network
 
         public void Dispose()
         {
-            Log("Cancelling client...");
+            Log("Connection ended");
             
             lock (locker)
             {
-                instance = null;
-                socket?.Shutdown(SocketShutdown.Both);
                 socket?.Close();
-                socket?.Dispose();
+                handler?.Close();
                 thread.Interrupt();
                 thread.Abort();
                 timer.Enabled = false;
-                GC.SuppressFinalize(this);
+                timer.Dispose();
             }
         }
 
@@ -200,8 +199,6 @@ namespace Network
         {
             Debug.Log(GetHashCode() + ": " + message);
         }
-        
-        ~Client() => this.Dispose();
-        
+
     }
 }
