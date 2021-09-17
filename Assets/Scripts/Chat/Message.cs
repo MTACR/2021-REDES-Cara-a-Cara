@@ -28,10 +28,11 @@ namespace Chat
             Setup(false, sender, message, id);
         }
         
-        public void Setup(string sender, string message)
+        public int Setup(string sender, string message)
         {
             this.id = GetHashCode();
             Setup(true, sender, message, id);
+            return id;
         }
         
         private void Setup(bool isMine, string sender, string message, int id)
@@ -65,7 +66,7 @@ namespace Chat
             onExit.enabled = false;
             
             if (!isMine)
-                Client.Instance.Send(SenderParser.ParseAnswer(Client.Instance.id, 0, answer, "resposta?")); //TODO: PEGAR ID DA PERGUNTA
+                Client.Instance.Send(SenderParser.ParseAnswer(Client.Instance.id, id, answer, "resposta?")); //TODO: PEGAR ID DA PERGUNTA
         }
 
         public void React(Answer answer)

@@ -189,7 +189,7 @@ namespace Network
             
             TasksDispatcher.Instance.Schedule(delegate
             {
-                Object.FindObjectOfType<ChatManager>().ReactToMessage(answer);
+                Object.FindObjectOfType<ChatManager>().ReactToMessage(questionId, answer);
             });
 
             Debug.Log($"{"PH"} {agreementText}: {answernText}");
