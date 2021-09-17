@@ -11,7 +11,7 @@ namespace UI
     public class Home : MonoBehaviour
     {
 
-        private Client client;
+        //private Client client;
         [SerializeField] public GameObject loading;
         [SerializeField] public GameObject error;
         [SerializeField] public TextMeshProUGUI subtext;
@@ -20,7 +20,7 @@ namespace UI
 
         private void Start()
         {
-            client = Client.Instance;
+            //client = Client.Instance;
             //"26.158.168.172"
         }
 
@@ -31,13 +31,11 @@ namespace UI
             
             if (IsIpValid(ip))
             {
-                Debug.Log("Valid IP format");
-                
                 loading.SetActive(true);
             
                 string msg = isHost ? "Waiting for opponent" : "Connecting to server";
                 
-                client.StartClient(isHost, ip, () => subtext.text = msg, ShowError);
+                Client.Instance.StartClient(isHost, ip, () => subtext.text = msg, ShowError);
             
                 StartCoroutine(LoadScene());
             }
@@ -51,7 +49,7 @@ namespace UI
         public void Cancel()
         {
             loading.SetActive(false);
-            client.Cancel();
+            Client.Instance.Dispose();
         }
 
         private void ShowError(string message)
@@ -83,7 +81,7 @@ namespace UI
             AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Game");
             asyncLoad.allowSceneActivation = false;
 
-            while (!asyncLoad.isDone && !client.isReady)
+            while (!asyncLoad.isDone && !Client.Instance.isReady)
             {
                 yield return null;
             }
