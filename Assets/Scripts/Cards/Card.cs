@@ -1,3 +1,4 @@
+using Game;
 using Network;
 using TMPro;
 using UnityEngine;
@@ -8,15 +9,17 @@ namespace Cards
     {
         [SerializeField] public MeshRenderer picture;
         [SerializeField] public TextMeshPro text;
+        [SerializeField] public CardModel model;
         private Animator animator;
         private bool isVisible;
         private float cooldown;
         private int ID { get; set; }
         private Client client;
-        [SerializeField] public CardModel model;
-
+        private GameManager manager;
+        
         private void Start()
         {
+            manager = FindObjectOfType<GameManager>();
             animator = GetComponent<Animator>();
             cooldown = Time.time;
             client = Client.Instance;
@@ -39,7 +42,7 @@ namespace Cards
 
         void Update()
         {
-            if (!Input.GetMouseButton(0)) return;
+            if (!Input.GetMouseButton(0) || !manager.canClick) return;
             
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;

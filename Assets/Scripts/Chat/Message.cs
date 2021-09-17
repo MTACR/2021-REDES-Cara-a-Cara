@@ -44,7 +44,18 @@ namespace Chat
             this.message.text = message;
         }
         
-        public void OnAnswer(Answer answer)
+        private void OnAnswer(Answer answer)
+        {
+            React(answer);
+            pannel.SetActive(false);
+            onEnter.enabled = false;
+            onExit.enabled = false;
+            
+            if (!isMine)
+                Client.Instance.Send(SenderParser.ParseAnswer("EU", answer, "resposta?"));
+        }
+
+        public void React(Answer answer)
         {
             image.sprite = answer switch
             {
@@ -53,13 +64,6 @@ namespace Chat
                 Answer.Unclear => reject,
                 _ => throw new ArgumentOutOfRangeException(nameof(answer), answer, null)
             };
-
-            pannel.SetActive(false);
-            onEnter.enabled = false;
-            onExit.enabled = false;
-            
-            if (!isMine)
-                Client.Instance.Send(SenderParser.ParseAnswer("EU", answer, "resposta?"));
         }
         
         public void MouseEnter()

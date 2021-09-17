@@ -1,5 +1,6 @@
 using Cards;
 using Network;
+using TMPro;
 using UnityEngine;
 
 namespace Game
@@ -12,17 +13,29 @@ namespace Game
         private Client client;
         private bool myTurn = true;
         private Deck deck;
+        public bool canClick;
         [SerializeField] public GameObject scrollView;
         [SerializeField] public GameObject message;
         [SerializeField] public GameObject myCard;
+        [SerializeField] public GameObject errorOvrl;
+        [SerializeField] public TextMeshProUGUI errorText;
 
-        void Start()
+        private void Start()
         {
-            client = Client.Instance;
             deck = FindObjectOfType<Deck>();
+            client = Client.Instance;
+            client.SetListeners(() =>
+            {
+                
+            }, s =>
+            {
+                errorText.text = s;
+                errorOvrl.SetActive(true);
+            });
+            
         }
 
-        void Update()
+        private void Update()
         {
             timePassed += Time.deltaTime;
             
@@ -35,6 +48,7 @@ namespace Game
 
         public void ShowCards()
         {
+            canClick = true;
             FindObjectOfType<Deck>().FlipAll();
         }
 
@@ -50,6 +64,21 @@ namespace Game
             Card model = deck.RandomCard();
             Card card = myCard.GetComponent<Card>();
             card.Setup(model.model, deck.chosenCard);
+        }
+
+        public void Guess()
+        {
+            canClick = false;
+        }
+
+        public void ShowGiveUp()
+        {
+            canClick = false;
+        }
+
+        public void DoGiveUp()
+        {
+            
         }
 
         public void StartMatch() {

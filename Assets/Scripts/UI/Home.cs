@@ -10,33 +10,36 @@ namespace UI
 {
     public class Home : MonoBehaviour
     {
-
-        //private Client client;
         [SerializeField] public GameObject loading;
         [SerializeField] public GameObject error;
         [SerializeField] public TextMeshProUGUI subtext;
-        [SerializeField] public TextMeshProUGUI iptext;
+        [SerializeField] public TMP_InputField iptext;
         [SerializeField] public TextMeshProUGUI errortext;
+        private Client client;
+        private bool isHost;
 
         private void Start()
         {
-            //client = Client.Instance;
-            //"26.158.168.172"
+            client = Client.Instance;
+            client.SetListeners(() =>
+            {
+                string msg = isHost ? "Waiting for opponent" : "Connecting to server";
+                subtext.text = msg;
+            }, ShowError);
+            iptext.Select();
+            iptext.text = "26.158.168.172";
         }
 
         public void Start(bool isHost)
         {
+            this.isHost = isHost;
             string ip = iptext.text.Trim();
-            ip = ip.Substring(0, ip.Length - 1);
+            //ip = ip.Substring(0, ip.Length - 1);
             
             if (IsIpValid(ip))
             {
                 loading.SetActive(true);
-            
-                string msg = isHost ? "Waiting for opponent" : "Connecting to server";
-                
-                Client.Instance.StartClient(isHost, ip, () => subtext.text = msg, ShowError);
-            
+                Client.Instance.StartClient(isHost, ip);
                 StartCoroutine(LoadScene());
             }
             else

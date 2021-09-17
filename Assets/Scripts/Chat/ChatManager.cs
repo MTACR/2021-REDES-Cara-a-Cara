@@ -8,12 +8,16 @@ namespace Chat
 {
     public class ChatManager : MonoBehaviour
     {
-        
         [SerializeField] public GameObject container;
         [SerializeField] public GameObject prefab;
         [SerializeField] public TMP_InputField msg;
-
+        private Client client;
         private Message lastMessage;
+
+        private void Start()
+        {
+            client = Client.Instance;
+        }
 
         public void ShowMessage(bool isMine, string sender, string text)
         {
@@ -35,13 +39,19 @@ namespace Chat
             msg.Select();
             msg.text = "";
             ShowMessage(true, "Me", message);
-            Client.Instance.Send(SenderParser.ParseQuestion("William", message));
+            client.Send(SenderParser.ParseQuestion("William", message));
         }
 
+        public void ReactToMessage(Answer answer)
+        {
+            lastMessage.React(answer);
+        }
+        
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Return))
                 SendMessage();
         }
+        
     }
 }

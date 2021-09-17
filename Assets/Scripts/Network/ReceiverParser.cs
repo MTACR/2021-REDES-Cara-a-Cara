@@ -176,7 +176,8 @@ namespace Network
             var agreement = state.buffer[9];
             var answerMessage = state.buffer.Skip(10).Take(100).ToArray();
             var answernText = Encoding.Default.GetString(answerMessage);
-
+            var answer = (Answer) agreement;
+                
             string agreementText = (Answer) agreement switch
             {
                 Answer.Confirm => //CONFIRMED
@@ -185,6 +186,11 @@ namespace Network
                     "denied",
                 _ => "left uncler"
             };
+            
+            TasksDispatcher.Instance.Schedule(delegate
+            {
+                Object.FindObjectOfType<ChatManager>().ReactToMessage(answer);
+            });
 
             Debug.Log($"{"PH"} {agreementText}: {answernText}");
             //TODO

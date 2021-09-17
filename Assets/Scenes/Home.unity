@@ -982,7 +982,7 @@ MonoBehaviour:
   loading: {fileID: 1632865923}
   error: {fileID: 2027945839}
   subtext: {fileID: 1206329047}
-  iptext: {fileID: 1670918792}
+  iptext: {fileID: 286704262}
   errortext: {fileID: 931506741}
 --- !u!1 &931506739
 GameObject:

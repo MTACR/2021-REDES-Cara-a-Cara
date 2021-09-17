@@ -155,17 +155,15 @@ namespace Network
             socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
         }
 
-        public void StartClient(bool isHost, string ip, Action onWaitng, Action<string> onError)
+        public void StartClient(bool isHost, string ip)
         {
             this.isHost = isHost;
             this.ip = ip;
-            this.onStart = onWaitng;
-            this.onError = onError;
-            
-            Log("Starting" + (isHost ? "host" : "client"));
+
+            Log("Starting " + (isHost ? "host" : "client"));
             
             thread = new Thread(Init) {IsBackground = true};
-            timer = new Timer(10000) {Enabled = true, AutoReset = false};
+            timer = new Timer(30000) {Enabled = true, AutoReset = false};
             timer.Elapsed += OnElapsed;
             thread.Start();
         }
@@ -180,6 +178,12 @@ namespace Network
             Debug.LogError(GetHashCode() + ": " + message);
             dispatcher.Schedule(delegate { onError(message); });
             Dispose();
+        }
+
+        public void SetListeners(Action onStart, Action<string> onError)
+        {
+            this.onStart = onStart;
+            this.onError = onError;
         }
 
         public void Dispose()
