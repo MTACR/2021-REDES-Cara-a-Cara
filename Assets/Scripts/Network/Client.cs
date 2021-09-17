@@ -12,15 +12,15 @@ namespace Network
 {
     public sealed class Client
     {
-        public string ip = "26.158.168.172";
+        //"26.158.168.172"
+        private string ip;
         private Thread thread;
         private Socket socket;
         public bool isHost;
         public bool isReady { get; private set; }
         
         private Action onStart;
-        private Action onError;
-        private Action<string> onConnection;
+        private Action<string> onError;
         
         private readonly TasksDispatcher dispatcher;
         private static readonly object locker = new object();  
@@ -56,7 +56,7 @@ namespace Network
                     Debug.LogError("IP address not bound");
                     dispatcher.Schedule(delegate
                     {
-                        onError();
+                        onError("IP address not bound");
                     });
                     return;
                 }
@@ -84,10 +84,10 @@ namespace Network
 
                         Debug.Log("Connection received from " + socket.RemoteEndPoint);
                         
-                        dispatcher.Schedule(delegate
+                        /*dispatcher.Schedule(delegate
                         {
                             onConnection(socket.RemoteEndPoint.ToString());
-                        });
+                        });*/
                         
                         socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
                     }, handler);
@@ -109,10 +109,10 @@ namespace Network
                             
                         Debug.Log("Connected to " + socket.RemoteEndPoint);
                         
-                        dispatcher.Schedule(delegate
+                        /*dispatcher.Schedule(delegate
                         {
                             onConnection(socket.RemoteEndPoint.ToString());
-                        });
+                        });*/
                             
                         socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
                     }, socket);
@@ -128,7 +128,7 @@ namespace Network
                 isReady = false;
                 dispatcher.Schedule(delegate
                 {
-                    onError();
+                    onError(e.Message);
                 });
             }
         }
@@ -140,7 +140,7 @@ namespace Network
                 Debug.LogError("Client socket is null");
                 dispatcher.Schedule(delegate
                 {
-                    onError();
+                    onError("Client socket is null");
                 });
                 return;
             }
@@ -158,7 +158,7 @@ namespace Network
                     isReady = false;
                     dispatcher.Schedule(delegate
                     {
-                        onError();
+                        onError(e.Message);
                     });
                 }
             }, socket);
@@ -169,6 +169,10 @@ namespace Network
             if (socket == null)
             {
                 Debug.LogError("Client socket is null");
+                dispatcher.Schedule(delegate
+                {
+                    onError("Client socket is null");
+                });
                 return;
             }
 
@@ -182,11 +186,11 @@ namespace Network
             socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
         }
 
-        public void StartClient(bool isHost, Action onWaitng, Action<string> onConnection, Action onError)
+        public void StartClient(bool isHost, string ip, Action onWaitng, Action<string> onError)
         {
             this.isHost = isHost;
+            this.ip = ip;
             this.onStart = onWaitng;
-            this.onConnection = onConnection;
             this.onError = onError;
             
             Debug.Log("Starting client...");
@@ -201,12 +205,20 @@ namespace Network
             
             lock (locker)
             {
-                if (socket != null)
+                try
                 {
-                    socket.Shutdown(SocketShutdown.Both);
-                    socket.Close();
+                    if (socket != null)
+                    {
+                        socket.Shutdown(SocketShutdown.Both);
+                        socket.Close();
+                    }
+
+                    thread.Abort();
                 }
-                thread.Abort();
+                catch (Exception e)
+                {
+                    // ignored
+                }
 
                 instance = null;
             }

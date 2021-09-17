@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using Network;
 using TMPro;
 using UnityEngine;
@@ -12,53 +13,74 @@ namespace UI
 
         private Client client;
         [SerializeField] public GameObject loading;
+        [SerializeField] public GameObject error;
         [SerializeField] public TextMeshProUGUI subtext;
+        [SerializeField] public TextMeshProUGUI iptext;
+        [SerializeField] public TextMeshProUGUI errortext;
 
         private void Start()
         {
             client = Client.Instance;
+            //"26.158.168.172"
         }
 
-        public void Host()
+        public void Start(bool isHost)
         {
-            loading.SetActive(true);
-            client.StartClient(true, () =>
+            string ip = iptext.text.Trim();
+            ip = ip.Substring(0, ip.Length - 1);
+            
+            if (IsIpValid(ip))
             {
-                subtext.text = "Waiting for opponent";
-            }, ip =>
+                Debug.Log("Valid IP format");
+                
+                loading.SetActive(true);
+            
+                string msg = isHost ? "Waiting for opponent" : "Connecting to server";
+                
+                client.StartClient(isHost, ip, () => subtext.text = msg, ShowError);
+            
+                StartCoroutine(LoadScene());
+            }
+            else
             {
-                subtext.text = "Connection from " + ip;
-            }, ShowError);
-            StartCoroutine(LoadScene("Game"));
-        }
-
-        public void Join()
-        {
-            loading.SetActive(true);
-            client.StartClient(false, () =>
-            {
-                subtext.text = "Connecting to server";
-            }, ip =>
-            {
-                subtext.text = "Connected to " + ip;
-            }, ShowError);
-            StartCoroutine(LoadScene("Game"));
+                Debug.LogError("Invalid IP format: " + ip);
+                ShowError("Invalid IP format");
+            }
         }
 
         public void Cancel()
         {
-            client.Cancel();
             loading.SetActive(false);
+            client.Cancel();
         }
 
-        private void ShowError()
+        private void ShowError(string message)
         {
-            
+            errortext.text = message;
+            loading.SetActive(false);
+            error.SetActive(true);
         }
 
-        private IEnumerator LoadScene(string name)
+        public void HideError()
         {
-            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(name);
+            error.SetActive(false);
+        }
+
+        private bool IsIpValid(string ip)
+        {
+            if (String.IsNullOrWhiteSpace(ip))
+            {
+                return false;
+            }
+
+            string[] splitValues = ip.Split('.');
+
+            return splitValues.Length == 4 && splitValues.All(r => byte.TryParse(r, out _));
+        }
+        
+        private IEnumerator LoadScene()
+        {
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Game");
             asyncLoad.allowSceneActivation = false;
 
             while (!asyncLoad.isDone && !client.isReady)
