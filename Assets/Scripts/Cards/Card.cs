@@ -56,7 +56,7 @@ namespace Cards
             
             cooldown = Time.time + 0.7f;
             Flip();
-            client.Send(SenderParser.ParseCardOp(ID, isVisible ? CardOpType.Up : CardOpType.Down));
+            client.Send(SenderParser.ParseCardOp(Client.Instance.id, ID, isVisible ? CardOpType.Up : CardOpType.Down));
         }
 
         public void Flip()
