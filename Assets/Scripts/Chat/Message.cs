@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Random = Unity.Mathematics.Random;
 
 namespace Chat
 {
@@ -21,10 +20,24 @@ namespace Chat
         [SerializeField] public TextMeshProUGUI sender;
         [SerializeField] public TextMeshProUGUI message;
         [SerializeField] public bool isMine;
+        public int id { get; private set; }
 
-        public void Setup(bool isMine, string sender, string message)
+        public void Setup(int id, string sender, string message)
+        {
+            this.id = id;
+            Setup(false, sender, message, id);
+        }
+        
+        public void Setup(string sender, string message)
+        {
+            this.id = GetHashCode();
+            Setup(true, sender, message, id);
+        }
+        
+        private void Setup(bool isMine, string sender, string message, int id)
         {
             this.isMine = isMine;
+            this.id = id;
             
             if (isMine)
             {
@@ -40,7 +53,7 @@ namespace Chat
             onEnter.enabled = !isMine;
             onExit.enabled = !isMine;
 
-            this.sender.text = isMine ? "Me" : sender;
+            this.sender.text = sender;
             this.message.text = message;
         }
         

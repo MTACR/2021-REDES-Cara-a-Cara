@@ -165,7 +165,7 @@ namespace Network
             
             TasksDispatcher.Instance.Schedule(delegate
             {
-                Object.FindObjectOfType<ChatManager>().ShowMessage(false, "PH", questionText);
+                Object.FindObjectOfType<ChatManager>().ShowMessage(questionId, "???????????", questionText);
             });
         }
 

@@ -19,10 +19,18 @@ namespace Chat
             client = Client.Instance;
         }
 
-        public void ShowMessage(bool isMine, string sender, string text)
+        public void ShowMessage(int id, string sender, string text)
         {
             Message message = Instantiate(prefab, container.transform).GetComponent<Message>();
-            message.Setup(isMine, sender, text);
+            message.Setup(id, sender, text);
+
+            lastMessage = message;
+        }
+        
+        private void ShowMessage(string sender, string text)
+        {
+            Message message = Instantiate(prefab, container.transform).GetComponent<Message>();
+            message.Setup(sender, text);
 
             lastMessage = message;
         }
@@ -38,8 +46,8 @@ namespace Chat
 
             msg.Select();
             msg.text = "";
-            ShowMessage(true, "Me", message);
-            client.Send(SenderParser.ParseQuestion("William", message));
+            ShowMessage("Me", message);
+            client.Send(SenderParser.ParseQuestion(client.id, lastMessage.id, message));
         }
 
         public void ReactToMessage(Answer answer)
