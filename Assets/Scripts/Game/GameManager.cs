@@ -35,7 +35,7 @@ namespace Game
             
         }
 
-        private void Update()
+       /* private void Update()
         {
             timePassed += Time.deltaTime;
             
@@ -44,7 +44,7 @@ namespace Game
                 byte[] message = SenderParser.ParseTimeUp(client.id, (byte) interval);
                 client.Send(message);
             }
-        }
+        }*/
 
         public void ShowCards()
         {

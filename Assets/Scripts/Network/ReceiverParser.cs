@@ -14,34 +14,34 @@ namespace Network
     {
         public static void ParseMessage(StateObject state)
         {
-            GameManager gameManager = Object.FindObjectOfType<GameManager>();
             var messageType = state.buffer[0];
+            
             switch ((MessageType) messageType)
             {
                 case MessageType.ConnectionOp: //CONNECTION_OP
-                    ConnectionOpParse(state, gameManager);
+                    ConnectionOpParse(state);
                     break;
                 case MessageType.CardOp: //CARD_OP
-                    CardOpParse(state, gameManager);
+                    CardOpParse(state);
                     break;
                 case MessageType.Status: //MATCH_STATUS
-                    StatusOpParse(state, gameManager);
+                    StatusOpParse(state);
                     break;
                 case MessageType.TimeUp: //TIME_UP
-                    TimeUpParse(state, gameManager);
+                    TimeUpParse(state);
                     break;
                 case MessageType.Question: //QUESTION
-                    QuestionParse(state, gameManager);
+                    QuestionParse(state);
                     break;
                 case MessageType.Answer: //QUESTION_ANSR
-                    QuestionAnswerParse(state, gameManager);
+                    QuestionAnswerParse(state);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private static void ConnectionOpParse(StateObject state, GameManager gameManager)
+        private static void ConnectionOpParse(StateObject state)
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
             var opType = state.buffer[5];
@@ -72,7 +72,7 @@ namespace Network
             }
         }
 
-        private static void CardOpParse(StateObject state, GameManager gameManager)
+        private static void CardOpParse(StateObject state)
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
             var characterId = state.buffer[5];
@@ -117,7 +117,7 @@ namespace Network
             }
         }
 
-        private static void StatusOpParse(StateObject state, GameManager gameManager)
+        private static void StatusOpParse(StateObject state)
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
             var status = state.buffer[5];
@@ -145,7 +145,7 @@ namespace Network
             }
         }
 
-        private static void TimeUpParse(StateObject state, GameManager gameManager)
+        private static void TimeUpParse(StateObject state)
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
             var time = state.buffer[5];
@@ -154,7 +154,7 @@ namespace Network
             //TODO
         }
 
-        private static void QuestionParse(StateObject state, GameManager gameManager)
+        private static void QuestionParse(StateObject state)
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
             var questionId = BitConverter.ToInt32(state.buffer, 5);
@@ -169,7 +169,7 @@ namespace Network
             });
         }
 
-        private static void QuestionAnswerParse(StateObject state, GameManager gameManager)
+        private static void QuestionAnswerParse(StateObject state)
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
             var questionId = BitConverter.ToInt32(state.buffer, 5);

@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Timers;
 using Callbacks;
@@ -127,7 +128,7 @@ namespace Network
                 try 
                 {
                     socket.EndSend(result);
-                    Log("-> " + bytes.ToCommaSeparatedString() + " :: " + bytes.Length + " bytes");
+                    Log("-> " +  Encoding.Default.GetString(bytes) + " :: " + bytes.Length + " bytes");
                 } 
                 catch (Exception e) 
                 {
@@ -149,7 +150,7 @@ namespace Network
             int bytes = socket.EndReceive(result);
             if (bytes <= 0) return;
             
-            Log("<- " + state.buffer.ToCommaSeparatedString() + " :: " + bytes + " bytes");
+            Log("<- " + Encoding.Default.GetString(state.buffer) + " :: " + bytes + " bytes");
             ReceiverParser.ParseMessage(state);
             
             socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
@@ -177,11 +178,12 @@ namespace Network
         {
             Debug.LogError(GetHashCode() + ": " + message);
             dispatcher.Schedule(delegate { onError(message); });
-            Dispose();
+            //Dispose();
         }
 
         public void SetListeners(Action onStart, Action<string> onError)
         {
+            Debug.Log("Listener definido");
             this.onStart = onStart;
             this.onError = onError;
         }

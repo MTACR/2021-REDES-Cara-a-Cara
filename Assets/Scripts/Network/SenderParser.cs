@@ -50,7 +50,7 @@ public class SenderParser {
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.Question;
         messageByte = OffsetIntToByte(messageByte, senderId, 1);
-        messageByte = OffsetIntToByte(messageByte, senderId, 5);
+        messageByte = OffsetIntToByte(messageByte, questionId, 5);
         messageByte = OffsetStringtoByte(messageByte, message, 9);
         return messageByte;
     }

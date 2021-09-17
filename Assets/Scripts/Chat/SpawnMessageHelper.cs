@@ -14,8 +14,8 @@ public class SpawnMessageHelper : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            Message message = Instantiate(prefab, container.transform).GetComponent<Message>();
-            message.Setup(Random.value % 10 > 5, "Other", "Isso é uma pergunta");
+            //Message message = Instantiate(prefab, container.transform).GetComponent<Message>();
+            //message.Setup(Random.value % 10 > 5, "Other", "Isso é uma pergunta");
         }
             
     }
