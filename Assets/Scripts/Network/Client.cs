@@ -24,6 +24,7 @@ namespace Network
         private readonly TasksDispatcher dispatcher;
         private static readonly object locker = new object();  
         private static Client instance;
+        public int id { get; }
         public bool isHost{ get; private set; }
         public bool isReady { get; private set; }
         public static Client Instance
@@ -39,6 +40,7 @@ namespace Network
         private Client()
         {
             dispatcher = TasksDispatcher.Instance;
+            id = GetHashCode();
         }
 
         private void Init()
@@ -197,7 +199,7 @@ namespace Network
 
         private void Log(string message)
         {
-            Debug.Log(GetHashCode() + ": " + message);
+            Debug.Log(id + ": " + message);
         }
 
     }
