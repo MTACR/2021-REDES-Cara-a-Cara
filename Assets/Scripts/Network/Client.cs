@@ -195,14 +195,21 @@ namespace Network
             thread.Start();
         }
 
-        public void Destroy()
+        public void Cancel()
         {
-            if (socket != null)
+            Debug.Log("Cancelling client...");
+            
+            lock (locker)
             {
-                socket.Shutdown(SocketShutdown.Both);
-                socket.Close();
+                if (socket != null)
+                {
+                    socket.Shutdown(SocketShutdown.Both);
+                    socket.Close();
+                }
+                thread.Abort();
+
+                instance = null;
             }
-            thread.Abort();
         }
         
     }

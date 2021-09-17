@@ -6,14 +6,14 @@ namespace Cards
 {
     public class Card : MonoBehaviour
     {
-        public MeshRenderer picture;
-        public TextMeshPro text;
+        [SerializeField] public MeshRenderer picture;
+        [SerializeField] public TextMeshPro text;
         private Animator animator;
         private bool isVisible;
         private float cooldown;
         private int ID { get; set; }
         private Client client;
-        public CardModel model;
+        [SerializeField] public CardModel model;
 
         private void Start()
         {

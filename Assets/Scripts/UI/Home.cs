@@ -10,10 +10,15 @@ namespace UI
     public class Home : MonoBehaviour
     {
 
-        public Client client;
-        public GameObject loading;
-        public TextMeshProUGUI subtext;
-        
+        private Client client;
+        [SerializeField] public GameObject loading;
+        [SerializeField] public TextMeshProUGUI subtext;
+
+        private void Start()
+        {
+            client = Client.Instance;
+        }
+
         public void Host()
         {
             loading.SetActive(true);
@@ -40,11 +45,17 @@ namespace UI
             StartCoroutine(LoadScene("Game"));
         }
 
+        public void Cancel()
+        {
+            client.Cancel();
+            loading.SetActive(false);
+        }
+
         private void ShowError()
         {
             
         }
-    
+
         private IEnumerator LoadScene(string name)
         {
             AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(name);

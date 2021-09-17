@@ -6,15 +6,15 @@ namespace Game
 {
     public class GameManager : MonoBehaviour
     {
-        public float interval = 30;
+        [SerializeField] public float interval = 30;
         private float timePassed = 0;
-        public string player_name = "player";
+        [SerializeField] public string player_name = "player";
         private Client client;
         private bool myTurn = true;
         private Deck deck;
-        public GameObject scrollView;
-        public GameObject message;
-        public GameObject myCard;
+        [SerializeField] public GameObject scrollView;
+        [SerializeField] public GameObject message;
+        [SerializeField] public GameObject myCard;
 
         void Start()
         {

@@ -4,8 +4,8 @@ namespace Cards
 {
     public class DeckOpponent : MonoBehaviour
     {
-        public GameObject prefab;
-        private Card[] cards;
+        [SerializeField] public GameObject prefab;
+        [SerializeField] private Card[] cards;
         
         void Start()
         {

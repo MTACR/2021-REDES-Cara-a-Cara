@@ -6,8 +6,8 @@ namespace Cards
 {
     public class Deck : MonoBehaviour
     {
-        public CardModel[] models;
-        public GameObject prefab;
+        [SerializeField] public CardModel[] models;
+        [SerializeField] public GameObject prefab;
         private Card[] cards;
         public int chosenCard { private set; get; }
 
