@@ -190,8 +190,10 @@ namespace Network
             
             TasksDispatcher.Instance.Schedule(delegate
             {
-                Object.FindObjectOfType<GameManager>().SetTurn(senderId);
                 Object.FindObjectOfType<ChatManager>().ReactToMessage(questionId, answer);
+                
+                if (answer == Answer.Unclear)
+                    Object.FindObjectOfType<GameManager>().SetTurn(senderId);
             });
 
             Debug.Log($"{"PH"} {agreementText}: {answernText}");

@@ -1,4 +1,5 @@
 using System;
+using Game;
 using Network;
 using TMPro;
 using UnityEngine;
@@ -64,9 +65,14 @@ namespace Chat
             pannel.SetActive(false);
             onEnter.enabled = false;
             onExit.enabled = false;
+
+            if (isMine) return;
             
-            if (!isMine)
-                Client.Instance.Send(SenderParser.ParseAnswer(id, answer, "resposta?")); //TODO: PEGAR ID DA PERGUNTA
+            Client.Instance.Send(SenderParser.ParseAnswer(id, answer, "resposta?"));
+                
+            if (answer != Answer.Unclear)
+                FindObjectOfType<GameManager>().SetTurn(Client.Instance.id);
+
         }
 
         public void React(Answer answer)
