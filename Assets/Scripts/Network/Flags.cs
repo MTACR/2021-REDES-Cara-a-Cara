@@ -18,7 +18,7 @@ public enum ConnectionType : byte {
 }
 
 public enum CardOpType : byte {
-    Choose = 0,
+    /*Choose = 0,*/
     Guess = 1,
     Up = 2,
     Down = 3
