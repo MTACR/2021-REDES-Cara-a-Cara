@@ -56,6 +56,7 @@ namespace Chat
             msg.text = "";
             ShowMessage("Me", message);
             client.Send(SenderParser.ParseQuestion(lastMessage.id, message));
+            manager.SetTurn(client.id);
         }
 
         public void ReactToMessage(int id, Answer answer)

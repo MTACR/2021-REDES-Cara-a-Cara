@@ -38,6 +38,8 @@ namespace Game
             
             if (myTurn)
                 SetTurn(-1);
+            else
+                SetTurn(Client.Instance.id);
         }
 
        /* private void Update()
