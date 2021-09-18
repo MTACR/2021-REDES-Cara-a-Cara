@@ -35,11 +35,7 @@ namespace Game
             });
 
             myTurn = !client.isHost;
-            
-            if (myTurn)
-                SetTurn(-1);
-            else
-                SetTurn(Client.Instance.id);
+            SetTurn(myTurn ? Client.Instance.opId : Client.Instance.myId);
         }
 
        /* private void Update()
@@ -98,7 +94,7 @@ namespace Game
         {
             Debug.Log("Vez de " + id);
             
-            if (id != client.id)
+            if (id != client.myId)
             {
                 myTurn = true;
                 turnText.text = "Your turn";

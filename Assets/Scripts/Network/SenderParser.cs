@@ -9,7 +9,7 @@ public class SenderParser {
         int length = 1 + 4 + 1 + 20 + 100;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.ConnectionOp;
-        messageByte = OffsetIntToByte(messageByte, Client.Instance.id, 1);
+        messageByte = OffsetIntToByte(messageByte, Client.Instance.myId, 1);
         messageByte[5] = (byte) opType;
         messageByte = OffsetStringtoByte(messageByte, senderName, 6);
         messageByte = OffsetStringtoByte(messageByte, message, 26);
@@ -22,7 +22,7 @@ public class SenderParser {
         int length = 1 + 4 + 1 + 1;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.CardOp;
-        messageByte = OffsetIntToByte(messageByte, Client.Instance.id, 1);
+        messageByte = OffsetIntToByte(messageByte, Client.Instance.myId, 1);
         messageByte[5] = (byte) characterId;
         messageByte[6] = (byte) cardOpType;
 
@@ -41,7 +41,7 @@ public class SenderParser {
         int length = 1 + 4 + 1;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.TimeUp;
-        messageByte = OffsetIntToByte(messageByte, Client.Instance.id, 1);
+        messageByte = OffsetIntToByte(messageByte, Client.Instance.myId, 1);
         messageByte[5] =        secondsPassed;
         return messageByte;
     }
@@ -50,7 +50,7 @@ public class SenderParser {
         int length = 1 + 4 + 4 + 100;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.Question;
-        messageByte = OffsetIntToByte(messageByte, Client.Instance.id, 1);
+        messageByte = OffsetIntToByte(messageByte, Client.Instance.myId, 1);
         messageByte = OffsetIntToByte(messageByte, questionId, 5);
         messageByte = OffsetStringtoByte(messageByte, message, 9);
         return messageByte;
@@ -60,7 +60,7 @@ public class SenderParser {
         int length = 1 + 4 + 4 + 1 + 100;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.Answer;
-        messageByte = OffsetIntToByte(messageByte, Client.Instance.id, 1);
+        messageByte = OffsetIntToByte(messageByte, Client.Instance.myId, 1);
         messageByte = OffsetIntToByte(messageByte, questionId, 5);
         messageByte[9] = (byte) answer;
         messageByte = OffsetStringtoByte(messageByte, response, 10);

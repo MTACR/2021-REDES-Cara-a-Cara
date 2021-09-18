@@ -70,6 +70,9 @@ namespace Network
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+
+            Client.Instance.opId = senderId;
         }
 
         private static void CardOpParse(StateObject state)
@@ -191,9 +194,6 @@ namespace Network
             TasksDispatcher.Instance.Schedule(delegate
             {
                 Object.FindObjectOfType<ChatManager>().ReactToMessage(questionId, answer);
-                
-                if (answer == Answer.Unclear)
-                    Object.FindObjectOfType<GameManager>().SetTurn(senderId);
             });
 
             Debug.Log($"{"PH"} {agreementText}: {answernText}");

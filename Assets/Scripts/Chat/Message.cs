@@ -69,10 +69,6 @@ namespace Chat
             if (isMine) return;
             
             Client.Instance.Send(SenderParser.ParseAnswer(id, answer, "resposta?"));
-                
-            if (answer != Answer.Unclear)
-                FindObjectOfType<GameManager>().SetTurn(Client.Instance.id);
-
         }
 
         public void React(Answer answer)

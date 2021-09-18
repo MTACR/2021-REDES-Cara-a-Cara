@@ -25,7 +25,8 @@ namespace Network
         private readonly TasksDispatcher dispatcher;
         private static readonly object locker = new object();  
         private static Client instance;
-        public int id { get; }
+        public int myId { get; }
+        public int opId;
         public bool isHost{ get; private set; }
         public bool isReady { get; private set; }
         public static Client Instance
@@ -41,7 +42,7 @@ namespace Network
         private Client()
         {
             dispatcher = TasksDispatcher.Instance;
-            id = GetHashCode();
+            myId = GetHashCode();
         }
 
         private void Init()
@@ -82,6 +83,7 @@ namespace Network
                         timer.Enabled = false;
 
                         Log("Connection received from " + socket.RemoteEndPoint);
+                        Send(SenderParser.ParseConnection(ConnectionType.Positive, "William", "Host"));
 
                         socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
                     }, handler);
@@ -100,6 +102,7 @@ namespace Network
                         timer.Enabled = false;
 
                         Log("Connected to " + socket.RemoteEndPoint);
+                        Send(SenderParser.ParseConnection(ConnectionType.Request, "William", "Client"));
 
                         socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
                     }, socket);
@@ -205,7 +208,7 @@ namespace Network
 
         private void Log(string message)
         {
-            Debug.Log(id + ": " + message);
+            Debug.Log(myId + ": " + message);
         }
 
     }
