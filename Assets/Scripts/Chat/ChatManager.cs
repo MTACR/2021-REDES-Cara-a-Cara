@@ -39,7 +39,8 @@ namespace Chat
             msg.Select();
             msg.text = "";
             ShowMessage(true, "Me", message);
-            client.Send(SenderParser.ParseQuestion("William", message));
+            System.Random random = new System.Random();
+            client.Send(SenderParser.ParseQuestion(Client.Instance.id, random.Next(), message));
         }
 
         public void ReactToMessage(Answer answer)
