@@ -12,113 +12,125 @@ namespace Network
 {
     public static class ReceiverParser
     {
-        public static void ParseMessage(StateObject state)
+        private static readonly Client client = Client.Instance;
+
+        public static void Message(State state)
         {
-            var messageType = state.buffer[0];
-            
-            switch ((MessageType) messageType)
+            var type = state.buffer[0];
+
+            switch ((Message) type)
             {
-                case MessageType.ConnectionOp: //CONNECTION_OP
-                    ConnectionOpParse(state);
+                case Network.Message.Connection: //CONNECTION_OP
+                    Connection(state);
                     break;
-                case MessageType.CardOp: //CARD_OP
-                    CardOpParse(state);
+
+                case Network.Message.Card: //CARD_OP
+                    Card(state);
                     break;
-                case MessageType.Status: //MATCH_STATUS //TODO: usar ou remover
-                    StatusOpParse(state);
+
+                case Network.Message.Status: //MATCH_STATUS //TODO: usar ou remover
+                    Status(state);
                     break;
-                case MessageType.TimeUp: //TIME_UP //TODO: remover
-                    TimeUpParse(state);
+
+                /*case Network.Message.TimeUp: //TIME_UP //TODO: remover
+                    TimeUp(state);
+                    break;*/
+
+                case Network.Message.Question: //QUESTION
+                    Question(state);
                     break;
-                case MessageType.Question: //QUESTION
-                    QuestionParse(state);
+
+                case Network.Message.Answer: //QUESTION_ANSR
+                    Answer(state);
                     break;
-                case MessageType.Answer: //QUESTION_ANSR
-                    QuestionAnswerParse(state);
-                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private static void ConnectionOpParse(StateObject state)
+        private static void Connection(State state)
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
-            var opType = state.buffer[5];
+            var type = state.buffer[5];
             /*var sender = state.buffer.Skip(6).Take(20).ToArray();
             var sender_name = Encoding.Default.GetString(sender);
             var sentMessage = state.buffer.Skip(26).Take(100).ToArray();
             var sentText = Encoding.Default.GetString(sentMessage);*/
-            switch ((ConnectionType)opType) {
-                case ConnectionType.Request: //REQUEST
+
+            switch ((Connection) type)
+            {
+                /*case Network.Connection.Request: //REQUEST
                     Debug.Log($"Opponent sent a request");
                     //TODO
                     break;
-                case ConnectionType.Positive: //POSITIVE
+
+                case Network.Connection.Positive: //POSITIVE
                     Debug.Log($"Opponent accepted your request");
                     //TODO
                     break;
-                case ConnectionType.Negative: //NEGATIVE
+
+                case Network.Connection.Negative: //NEGATIVE
                     Debug.Log($"Opponent declined your request");
                     //TODO
+                    break;*/
+
+                case Network.Connection.Connect:
+                    Debug.Log("Opponent connected with id " + senderId);
+                    client.SetOpId(senderId);
                     break;
-                case ConnectionType.Disconnect: //DISCONNECT
-                    Debug.Log($"Opponent disconnected");
-                    TasksDispatcher.Instance.Schedule(delegate {
-                        if (Client.Instance.opId == senderId) {
-                            Object.FindObjectOfType<GameManager>().ReturnHome();
-                        }
+
+                case Network.Connection.Disconnect: //DISCONNECT
+                    Debug.Log("Opponent disconnected");
+                    TasksDispatcher.Instance.Schedule(delegate
+                    {
+                        if (client.opId == senderId) Object.FindObjectOfType<GameManager>().ReturnHome();
                     });
                     //TODO
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
 
-            //Client.Instance.opId = senderId;
+            //client.opId = senderId;
         }
 
-        private static void CardOpParse(StateObject state)
+        private static void Card(State state)
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
             var characterId = state.buffer[5];
             var opCode = state.buffer[6];
-            switch ((CardOpType) opCode)
+            switch ((Card) opCode)
             {
                 /*case CardOpType.Choose: //CHOOSE
                     Debug.Log($"{characterId} was chosen");
                     //TODO
                     break;*/
-                case CardOpType.Guess: //GUESS
+                case Network.Card.Guess: //GUESS
                     Debug.Log($"{characterId} was guessed");
                     TasksDispatcher.Instance.Schedule(delegate
                     {
-                        if (Client.Instance.opId == senderId) {
-                            if (Object.FindObjectOfType<Deck>().IsChosen(characterId)) {
-                                var messase = SenderParser.ParseStatus(Status.Win);
-                                Client.Instance.Send(messase);
-                                Object.FindObjectOfType<GameManager>().EndMatch(Status.Lose);
-                            }
-                        }
+                        if (client.opId != senderId) return;
+                        if (!Object.FindObjectOfType<Deck>().IsChosen(characterId)) return;
+
+                        client.Send(SenderParser.Status(Network.Status.Win));
+                        Object.FindObjectOfType<GameManager>().EndMatch(Network.Status.Lose);
                     });
                     break;
-                case CardOpType.Up: //UP
+                case Network.Card.Up: //UP
                     Debug.Log($"{characterId} was raised");
                     TasksDispatcher.Instance.Schedule(delegate
                     {
-                        if (Client.Instance.opId == senderId) {
-                            Object.FindObjectOfType<DeckOpponent>().Flip(characterId, true);
-                        }
+                        if (client.opId == senderId) Object.FindObjectOfType<DeckOpponent>().Flip(characterId, true);
                     });
                     break;
-                case CardOpType.Down: //DOWN
+                case Network.Card.Down: //DOWN
                     Debug.Log($"{characterId} was lowered");
                     TasksDispatcher.Instance.Schedule(delegate
                     {
-                        if (Client.Instance.opId == senderId) {
-                            Object.FindObjectOfType<DeckOpponent>().Flip(characterId, false);
-                        }
+                        if (client.opId == senderId) Object.FindObjectOfType<DeckOpponent>().Flip(characterId, false);
                     });
                     break;
                 default:
@@ -126,94 +138,95 @@ namespace Network
             }
         }
 
-        private static void StatusOpParse(StateObject state)
+        private static void Status(State state)
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
             var status = state.buffer[5];
+
             switch ((Status) status)
             {
-                case Status.Start: //START
+                case Network.Status.Start: //START
                     Debug.Log("Match was started");
-                    TasksDispatcher.Instance.Schedule(delegate {
-                        if (Client.Instance.opId == senderId) {
-                            Object.FindObjectOfType<GameManager>().StartMatch();
-                        }
+                    TasksDispatcher.Instance.Schedule(delegate
+                    {
+                        if (client.opId == senderId) Object.FindObjectOfType<GameManager>().StartMatch();
                     });
                     break;
-                case Status.Win:
+
+                case Network.Status.Win:
                     break;
-                case Status.Lose:
+
+                case Network.Status.Lose:
                     break;
-                case Status.Tie:
+
+                case Network.Status.Tie:
                     break;
-                case Status.End:
+
+                case Network.Status.End:
                     break;
+
                 default:
                     TasksDispatcher.Instance.Schedule(delegate
                     {
-                        if (Client.Instance.opId == senderId) {
-                            Object.FindObjectOfType<GameManager>().EndMatch((Status)status);
-                        }
+                        if (client.opId == senderId) Object.FindObjectOfType<GameManager>().EndMatch((Status) status);
                     });
                     break;
             }
         }
 
-        private static void TimeUpParse(StateObject state) //TODO: remover
+        /*private static void TimeUp(State state) //TODO: remover
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
             var time = state.buffer[5];
 
             Debug.Log($"{time}s passed");
             //TODO
-        }
+        }*/
 
-        private static void QuestionParse(StateObject state)
+        private static void Question(State state)
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
             var questionId = BitConverter.ToInt32(state.buffer, 5);
-            var questionMessage = state.buffer.Skip(9).Take(100).ToArray();
-            var questionText = Encoding.Default.GetString(questionMessage);
+            var questionText = Encoding.Default.GetString(state.buffer.Skip(9).Take(100).ToArray());
 
             Debug.Log($"Opponent asked {questionText}");
-            
+
             TasksDispatcher.Instance.Schedule(delegate
             {
-                if (Client.Instance.opId == senderId) {
-                    Object.FindObjectOfType<GameManager>().RequireAnswer();
-                    Object.FindObjectOfType<ChatManager>().ShowMessage(questionId, "Opponent", questionText);
-                }
+                if (client.opId != senderId) return;
+
+                Object.FindObjectOfType<GameManager>().RequireAnswer();
+                Object.FindObjectOfType<ChatManager>().ShowMessage(questionId, "Opponent", questionText);
             });
         }
 
-        private static void QuestionAnswerParse(StateObject state)
+        private static void Answer(State state)
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
             var questionId = BitConverter.ToInt32(state.buffer, 5);
-            var agreement = state.buffer[9];
-            /*var answerMessage = state.buffer.Skip(10).Take(100).ToArray();
-            var answernText = Encoding.Default.GetString(answerMessage);*/
-            var answer = (Answer) agreement;
-            
+            var answer = (Answer) state.buffer[9];
+
             TasksDispatcher.Instance.Schedule(delegate
             {
-                if (Client.Instance.opId == senderId) {
-                    string agreementText = (Answer)agreement switch {
-                        Answer.Confirm => //CONFIRMED
-                            "confirmed",
-                        Answer.Deny => //DENIED
-                            "denied",
-                        _ => "left uncler"
-                    };
-                    Debug.Log($"Opponent {agreementText}");
+                if (client.opId != senderId) return;
 
-                    Client client = Client.Instance;
-                    Object.FindObjectOfType<ChatManager>().ReactToMessage(questionId, answer);
-                    Object.FindObjectOfType<GameManager>().SetTurn(answer == Answer.Unclear ? client.myId : client.opId);
+                var agreementText = answer switch
+                {
+                    Network.Answer.Confirm => //CONFIRMED
+                        "confirmed",
+                    Network.Answer.Deny => //DENIED
+                        "denied",
+                    _ => "left uncler"
+                };
 
-                    if (answer == Answer.Unclear)
-                        Object.FindObjectOfType<GameManager>().Unclear();
-                }
+                Debug.Log($"Opponent {agreementText}");
+
+                Object.FindObjectOfType<ChatManager>().ReactToMessage(questionId, answer);
+                Object.FindObjectOfType<GameManager>()
+                    .SetTurn(answer == Network.Answer.Unclear ? client.myId : client.opId);
+
+                if (answer == Network.Answer.Unclear)
+                    Object.FindObjectOfType<GameManager>().Unclear();
             });
         }
     }

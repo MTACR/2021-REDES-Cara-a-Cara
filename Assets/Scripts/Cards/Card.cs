@@ -10,13 +10,13 @@ namespace Cards
         [SerializeField] public MeshRenderer picture;
         [SerializeField] public TextMeshPro text;
         [SerializeField] public CardModel model;
-        private Animator animator;
-        private bool isVisible;
-        private float cooldown;
         public int id;
+        private Animator animator;
         private Client client;
+        private float cooldown;
+        private bool isVisible;
         private GameManager manager;
-        
+
         private void Start()
         {
             manager = FindObjectOfType<GameManager>();
@@ -25,38 +25,38 @@ namespace Cards
             client = Client.Instance;
         }
 
+        private void Update()
+        {
+            if (!Input.GetMouseButton(0) || !manager.canClick) return;
+
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (!Physics.Raycast(ray, out hit)) return;
+
+            var c = hit.collider.gameObject.transform.parent.GetComponent<Card>();
+
+            if (!c) return;
+            if (!c.name.Equals(name) || c.id != id || !(cooldown < Time.time)) return;
+
+            cooldown = Time.time + 0.7f;
+            Flip();
+            client.Send(SenderParser.Card(id, isVisible ? Network.Card.Up : Network.Card.Down));
+        }
+
         public void Setup(CardModel card, int id)
         {
-            this.model = card;
-            this.name = card.name;
+            model = card;
+            name = card.name;
             this.id = id;
             picture.GetComponent<Renderer>().material.mainTexture = card.texture;
             text.text = card.name;
             transform.GetChild(0).name = card.name;
         }
-        
+
         public void Setup(int id)
         {
             this.id = id;
-        }
-
-        void Update()
-        {
-            if (!Input.GetMouseButton(0) || !manager.canClick) return;
-            
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            
-            if (!Physics.Raycast(ray, out hit)) return;
-
-            Card c = hit.collider.gameObject.transform.parent.GetComponent<Card>();
-
-            if (!c) return;
-            if (!c.name.Equals(this.name) || c.id != id || !(cooldown < Time.time)) return;
-            
-            cooldown = Time.time + 0.7f;
-            Flip();
-            client.Send(SenderParser.ParseCardOp(id, isVisible ? CardOpType.Up : CardOpType.Down));
         }
 
         public void Flip()
@@ -64,12 +64,11 @@ namespace Cards
             animator.Play(isVisible ? "card_down" : "card_up");
             isVisible = !isVisible;
         }
-        
+
         public void Flip(bool isVisible)
         {
             this.isVisible = isVisible;
             animator.Play(isVisible ? "card_down" : "card_up");
         }
-
     }
 }

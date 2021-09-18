@@ -1,42 +1,44 @@
-using System.Collections;
-using System.Collections.Generic;
-using Network;
-using UnityEngine;
+using System;
 
-public class SenderParser {
-    public static byte[] ParseConnection(ConnectionType opType/*, string senderName, string message*/) {
-        int length = 1 + 4 + 1 /*+ 20 + 100*/;
-        byte[] messageByte = new byte[length];
-        messageByte[0] = (byte) MessageType.ConnectionOp;
-        messageByte = OffsetIntToByte(messageByte, Client.Instance.myId, 1);
-        messageByte[5] = (byte) opType;
-        /*messageByte = OffsetStringtoByte(messageByte, senderName, 6);
-        messageByte = OffsetStringtoByte(messageByte, message, 26);*/
+namespace Network
+{
+    public static class SenderParser
+    {
+        public static byte[] Connection(Connection op /*, string senderName, string message*/)
+        {
+            const int length = 1 + 4 + 1;
+            var bytes = new byte[length];
+            bytes[0] = (byte) Message.Connection;
+            bytes = OffsetIntToByte(bytes, Client.Instance.myId, 1);
+            bytes[5] = (byte) op;
+            /*messageByte = OffsetStringtoByte(messageByte, senderName, 6);
+            messageByte = OffsetStringtoByte(messageByte, message, 26);*/
+            return bytes;
+        }
 
-        return messageByte;
-    }
+        public static byte[] Card(int id, Card card)
+        {
+            const int length = 1 + 4 + 1 + 1;
+            var bytes = new byte[length];
+            bytes[0] = (byte) Message.Card;
+            bytes = OffsetIntToByte(bytes, Client.Instance.myId, 1);
+            bytes[5] = (byte) id;
+            bytes[6] = (byte) card;
+            return bytes;
+        }
 
-    public static byte[] ParseCardOp(int characterId, CardOpType cardOpType) {
-        int length = 1 + 4 + 1 + 1;
-        byte[] messageByte = new byte[length];
-        messageByte[0] = (byte) MessageType.CardOp;
-        messageByte = OffsetIntToByte(messageByte, Client.Instance.myId, 1);
-        messageByte[5] = (byte) characterId;
-        messageByte[6] = (byte) cardOpType;
+        public static byte[] Status(Status status)
+        {
+            //TODO: usar para informar vitoria ou remover
+            const int length = 1 + 4 + 1;
+            var bytes = new byte[length];
+            bytes[0] = (byte) Message.Status;
+            bytes = OffsetIntToByte(bytes, Client.Instance.myId, 1);
+            bytes[5] = (byte) status;
+            return bytes;
+        }
 
-        return messageByte;
-    }
-
-    public static byte[] ParseStatus(Status status) { //TODO: usar para informar vitoria ou remover
-        int length = 1 + 4 + 1;
-        byte[] messageByte = new byte[length];
-        messageByte[0] = (byte) MessageType.Status;
-        messageByte = OffsetIntToByte(messageByte, Client.Instance.myId, 1);
-        messageByte[5] = (byte) status;
-        return messageByte;
-    }
-
-    /*public static byte[] ParseTimeUp(byte secondsPassed) { //TODO: provavelmente remover
+        /*public static byte[] ParseTimeUp(byte secondsPassed) { //TODO: provavelmente remover
         int length = 1 + 4 + 1;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.TimeUp;
@@ -45,41 +47,44 @@ public class SenderParser {
         return messageByte;
     }*/
 
-    public static byte[] ParseQuestion(int questionId, string message) {
-        int length = 1 + 4 + 4 + 100;
-        byte[] messageByte = new byte[length];
-        messageByte[0] = (byte) MessageType.Question;
-        messageByte = OffsetIntToByte(messageByte, Client.Instance.myId, 1);
-        messageByte = OffsetIntToByte(messageByte, questionId, 5);
-        messageByte = OffsetStringtoByte(messageByte, message, 9);
-        return messageByte;
-    }
-
-    public static byte[] ParseAnswer(int questionId, Answer answer/*, string response*/) {
-        int length = 1 + 4 + 4 + 1 /*+ 100*/;
-        byte[] messageByte = new byte[length];
-        messageByte[0] = (byte) MessageType.Answer;
-        messageByte = OffsetIntToByte(messageByte, Client.Instance.myId, 1);
-        messageByte = OffsetIntToByte(messageByte, questionId, 5);
-        messageByte[9] = (byte) answer;
-        /*messageByte = OffsetStringtoByte(messageByte, response, 10);*/
-        return messageByte;
-    }
-
-    private static byte[] OffsetStringtoByte(byte[] messageByte, string str, int offset) {
-        for (int i = 0; i < str.Length; ++i) {
-            messageByte[offset + i] = (byte)str[i];
+        public static byte[] Question(int id, string message)
+        {
+            const int length = 1 + 4 + 4 + 100;
+            var bytes = new byte[length];
+            bytes[0] = (byte) Message.Question;
+            bytes = OffsetIntToByte(bytes, Client.Instance.myId, 1);
+            bytes = OffsetIntToByte(bytes, id, 5);
+            bytes = OffsetStringtoByte(bytes, message, 9);
+            return bytes;
         }
 
-        return messageByte;
-    }
-
-    private static byte[] OffsetIntToByte(byte[] messageByte, int id, int offset) {
-        var byteId = System.BitConverter.GetBytes(id);
-        for (int i = 0; i < 4; ++i) {
-            messageByte[offset + i] = byteId[i];
+        public static byte[] Answer(int id, Answer answer /*, string response*/)
+        {
+            const int length = 1 + 4 + 4 + 1;
+            var bytes = new byte[length];
+            bytes[0] = (byte) Message.Answer;
+            bytes = OffsetIntToByte(bytes, Client.Instance.myId, 1);
+            bytes = OffsetIntToByte(bytes, id, 5);
+            bytes[9] = (byte) answer;
+            /*messageByte = OffsetStringtoByte(messageByte, response, 10);*/
+            return bytes;
         }
 
-        return messageByte;
+        private static byte[] OffsetStringtoByte(byte[] bytes, string str, int offset)
+        {
+            for (var i = 0; i < str.Length; ++i)
+                bytes[offset + i] = (byte) str[i];
+
+            return bytes;
+        }
+
+        private static byte[] OffsetIntToByte(byte[] bytes, int id, int offset)
+        {
+            var byteId = BitConverter.GetBytes(id);
+            for (var i = 0; i < 4; ++i)
+                bytes[offset + i] = byteId[i];
+
+            return bytes;
+        }
     }
 }

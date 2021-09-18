@@ -4,9 +4,11 @@ namespace Callbacks
 {
     public class TasksDispatcher
     {
+        public delegate void Task();
+
         private static TasksDispatcher instance;
-        private readonly Queue<Task> queue;
         private static readonly object locker = new object();
+        private readonly Queue<Task> queue;
 
         private TasksDispatcher()
         {
@@ -18,7 +20,9 @@ namespace Callbacks
             get
             {
                 lock (locker)
+                {
                     return instance ??= new TasksDispatcher();
+                }
             }
         }
 
@@ -32,18 +36,12 @@ namespace Callbacks
 
         public Task Dequeue()
         {
-            lock (locker) 
+            lock (locker)
             {
-                if (queue.Count > 0)
-                {
-                    return queue.Dequeue();
-                }
+                if (queue.Count > 0) return queue.Dequeue();
             }
 
             return null;
         }
-        
-        public delegate void Task();
-
     }
 }

@@ -6,36 +6,25 @@ using System.Threading;
 using System.Timers;
 using Callbacks;
 using UnityEngine;
-using Object = System.Object;
 using Timer = System.Timers.Timer;
 
 namespace Network
 {
     public sealed class Client
     {
+        private static readonly object locker = new object();
+        private static Client instance;
+        private readonly TasksDispatcher dispatcher;
+
+        private Socket handler;
+
         //"26.158.168.172"
         private string ip;
-        private Socket socket;
-        private Socket handler;
-        private Action onStart;
         private Action<string> onError;
+        private Action onStart;
+        private Socket socket;
         private Thread thread;
         private Timer timer;
-        private readonly TasksDispatcher dispatcher;
-        private static readonly object locker = new object();  
-        private static Client instance;
-        public int myId { get; }
-        public int opId { get; private set; }
-        public bool isHost{ get; private set; }
-        public bool isReady { get; private set; }
-        public static Client Instance
-        {
-            get
-            {
-                lock (locker)
-                    return instance ??= new Client();
-            }
-        }
 
         private Client()
         {
@@ -43,11 +32,27 @@ namespace Network
             myId = GetHashCode();
         }
 
+        public int myId { get; }
+        public int opId { get; private set; }
+        public bool isHost { get; private set; }
+        public bool isReady { get; private set; }
+
+        public static Client Instance
+        {
+            get
+            {
+                lock (locker)
+                {
+                    return instance ??= new Client();
+                }
+            }
+        }
+
         private void Init()
         {
             try
             {
-                IPHostEntry host = Dns.GetHostEntry(ip);
+                var host = Dns.GetHostEntry(ip);
                 IPAddress ipAddress = null;
 
                 foreach (var address in host.AddressList)
@@ -60,7 +65,7 @@ namespace Network
                     return;
                 }
 
-                IPEndPoint endPoint = new IPEndPoint(ipAddress, 1024);
+                var endPoint = new IPEndPoint(ipAddress, 1024);
 
                 if (isHost)
                 {
@@ -76,26 +81,15 @@ namespace Network
                     handler.BeginAccept(result =>
                     {
                         socket = handler.EndAccept(result);
-                        StateObject state = new StateObject();
+                        var state = new State();
                         isReady = true;
                         timer.Enabled = false;
 
                         Debug.Log("Connection received from " + socket.RemoteEndPoint);
-                        
-                        //Supostamente definir o tipo de conexão é desnecessário. Mudar isso.
-                        Send(SenderParser.ParseConnection(ConnectionType.Positive/*, "William", "Host"*/));
 
-                        //socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
-                        socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ar =>
-                        {
-                            //TODO primeira conexão
-                            // obrigatoriamente recebe o id do adversario
-                            var senderId = BitConverter.ToInt32(state.buffer, 1);
-                            opId = senderId;
-                            Debug.Log("Opponent id: " + opId);
+                        Send(SenderParser.Connection(Connection.Connect));
 
-                            socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
-                        }, state);
+                        socket.BeginReceive(state.buffer, 0, State.BufferSize, 0, ReceiveCallback, state);
                     }, handler);
                 }
                 else
@@ -107,26 +101,15 @@ namespace Network
                     socket.BeginConnect(endPoint, result =>
                     {
                         socket.EndConnect(result);
-                        StateObject state = new StateObject();
+                        var state = new State();
                         isReady = true;
                         timer.Enabled = false;
 
                         Debug.Log("Connected to " + socket.RemoteEndPoint);
-                        
-                        //Supostamente definir o tipo de conexão é desnecessário. Mudar isso.
-                        Send(SenderParser.ParseConnection(ConnectionType.Request/*, "William", "Client"*/));
 
-                        //socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
-                        socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ar =>
-                        {
-                            //TODO primeira conexão
-                            // obrigatoriamente recebe o id do adversario
-                            var senderId = BitConverter.ToInt32(state.buffer, 1);
-                            opId = senderId;
-                            Debug.Log("Opponent id: " + opId);
+                        Send(SenderParser.Connection(Connection.Connect));
 
-                            socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
-                        }, state);
+                        socket.BeginReceive(state.buffer, 0, State.BufferSize, 0, ReceiveCallback, state);
                     }, socket);
                 }
             }
@@ -139,7 +122,18 @@ namespace Network
                     CallError(e.Message);
             }
         }
-        
+
+        public void SetOpId(int id)
+        {
+            if (opId != 0)
+            {
+                CallError("Opponent ID already defined");
+                return;
+            }
+
+            opId = id;
+        }
+
         public void Send(byte[] bytes)
         {
             if (socket == null)
@@ -150,12 +144,12 @@ namespace Network
 
             socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, result =>
             {
-                try 
+                try
                 {
                     socket.EndSend(result);
-                    Debug.Log("-> " +  Encoding.Default.GetString(bytes) + " :: " + bytes.Length + " bytes");
-                } 
-                catch (Exception e) 
+                    Debug.Log("-> " + Encoding.Default.GetString(bytes) + " :: " + bytes.Length + " bytes");
+                }
+                catch (Exception e)
                 {
                     isReady = false;
                     CallError(e.Message);
@@ -171,14 +165,14 @@ namespace Network
                 return;
             }
 
-            StateObject state = (StateObject) result.AsyncState; 
-            int bytes = socket.EndReceive(result);
+            var state = (State) result.AsyncState;
+            var bytes = socket.EndReceive(result);
             if (bytes <= 0) return;
-            
+
             Debug.Log("<- " + Encoding.Default.GetString(state.buffer) + " :: " + bytes + " bytes");
-            ReceiverParser.ParseMessage(state);
-            
-            socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
+            ReceiverParser.Message(state);
+
+            socket.BeginReceive(state.buffer, 0, State.BufferSize, 0, ReceiveCallback, state);
         }
 
         public void StartClient(bool isHost, string ip)
@@ -187,14 +181,14 @@ namespace Network
             this.ip = ip;
 
             Debug.Log("Starting " + (isHost ? "host" : "client"));
-            
+
             thread = new Thread(Init) {IsBackground = true};
             timer = new Timer(30000) {Enabled = true, AutoReset = false};
             timer.Elapsed += OnElapsed;
             thread.Start();
         }
 
-        private void OnElapsed(Object source, ElapsedEventArgs e)
+        private void OnElapsed(object source, ElapsedEventArgs e)
         {
             CallError("No connection received");
         }
@@ -216,7 +210,7 @@ namespace Network
         public void Dispose()
         {
             Debug.Log("Connection ended");
-            
+
             lock (locker)
             {
                 socket?.Close();
@@ -228,9 +222,10 @@ namespace Network
             }
         }
 
-        public void OnDestroy() { //TODO: isso faz o minimo de sentido?
-            Send(SenderParser.ParseConnection(ConnectionType.Disconnect));
+        public void OnDestroy()
+        {
+            //TODO: isso faz o minimo de sentido?
+            Send(SenderParser.Connection(Connection.Disconnect));
         }
-
     }
 }

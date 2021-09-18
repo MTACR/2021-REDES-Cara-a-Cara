@@ -1,9 +1,8 @@
 using Cards;
 using Network;
-using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using Card = Cards.Card;
 
 namespace Game
 {
@@ -15,19 +14,16 @@ namespace Game
         [SerializeField] public GameObject errorOvrl;
         [SerializeField] public TextMeshProUGUI errorText;
         [SerializeField] public TextMeshProUGUI turnText;
-        private Client client;
-        public bool myTurn { get; private set; }
-        private Deck deck;
         public bool canClick;
+        private Client client;
+        private Deck deck;
+        public bool myTurn { get; private set; }
 
         private void Awake()
         {
             deck = FindObjectOfType<Deck>();
             client = Client.Instance;
-            client.SetListeners(() =>
-            {
-                
-            }, s =>
+            client.SetListeners(() => { }, s =>
             {
                 errorText.text = s;
                 errorOvrl.SetActive(true);
@@ -45,22 +41,22 @@ namespace Game
 
         public void SetCard()
         {
-            Card model = deck.ChoosenCard();
-            Card card = myCard.GetComponent<Card>();
+            var model = deck.ChoosenCard();
+            var card = myCard.GetComponent<Card>();
             card.Setup(model.model, deck.chosenCard);
         }
 
         public void RandomCard()
         {
-            Card model = deck.RandomCard();
-            Card card = myCard.GetComponent<Card>();
+            var model = deck.RandomCard();
+            var card = myCard.GetComponent<Card>();
             card.Setup(model.model, deck.chosenCard);
         }
 
         public void Guess()
         {
             if (!myTurn) return;
-            
+
             canClick = false;
         }
 
@@ -71,10 +67,10 @@ namespace Game
 
         public void DoGiveUp()
         {
-            
         }
 
-        public void StartMatch() {
+        public void StartMatch()
+        {
             //TODO
         }
 
@@ -102,31 +98,32 @@ namespace Game
             turnText.text = "Unclear message. Try a yes/no question";
         }
 
-        public void EndMatch(Status status) {
+        public void EndMatch(Status status)
+        {
             //TODO
-            switch ((Status) status) {
+            switch (status)
+            {
                 case Status.Win: //WIN
-                    Debug.Log($"Match was won");
+                    Debug.Log("Match was won");
                     //TODO
                     break;
                 case Status.Lose: //LOSE          
-                    Debug.Log($"Match was lost");
+                    Debug.Log("Match was lost");
                     //TODO
                     break;
                 case Status.Tie: //TIE
-                    Debug.Log($"Match was tied");
+                    Debug.Log("Match was tied");
                     //TODO
                     break;
                 case Status.End: //END
-                    Debug.Log($"Match was ended");
+                    Debug.Log("Match was ended");
                     //TODO
-                    break;
-                default:
                     break;
             }
         }
 
-        public void ReturnHome() {
+        public void ReturnHome()
+        {
             //TODO: loading para o Home
         }
     }

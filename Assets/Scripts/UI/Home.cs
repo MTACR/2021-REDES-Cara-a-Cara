@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Linq;
 using Network;
@@ -23,7 +22,7 @@ namespace UI
             client = Client.Instance;
             client.SetListeners(() =>
             {
-                string msg = isHost ? "Waiting for opponent" : "Connecting to server";
+                var msg = isHost ? "Waiting for opponent" : "Connecting to server";
                 subtext.text = msg;
             }, ShowError);
             iptext.Select();
@@ -33,9 +32,9 @@ namespace UI
         public void StartConnection(bool isHost)
         {
             this.isHost = isHost;
-            string ip = iptext.text.Trim();
+            var ip = iptext.text.Trim();
             //ip = ip.Substring(0, ip.Length - 1);
-            
+
             if (IsIpValid(ip))
             {
                 loading.SetActive(true);
@@ -71,28 +70,21 @@ namespace UI
 
         private bool IsIpValid(string ip)
         {
-            if (String.IsNullOrWhiteSpace(ip))
-            {
-                return false;
-            }
+            if (string.IsNullOrWhiteSpace(ip)) return false;
 
-            string[] splitValues = ip.Split('.');
+            var splitValues = ip.Split('.');
 
             return splitValues.Length == 4 && splitValues.All(r => byte.TryParse(r, out _));
         }
-        
+
         private IEnumerator LoadScene()
         {
-            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Game");
+            var asyncLoad = SceneManager.LoadSceneAsync("Game");
             asyncLoad.allowSceneActivation = false;
 
-            while (!asyncLoad.isDone && !Client.Instance.isReady)
-            {
-                yield return null;
-            }
-        
+            while (!asyncLoad.isDone && !Client.Instance.isReady) yield return null;
+
             asyncLoad.allowSceneActivation = true;
         }
-    
     }
 }

@@ -28,19 +28,19 @@ namespace Chat
             this.id = id;
             Setup(false, sender, message, id);
         }
-        
+
         public int Setup(string sender, string message)
         {
-            this.id = GetHashCode();
+            id = GetHashCode();
             Setup(true, sender, message, id);
             return id;
         }
-        
+
         private void Setup(bool isMine, string sender, string message, int id)
         {
             this.isMine = isMine;
             this.id = id;
-            
+
             if (isMine)
             {
                 container.offsetMin = new Vector2(50, container.offsetMin.y);
@@ -51,14 +51,14 @@ namespace Chat
                 container.offsetMin = new Vector2(0, container.offsetMin.y);
                 container.offsetMax = new Vector2(-50, container.offsetMax.y);
             }
-            
+
             onEnter.enabled = !isMine;
             onExit.enabled = !isMine;
 
             this.sender.text = sender;
             this.message.text = message;
         }
-        
+
         private void OnAnswer(Answer answer)
         {
             React(answer);
@@ -68,8 +68,8 @@ namespace Chat
 
             if (isMine) return;
 
-            Client client = Client.Instance;
-            client.Send(SenderParser.ParseAnswer(id, answer/*, "resposta?"*/));
+            var client = Client.Instance;
+            client.Send(SenderParser.Answer(id, answer /*, "resposta?"*/));
             FindObjectOfType<GameManager>().SetTurn(answer == Answer.Unclear ? client.opId : client.myId);
         }
 
@@ -83,12 +83,12 @@ namespace Chat
                 _ => throw new ArgumentOutOfRangeException(nameof(answer), answer, null)
             };
         }
-        
+
         public void MouseEnter()
         {
             pannel.SetActive(true);
         }
-    
+
         public void MouseExit()
         {
             pannel.SetActive(false);
@@ -108,6 +108,5 @@ namespace Chat
         {
             OnAnswer(Answer.Unclear);
         }
-
     }
 }
