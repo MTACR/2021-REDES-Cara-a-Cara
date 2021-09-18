@@ -92,6 +92,7 @@ namespace Network
                             // obrigatoriamente recebe o id do adversario
                             var senderId = BitConverter.ToInt32(state.buffer, 1);
                             opId = senderId;
+                            Debug.Log("Opponent id: " + opId);
 
                             socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
                         }, state);
@@ -122,6 +123,7 @@ namespace Network
                             // obrigatoriamente recebe o id do adversario
                             var senderId = BitConverter.ToInt32(state.buffer, 1);
                             opId = senderId;
+                            Debug.Log("Opponent id: " + opId);
 
                             socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
                         }, state);

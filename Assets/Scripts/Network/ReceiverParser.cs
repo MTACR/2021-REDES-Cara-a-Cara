@@ -196,6 +196,9 @@ namespace Network
                 Client client = Client.Instance;
                 Object.FindObjectOfType<ChatManager>().ReactToMessage(questionId, answer);
                 Object.FindObjectOfType<GameManager>().SetTurn(answer == Answer.Unclear ? client.myId : client.opId);
+
+                if (answer == Answer.Unclear)
+                    Object.FindObjectOfType<GameManager>().Unclear();
             });
 
             Debug.Log($"{"PH"} {agreementText}: {answernText}");
