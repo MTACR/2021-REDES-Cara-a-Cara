@@ -21,7 +21,13 @@ namespace Chat
         [SerializeField] public TextMeshProUGUI sender;
         [SerializeField] public TextMeshProUGUI message;
         [SerializeField] public bool isMine;
+        private GameManager manager;
         public int id { get; private set; }
+
+        private void Start()
+        {
+            manager = FindObjectOfType<GameManager>();
+        }
 
         public void Setup(int id, string sender, string message)
         {
@@ -69,8 +75,8 @@ namespace Chat
             if (isMine) return;
 
             var client = Client.Instance;
-            client.Send(SenderParser.Answer(id, answer /*, "resposta?"*/));
-            FindObjectOfType<GameManager>().SetTurn(answer == Answer.Unclear ? client.opId : client.myId);
+            client.Send(SenderParser.Answer(id, answer));
+            manager.SetTurn(answer == Answer.Unclear ? client.opId : client.myId);
         }
 
         public void React(Answer answer)
@@ -86,27 +92,32 @@ namespace Chat
 
         public void MouseEnter()
         {
-            pannel.SetActive(true);
+            if (manager.canClick)
+                pannel.SetActive(true);
         }
 
         public void MouseExit()
         {
-            pannel.SetActive(false);
+            if (manager.canClick)
+                pannel.SetActive(false);
         }
 
         public void Yes()
         {
-            OnAnswer(Answer.Confirm);
+            if (manager.canClick)
+                OnAnswer(Answer.Confirm);
         }
 
         public void No()
         {
-            OnAnswer(Answer.Deny);
+            if (manager.canClick)
+                OnAnswer(Answer.Deny);
         }
 
         public void Reject()
         {
-            OnAnswer(Answer.Unclear);
+            if (manager.canClick)
+                OnAnswer(Answer.Unclear);
         }
     }
 }

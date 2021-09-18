@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Linq;
+using Callbacks;
 using Network;
 using TMPro;
 using UnityEngine;
@@ -19,6 +20,9 @@ namespace UI
 
         private void Awake()
         {
+            if (FindObjectOfType<TaskManager>() == null)
+                new GameObject().AddComponent<TaskManager>();
+
             client = Client.Instance;
             client.SetListeners(() =>
             {
@@ -33,7 +37,6 @@ namespace UI
         {
             this.isHost = isHost;
             var ip = iptext.text.Trim();
-            //ip = ip.Substring(0, ip.Length - 1);
 
             if (IsIpValid(ip))
             {
@@ -77,7 +80,7 @@ namespace UI
             return splitValues.Length == 4 && splitValues.All(r => byte.TryParse(r, out _));
         }
 
-        private IEnumerator LoadScene()
+        private static IEnumerator LoadScene()
         {
             var asyncLoad = SceneManager.LoadSceneAsync("Game");
             asyncLoad.allowSceneActivation = false;

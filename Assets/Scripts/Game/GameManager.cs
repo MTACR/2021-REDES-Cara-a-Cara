@@ -1,3 +1,4 @@
+using Callbacks;
 using Cards;
 using Network;
 using TMPro;
@@ -21,10 +22,14 @@ namespace Game
 
         private void Awake()
         {
+            if (FindObjectOfType<TaskManager>() == null)
+                new GameObject().AddComponent<TaskManager>();
+
             deck = FindObjectOfType<Deck>();
             client = Client.Instance;
             client.SetListeners(() => { }, s =>
             {
+                canClick = false;
                 errorText.text = s;
                 errorOvrl.SetActive(true);
             });

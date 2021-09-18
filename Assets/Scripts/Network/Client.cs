@@ -14,7 +14,6 @@ namespace Network
     {
         private static readonly object locker = new object();
         private static Client instance;
-        private readonly TasksDispatcher dispatcher;
 
         private Socket handler;
 
@@ -28,7 +27,6 @@ namespace Network
 
         private Client()
         {
-            dispatcher = TasksDispatcher.Instance;
             myId = GetHashCode();
         }
 
@@ -75,7 +73,7 @@ namespace Network
 
                     Debug.Log("Waiting for connection...");
 
-                    dispatcher.Schedule(delegate { onStart(); });
+                    TasksDispatcher.Instance.Schedule(delegate { onStart(); });
                     timer.Start();
 
                     handler.BeginAccept(result =>
@@ -96,7 +94,7 @@ namespace Network
                 {
                     socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                    dispatcher.Schedule(delegate { onStart(); });
+                    TasksDispatcher.Instance.Schedule(delegate { onStart(); });
 
                     socket.BeginConnect(endPoint, result =>
                     {
@@ -195,14 +193,12 @@ namespace Network
 
         private void CallError(string message)
         {
-            Debug.LogError(GetHashCode() + ": " + message);
-            dispatcher.Schedule(delegate { onError(message); });
-            //Dispose();
+            Debug.LogError(message);
+            TasksDispatcher.Instance.Schedule(delegate { onError(message); });
         }
 
         public void SetListeners(Action onStart, Action<string> onError)
         {
-            Debug.Log("Listener definido");
             this.onStart = onStart;
             this.onError = onError;
         }

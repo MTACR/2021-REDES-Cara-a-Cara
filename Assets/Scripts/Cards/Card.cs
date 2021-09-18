@@ -10,7 +10,7 @@ namespace Cards
         [SerializeField] public MeshRenderer picture;
         [SerializeField] public TextMeshPro text;
         [SerializeField] public CardModel model;
-        public int id;
+        private int id;
         private Animator animator;
         private Client client;
         private float cooldown;
