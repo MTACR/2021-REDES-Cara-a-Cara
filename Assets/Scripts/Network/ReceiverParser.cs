@@ -166,6 +166,7 @@ namespace Network
             TasksDispatcher.Instance.Schedule(delegate
             {
                 Object.FindObjectOfType<ChatManager>().ShowMessage(questionId, "???????????", questionText);
+                Object.FindObjectOfType<GameManager>().myTurn = true;
             });
         }
 

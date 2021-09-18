@@ -11,7 +11,7 @@ namespace Game
         private float timePassed = 0;
         [SerializeField] public string player_name = "player";
         private Client client;
-        private bool myTurn = true;
+        public bool myTurn;
         private Deck deck;
         public bool canClick;
         [SerializeField] public GameObject scrollView;
@@ -32,7 +32,8 @@ namespace Game
                 errorText.text = s;
                 errorOvrl.SetActive(true);
             });
-            
+
+            myTurn = !client.isHost;
         }
 
        /* private void Update()
@@ -68,6 +69,8 @@ namespace Game
 
         public void Guess()
         {
+            if (!myTurn) return;
+            
             canClick = false;
         }
 

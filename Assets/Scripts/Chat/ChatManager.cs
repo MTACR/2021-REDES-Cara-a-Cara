@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game;
 using Network;
 using TMPro;
 using UnityEngine;
@@ -15,11 +16,13 @@ namespace Chat
         private Client client;
         private Dictionary<int, Message> messages;
         private Message lastMessage;
+        private GameManager manager;
 
         private void Start()
         {
             client = Client.Instance;
             messages = new Dictionary<int, Message>();
+            manager = FindObjectOfType<GameManager>();
         }
 
         public void ShowMessage(int id, string sender, string text)
@@ -40,6 +43,8 @@ namespace Chat
 
         public void SendMessage()
         {
+            if (!manager.myTurn) return;
+            
             string message = msg.text.Trim();
 
             if (message.Length <= 0) return;
@@ -55,6 +60,8 @@ namespace Chat
 
         public void ReactToMessage(int id, Answer answer)
         {
+            if (!manager.myTurn) return;
+            
             messages[id].React(answer);
         }
         
