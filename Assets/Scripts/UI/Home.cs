@@ -30,7 +30,7 @@ namespace UI
             iptext.text = "26.158.168.172";
         }
 
-        public void Start(bool isHost)
+        public void StartConnection(bool isHost)
         {
             this.isHost = isHost;
             string ip = iptext.text.Trim();

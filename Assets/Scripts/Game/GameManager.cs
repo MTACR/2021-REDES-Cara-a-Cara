@@ -11,7 +11,7 @@ namespace Game
         private float timePassed = 0;
         [SerializeField] public string player_name = "player";
         private Client client;
-        public bool myTurn;
+        public bool myTurn { get; private set; }
         private Deck deck;
         public bool canClick;
         [SerializeField] public GameObject scrollView;
@@ -19,6 +19,7 @@ namespace Game
         [SerializeField] public GameObject myCard;
         [SerializeField] public GameObject errorOvrl;
         [SerializeField] public TextMeshProUGUI errorText;
+        [SerializeField] public TextMeshProUGUI turnText;
 
         private void Awake()
         {
@@ -34,6 +35,9 @@ namespace Game
             });
 
             myTurn = !client.isHost;
+            
+            if (myTurn)
+                SetTurn(-1);
         }
 
        /* private void Update()
@@ -86,6 +90,20 @@ namespace Game
 
         public void StartMatch() {
             //TODO
+        }
+
+        public void SetTurn(int id)
+        {
+            if (id != client.id)
+            {
+                myTurn = true;
+                turnText.text = "Your turn";
+            }
+            else
+            {
+                myTurn = false;
+                turnText.text = "Opponent's turn";
+            }
         }
 
         public void EndMatch(Status status) {

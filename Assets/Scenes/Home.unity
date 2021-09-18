@@ -768,7 +768,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 902306659}
         m_TargetAssemblyTypeName: UI.Home, Assembly-CSharp
-        m_MethodName: Start
+        m_MethodName: StartConnection
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1203,7 +1203,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 902306659}
         m_TargetAssemblyTypeName: UI.Home, Assembly-CSharp
-        m_MethodName: Start
+        m_MethodName: StartConnection
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
