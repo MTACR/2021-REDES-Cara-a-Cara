@@ -1016,6 +1016,7 @@ MonoBehaviour:
   myCard: {fileID: 38961659}
   errorOvrl: {fileID: 2008832893}
   errorText: {fileID: 430435239}
+  turnText: {fileID: 302924101}
 --- !u!1 &302924099
 GameObject:
   m_ObjectHideFlags: 0
