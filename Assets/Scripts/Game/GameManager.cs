@@ -20,7 +20,7 @@ namespace Game
         [SerializeField] public GameObject errorOvrl;
         [SerializeField] public TextMeshProUGUI errorText;
 
-        private void Start()
+        private void Awake()
         {
             deck = FindObjectOfType<Deck>();
             client = Client.Instance;

@@ -18,7 +18,7 @@ namespace UI
         private Client client;
         private bool isHost;
 
-        private void Start()
+        private void Awake()
         {
             client = Client.Instance;
             client.SetListeners(() =>

@@ -18,7 +18,7 @@ namespace Chat
         private Message lastMessage;
         private GameManager manager;
 
-        private void Start()
+        private void Awake()
         {
             client = Client.Instance;
             messages = new Dictionary<int, Message>();
