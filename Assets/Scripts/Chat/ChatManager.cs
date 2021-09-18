@@ -56,13 +56,11 @@ namespace Chat
             msg.text = "";
             ShowMessage("Me", message);
             client.Send(SenderParser.ParseQuestion(lastMessage.id, message));
-            manager.SetTurn(client.myId);
+            manager.SetTurn(client.opId);
         }
 
         public void ReactToMessage(int id, Answer answer)
         {
-            if (!manager.myTurn) return;
-            
             messages[id].React(answer);
         }
         

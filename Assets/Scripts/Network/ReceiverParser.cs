@@ -193,7 +193,9 @@ namespace Network
             
             TasksDispatcher.Instance.Schedule(delegate
             {
+                Client client = Client.Instance;
                 Object.FindObjectOfType<ChatManager>().ReactToMessage(questionId, answer);
+                Object.FindObjectOfType<GameManager>().SetTurn(answer == Answer.Unclear ? client.myId : client.opId);
             });
 
             Debug.Log($"{"PH"} {agreementText}: {answernText}");

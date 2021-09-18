@@ -67,8 +67,10 @@ namespace Chat
             onExit.enabled = false;
 
             if (isMine) return;
-            
-            Client.Instance.Send(SenderParser.ParseAnswer(id, answer, "resposta?"));
+
+            Client client = Client.Instance;
+            client.Send(SenderParser.ParseAnswer(id, answer, "resposta?"));
+            FindObjectOfType<GameManager>().SetTurn(answer == Answer.Unclear ? client.opId : client.myId);
         }
 
         public void React(Answer answer)

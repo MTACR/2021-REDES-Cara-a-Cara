@@ -7,19 +7,16 @@ namespace Game
 {
     public class GameManager : MonoBehaviour
     {
-        [SerializeField] public float interval = 30;
-        private float timePassed = 0;
-        [SerializeField] public string player_name = "player";
-        private Client client;
-        public bool myTurn { get; private set; }
-        private Deck deck;
-        public bool canClick;
         [SerializeField] public GameObject scrollView;
         [SerializeField] public GameObject message;
         [SerializeField] public GameObject myCard;
         [SerializeField] public GameObject errorOvrl;
         [SerializeField] public TextMeshProUGUI errorText;
         [SerializeField] public TextMeshProUGUI turnText;
+        private Client client;
+        public bool myTurn { get; private set; }
+        private Deck deck;
+        public bool canClick;
 
         private void Awake()
         {
@@ -35,19 +32,8 @@ namespace Game
             });
 
             myTurn = !client.isHost;
-            SetTurn(myTurn ? Client.Instance.opId : Client.Instance.myId);
+            SetTurn(myTurn ? Client.Instance.myId : Client.Instance.opId);
         }
-
-       /* private void Update()
-        {
-            timePassed += Time.deltaTime;
-            
-            if (timePassed > interval && client.isReady && client.isHost) {
-                timePassed = 0;
-                byte[] message = SenderParser.ParseTimeUp(client.id, (byte) interval);
-                client.Send(message);
-            }
-        }*/
 
         public void ShowCards()
         {
@@ -92,9 +78,7 @@ namespace Game
 
         public void SetTurn(int id)
         {
-            Debug.Log("Vez de " + id);
-            
-            if (id != client.myId)
+            if (id == client.myId)
             {
                 myTurn = true;
                 turnText.text = "Your turn";

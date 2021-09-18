@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading;
 using System.Timers;
 using Callbacks;
-using Unity.VisualScripting;
 using UnityEngine;
 using Object = System.Object;
 using Timer = System.Timers.Timer;
@@ -37,7 +36,6 @@ namespace Network
                     return instance ??= new Client();
             }
         }
-        //Talvez não seja necessário fazer a classe thread-safe. Veremos...
 
         private Client()
         {
@@ -70,7 +68,7 @@ namespace Network
                     handler.Bind(endPoint);
                     handler.Listen(1);
 
-                    Log("Waiting for connection...");
+                    Debug.Log("Waiting for connection...");
 
                     dispatcher.Schedule(delegate { onStart(); });
                     timer.Start();
@@ -82,7 +80,7 @@ namespace Network
                         isReady = true;
                         timer.Enabled = false;
 
-                        Log("Connection received from " + socket.RemoteEndPoint);
+                        Debug.Log("Connection received from " + socket.RemoteEndPoint);
                         Send(SenderParser.ParseConnection(ConnectionType.Positive, "William", "Host"));
 
                         socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
@@ -101,7 +99,7 @@ namespace Network
                         isReady = true;
                         timer.Enabled = false;
 
-                        Log("Connected to " + socket.RemoteEndPoint);
+                        Debug.Log("Connected to " + socket.RemoteEndPoint);
                         Send(SenderParser.ParseConnection(ConnectionType.Request, "William", "Client"));
 
                         socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
@@ -131,7 +129,7 @@ namespace Network
                 try 
                 {
                     socket.EndSend(result);
-                    Log("-> " +  Encoding.Default.GetString(bytes) + " :: " + bytes.Length + " bytes");
+                    Debug.Log("-> " +  Encoding.Default.GetString(bytes) + " :: " + bytes.Length + " bytes");
                 } 
                 catch (Exception e) 
                 {
@@ -153,7 +151,7 @@ namespace Network
             int bytes = socket.EndReceive(result);
             if (bytes <= 0) return;
             
-            Log("<- " + Encoding.Default.GetString(state.buffer) + " :: " + bytes + " bytes");
+            Debug.Log("<- " + Encoding.Default.GetString(state.buffer) + " :: " + bytes + " bytes");
             ReceiverParser.ParseMessage(state);
             
             socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
@@ -164,7 +162,7 @@ namespace Network
             this.isHost = isHost;
             this.ip = ip;
 
-            Log("Starting " + (isHost ? "host" : "client"));
+            Debug.Log("Starting " + (isHost ? "host" : "client"));
             
             thread = new Thread(Init) {IsBackground = true};
             timer = new Timer(30000) {Enabled = true, AutoReset = false};
@@ -193,7 +191,7 @@ namespace Network
 
         public void Dispose()
         {
-            Log("Connection ended");
+            Debug.Log("Connection ended");
             
             lock (locker)
             {
@@ -204,11 +202,6 @@ namespace Network
                 timer.Enabled = false;
                 timer.Dispose();
             }
-        }
-
-        private void Log(string message)
-        {
-            Debug.Log(myId + ": " + message);
         }
 
     }
