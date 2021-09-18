@@ -95,6 +95,11 @@ namespace Game
             turnText.text = "Answer the opponent's question";
         }
 
+        public void Unclear()
+        {
+            turnText.text = "Unclear message. Try a yes/no question";
+        }
+
         public void EndMatch(Status status) {
             //TODO
             switch ((Status) status) {

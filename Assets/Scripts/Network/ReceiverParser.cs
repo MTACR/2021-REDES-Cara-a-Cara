@@ -72,7 +72,7 @@ namespace Network
             }
 
 
-            Client.Instance.opId = senderId;
+            //Client.Instance.opId = senderId;
         }
 
         private static void CardOpParse(StateObject state)

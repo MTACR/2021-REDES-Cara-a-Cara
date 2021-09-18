@@ -25,7 +25,7 @@ namespace Network
         private static readonly object locker = new object();  
         private static Client instance;
         public int myId { get; }
-        public int opId;
+        public int opId { get; private set; }
         public bool isHost{ get; private set; }
         public bool isReady { get; private set; }
         public static Client Instance
@@ -81,9 +81,20 @@ namespace Network
                         timer.Enabled = false;
 
                         Debug.Log("Connection received from " + socket.RemoteEndPoint);
+                        
+                        //Supostamente definir o tipo de conexão é desnecessário. Mudar isso.
                         Send(SenderParser.ParseConnection(ConnectionType.Positive, "William", "Host"));
 
-                        socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
+                        //socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
+                        socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ar =>
+                        {
+                            //TODO primeira conexão
+                            // obrigatoriamente recebe o id do adversario
+                            var senderId = BitConverter.ToInt32(state.buffer, 1);
+                            opId = senderId;
+
+                            socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
+                        }, state);
                     }, handler);
                 }
                 else
@@ -100,9 +111,20 @@ namespace Network
                         timer.Enabled = false;
 
                         Debug.Log("Connected to " + socket.RemoteEndPoint);
+                        
+                        //Supostamente definir o tipo de conexão é desnecessário. Mudar isso.
                         Send(SenderParser.ParseConnection(ConnectionType.Request, "William", "Client"));
 
-                        socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
+                        //socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
+                        socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ar =>
+                        {
+                            //TODO primeira conexão
+                            // obrigatoriamente recebe o id do adversario
+                            var senderId = BitConverter.ToInt32(state.buffer, 1);
+                            opId = senderId;
+
+                            socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, ReceiveCallback, state);
+                        }, state);
                     }, socket);
                 }
             }
