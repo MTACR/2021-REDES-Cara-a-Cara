@@ -14,38 +14,40 @@ namespace Network
     {
         public static void ParseMessage(StateObject state)
         {
+            GameManager gameManager = Object.FindObjectOfType<GameManager>();
             var messageType = state.buffer[0];
             switch ((MessageType) messageType)
             {
                 case MessageType.ConnectionOp: //CONNECTION_OP
-                    ConnectionOpParse(state);
+                    ConnectionOpParse(state, gameManager);
                     break;
                 case MessageType.CardOp: //CARD_OP
-                    CardOpParse(state);
+                    CardOpParse(state, gameManager);
                     break;
                 case MessageType.Status: //MATCH_STATUS
-                    StatusOpParse(state);
+                    StatusOpParse(state, gameManager);
                     break;
                 case MessageType.TimeUp: //TIME_UP
-                    TimeUpParse(state);
+                    TimeUpParse(state, gameManager);
                     break;
                 case MessageType.Question: //QUESTION
-                    QuestionParse(state);
+                    QuestionParse(state, gameManager);
                     break;
                 case MessageType.Answer: //QUESTION_ANSR
-                    QuestionAnswerParse(state);
+                    QuestionAnswerParse(state, gameManager);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private static void ConnectionOpParse(StateObject state)
+        private static void ConnectionOpParse(StateObject state, GameManager gameManager)
         {
-            var opType = state.buffer[1];
-            var sender = state.buffer.Skip(2).Take(20).ToArray();
+            var senderId = BitConverter.ToInt32(state.buffer, 1);
+            var opType = state.buffer[5];
+            var sender = state.buffer.Skip(6).Take(20).ToArray();
             var sender_name = Encoding.Default.GetString(sender);
-            var sentMessage = state.buffer.Skip(22).Take(100).ToArray();
+            var sentMessage = state.buffer.Skip(26).Take(100).ToArray();
             var sentText = Encoding.Default.GetString(sentMessage);
             switch ((ConnectionType) opType)
             {
@@ -70,10 +72,11 @@ namespace Network
             }
         }
 
-        private static void CardOpParse(StateObject state)
+        private static void CardOpParse(StateObject state, GameManager gameManager)
         {
-            var characterId = state.buffer[1];
-            var opCode = state.buffer[2];
+            var senderId = BitConverter.ToInt32(state.buffer, 1);
+            var characterId = state.buffer[5];
+            var opCode = state.buffer[6];
             switch ((CardOpType) opCode)
             {
                 case CardOpType.Choose: //CHOOSE
@@ -114,9 +117,10 @@ namespace Network
             }
         }
 
-        private static void StatusOpParse(StateObject state)
+        private static void StatusOpParse(StateObject state, GameManager gameManager)
         {
-            var status = state.buffer[1];
+            var senderId = BitConverter.ToInt32(state.buffer, 1);
+            var status = state.buffer[5];
             switch ((Status) status)
             {
                 case Status.Start: //START
@@ -141,35 +145,36 @@ namespace Network
             }
         }
 
-        private static void TimeUpParse(StateObject state)
+        private static void TimeUpParse(StateObject state, GameManager gameManager)
         {
-            var time = state.buffer[1];
+            var senderId = BitConverter.ToInt32(state.buffer, 1);
+            var time = state.buffer[5];
 
             Debug.Log($"{time}s passed");
             //TODO
         }
 
-        private static void QuestionParse(StateObject state)
+        private static void QuestionParse(StateObject state, GameManager gameManager)
         {
-            var sender = state.buffer.Skip(1).Take(20).ToArray();
-            var sender_name = Encoding.Default.GetString(sender);
-            var questionMessage = state.buffer.Skip(21).Take(100).ToArray();
+            var senderId = BitConverter.ToInt32(state.buffer, 1);
+            var questionId = BitConverter.ToInt32(state.buffer, 5);
+            var questionMessage = state.buffer.Skip(9).Take(100).ToArray();
             var questionText = Encoding.Default.GetString(questionMessage);
 
-            Debug.Log($"{sender_name} asked {questionText}");
+            Debug.Log($"{"PH"} asked {questionText}");
             
             TasksDispatcher.Instance.Schedule(delegate
             {
-                Object.FindObjectOfType<ChatManager>().ShowMessage(false, sender_name, questionText);
+                Object.FindObjectOfType<ChatManager>().ShowMessage(false, "PH", questionText);
             });
         }
 
-        private static void QuestionAnswerParse(StateObject state)
+        private static void QuestionAnswerParse(StateObject state, GameManager gameManager)
         {
-            var sender = state.buffer.Skip(1).Take(20).ToArray();
-            var sender_name = Encoding.Default.GetString(sender);
-            var agreement = state.buffer[22];
-            var answerMessage = state.buffer.Skip(22).Take(100).ToArray();
+            var senderId = BitConverter.ToInt32(state.buffer, 1);
+            var questionId = BitConverter.ToInt32(state.buffer, 5);
+            var agreement = state.buffer[9];
+            var answerMessage = state.buffer.Skip(10).Take(100).ToArray();
             var answernText = Encoding.Default.GetString(answerMessage);
 
             string agreementText = (Answer) agreement switch
@@ -181,7 +186,7 @@ namespace Network
                 _ => "left uncler"
             };
 
-            Debug.Log($"{sender_name} {agreementText}: {answernText}");
+            Debug.Log($"{"PH"} {agreementText}: {answernText}");
             //TODO
         }
     }

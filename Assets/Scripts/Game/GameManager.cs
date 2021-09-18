@@ -28,7 +28,7 @@ namespace Game
             
             if (timePassed > interval && client.isReady && client.isHost) {
                 timePassed = 0;
-                byte[] message = SenderParser.ParseTimeUp((byte) interval);
+                byte[] message = SenderParser.ParseTimeUp(client.id, (byte) interval);
                 client.Send(message);
             }
         }
