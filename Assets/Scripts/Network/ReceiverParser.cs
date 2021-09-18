@@ -89,7 +89,7 @@ namespace Network
                     {
                         if (Object.FindObjectOfType<Deck>().IsChosen(characterId))
                         {
-                            var messase = SenderParser.ParseStatus(Client.Instance.id, Status.Win);
+                            var messase = SenderParser.ParseStatus(Status.Win);
                             Client.Instance.Send(messase);
                             Object.FindObjectOfType<GameManager>().EndMatch(Status.Lose);
                         }

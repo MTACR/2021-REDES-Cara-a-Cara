@@ -94,6 +94,8 @@ namespace Game
 
         public void SetTurn(int id)
         {
+            Debug.Log("Vez de " + id);
+            
             if (id != client.id)
             {
                 myTurn = true;

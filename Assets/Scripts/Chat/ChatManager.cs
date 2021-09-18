@@ -55,7 +55,7 @@ namespace Chat
             msg.Select();
             msg.text = "";
             ShowMessage("Me", message);
-            client.Send(SenderParser.ParseQuestion(client.id, lastMessage.id, message));
+            client.Send(SenderParser.ParseQuestion(lastMessage.id, message));
         }
 
         public void ReactToMessage(int id, Answer answer)

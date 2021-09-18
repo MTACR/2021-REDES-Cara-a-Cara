@@ -66,7 +66,7 @@ namespace Chat
             onExit.enabled = false;
             
             if (!isMine)
-                Client.Instance.Send(SenderParser.ParseAnswer(Client.Instance.id, id, answer, "resposta?")); //TODO: PEGAR ID DA PERGUNTA
+                Client.Instance.Send(SenderParser.ParseAnswer(id, answer, "resposta?")); //TODO: PEGAR ID DA PERGUNTA
         }
 
         public void React(Answer answer)

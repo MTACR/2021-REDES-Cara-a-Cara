@@ -51,12 +51,14 @@ namespace UI
 
         public void Cancel()
         {
+            subtext.text = "";
             loading.SetActive(false);
             Client.Instance.Dispose();
         }
 
         private void ShowError(string message)
         {
+            subtext.text = "";
             errortext.text = message;
             loading.SetActive(false);
             error.SetActive(true);
