@@ -165,7 +165,7 @@ namespace Network
             
             TasksDispatcher.Instance.Schedule(delegate
             {
-                Object.FindObjectOfType<GameManager>().SetTurn(senderId);
+                Object.FindObjectOfType<GameManager>().RequireAnswer();
                 Object.FindObjectOfType<ChatManager>().ShowMessage(questionId, "???????????", questionText);
             });
         }
@@ -190,6 +190,7 @@ namespace Network
             
             TasksDispatcher.Instance.Schedule(delegate
             {
+                Object.FindObjectOfType<GameManager>().SetTurn(senderId);
                 Object.FindObjectOfType<ChatManager>().ReactToMessage(questionId, answer);
             });
 

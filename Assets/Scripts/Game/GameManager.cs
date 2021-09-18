@@ -110,6 +110,11 @@ namespace Game
             }
         }
 
+        public void RequireAnswer()
+        {
+            turnText.text = "Answer the opponent's question";
+        }
+
         public void EndMatch(Status status) {
             //TODO
             switch ((Status) status) {
