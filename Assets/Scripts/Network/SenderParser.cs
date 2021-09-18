@@ -4,20 +4,18 @@ using Network;
 using UnityEngine;
 
 public class SenderParser {
-    //<op_type: Integer, sender_name: String, message: String
-    public static byte[] ParseConnection(ConnectionType opType, string senderName, string message) {
-        int length = 1 + 4 + 1 + 20 + 100;
+    public static byte[] ParseConnection(ConnectionType opType/*, string senderName, string message*/) {
+        int length = 1 + 4 + 1 /*+ 20 + 100*/;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.ConnectionOp;
         messageByte = OffsetIntToByte(messageByte, Client.Instance.myId, 1);
         messageByte[5] = (byte) opType;
-        messageByte = OffsetStringtoByte(messageByte, senderName, 6);
-        messageByte = OffsetStringtoByte(messageByte, message, 26);
+        /*messageByte = OffsetStringtoByte(messageByte, senderName, 6);
+        messageByte = OffsetStringtoByte(messageByte, message, 26);*/
 
         return messageByte;
     }
 
-    //<character_id: Integer, OpCode: Integer>
     public static byte[] ParseCardOp(int characterId, CardOpType cardOpType) {
         int length = 1 + 4 + 1 + 1;
         byte[] messageByte = new byte[length];
@@ -29,22 +27,23 @@ public class SenderParser {
         return messageByte;
     }
 
-    public static byte[] ParseStatus(Status status) {
+    public static byte[] ParseStatus(Status status) { //TODO: usar para informar vitoria ou remover
         int length = 1 + 4 + 1;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.Status;
+        messageByte = OffsetIntToByte(messageByte, Client.Instance.myId, 1);
         messageByte[5] = (byte) status;
         return messageByte;
     }
 
-    public static byte[] ParseTimeUp(byte secondsPassed) {
+    /*public static byte[] ParseTimeUp(byte secondsPassed) { //TODO: provavelmente remover
         int length = 1 + 4 + 1;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.TimeUp;
         messageByte = OffsetIntToByte(messageByte, Client.Instance.myId, 1);
         messageByte[5] =        secondsPassed;
         return messageByte;
-    }
+    }*/
 
     public static byte[] ParseQuestion(int questionId, string message) {
         int length = 1 + 4 + 4 + 100;
@@ -56,14 +55,14 @@ public class SenderParser {
         return messageByte;
     }
 
-    public static byte[] ParseAnswer(int questionId, Answer answer, string response) {
-        int length = 1 + 4 + 4 + 1 + 100;
+    public static byte[] ParseAnswer(int questionId, Answer answer/*, string response*/) {
+        int length = 1 + 4 + 4 + 1 /*+ 100*/;
         byte[] messageByte = new byte[length];
         messageByte[0] = (byte) MessageType.Answer;
         messageByte = OffsetIntToByte(messageByte, Client.Instance.myId, 1);
         messageByte = OffsetIntToByte(messageByte, questionId, 5);
         messageByte[9] = (byte) answer;
-        messageByte = OffsetStringtoByte(messageByte, response, 10);
+        /*messageByte = OffsetStringtoByte(messageByte, response, 10);*/
         return messageByte;
     }
 

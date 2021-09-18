@@ -24,10 +24,10 @@ namespace Network
                 case MessageType.CardOp: //CARD_OP
                     CardOpParse(state);
                     break;
-                case MessageType.Status: //MATCH_STATUS
+                case MessageType.Status: //MATCH_STATUS //TODO: usar ou remover
                     StatusOpParse(state);
                     break;
-                case MessageType.TimeUp: //TIME_UP
+                case MessageType.TimeUp: //TIME_UP //TODO: remover
                     TimeUpParse(state);
                     break;
                 case MessageType.Question: //QUESTION
@@ -45,26 +45,27 @@ namespace Network
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
             var opType = state.buffer[5];
-            var sender = state.buffer.Skip(6).Take(20).ToArray();
+            /*var sender = state.buffer.Skip(6).Take(20).ToArray();
             var sender_name = Encoding.Default.GetString(sender);
             var sentMessage = state.buffer.Skip(26).Take(100).ToArray();
-            var sentText = Encoding.Default.GetString(sentMessage);
+            var sentText = Encoding.Default.GetString(sentMessage);*/
             switch ((ConnectionType) opType)
             {
                 case ConnectionType.Request: //REQUEST
-                    Debug.Log($"{sender_name} sent a request: {sentText}");
+                    Debug.Log($"Opponent sent a request");
                     //TODO
                     break;
                 case ConnectionType.Positive: //POSITIVE
-                    Debug.Log($"{sender_name} accepted your request: {sentText}");
+                    Debug.Log($"Opponent accepted your request");
                     //TODO
                     break;
                 case ConnectionType.Negative: //NEGATIVE
-                    Debug.Log($"{sender_name} declined your request: {sentText}");
+                    Debug.Log($"Opponent declined your request");
                     //TODO
                     break;
                 case ConnectionType.Disconnect: //DISCONNECT
-                    Debug.Log($"{sender_name} disconnected: {sentText}");
+                    Debug.Log($"Opponent disconnected");
+                    TasksDispatcher.Instance.Schedule(delegate { Object.FindObjectOfType<GameManager>().ReturnHome(); });
                     //TODO
                     break;
                 default:
@@ -97,7 +98,6 @@ namespace Network
                             Object.FindObjectOfType<GameManager>().EndMatch(Status.Lose);
                         }
                     });
-                    //TODO?
                     break;
                 case CardOpType.Up: //UP
                     Debug.Log($"{characterId} was raised");
@@ -105,7 +105,6 @@ namespace Network
                     {
                         Object.FindObjectOfType<DeckOpponent>().Flip(characterId, true);
                     });
-                    //TODO?
                     break;
                 case CardOpType.Down: //DOWN
                     Debug.Log($"{characterId} was lowered");
@@ -113,7 +112,6 @@ namespace Network
                     {
                         Object.FindObjectOfType<DeckOpponent>().Flip(characterId, false);
                     });
-                    //TODO?
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -129,7 +127,6 @@ namespace Network
                 case Status.Start: //START
                     Debug.Log("Match was started");
                     TasksDispatcher.Instance.Schedule(delegate { Object.FindObjectOfType<GameManager>().StartMatch(); });
-                    //TODO?
                     break;
                 case Status.Win:
                     break;
@@ -148,7 +145,7 @@ namespace Network
             }
         }
 
-        private static void TimeUpParse(StateObject state)
+        private static void TimeUpParse(StateObject state) //TODO: remover
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
             var time = state.buffer[5];
@@ -164,12 +161,12 @@ namespace Network
             var questionMessage = state.buffer.Skip(9).Take(100).ToArray();
             var questionText = Encoding.Default.GetString(questionMessage);
 
-            Debug.Log($"{"PH"} asked {questionText}");
+            Debug.Log($"Opponent asked {questionText}");
             
             TasksDispatcher.Instance.Schedule(delegate
             {
                 Object.FindObjectOfType<GameManager>().RequireAnswer();
-                Object.FindObjectOfType<ChatManager>().ShowMessage(questionId, "???????????", questionText);
+                Object.FindObjectOfType<ChatManager>().ShowMessage(questionId, "Opponent", questionText);
             });
         }
 
@@ -178,8 +175,8 @@ namespace Network
             var senderId = BitConverter.ToInt32(state.buffer, 1);
             var questionId = BitConverter.ToInt32(state.buffer, 5);
             var agreement = state.buffer[9];
-            var answerMessage = state.buffer.Skip(10).Take(100).ToArray();
-            var answernText = Encoding.Default.GetString(answerMessage);
+            /*var answerMessage = state.buffer.Skip(10).Take(100).ToArray();
+            var answernText = Encoding.Default.GetString(answerMessage);*/
             var answer = (Answer) agreement;
                 
             string agreementText = (Answer) agreement switch
@@ -201,8 +198,7 @@ namespace Network
                     Object.FindObjectOfType<GameManager>().Unclear();
             });
 
-            Debug.Log($"{"PH"} {agreementText}: {answernText}");
-            //TODO
+            Debug.Log($"Opponent {agreementText}");
         }
     }
 }

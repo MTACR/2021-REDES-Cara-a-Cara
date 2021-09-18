@@ -1,7 +1,9 @@
 using Cards;
 using Network;
+using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Game
 {
@@ -122,6 +124,10 @@ namespace Game
                 default:
                     break;
             }
+        }
+
+        public void ReturnHome() {
+            //TODO: loading para o Home
         }
     }
 }

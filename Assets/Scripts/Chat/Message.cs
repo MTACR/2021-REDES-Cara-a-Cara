@@ -69,7 +69,7 @@ namespace Chat
             if (isMine) return;
 
             Client client = Client.Instance;
-            client.Send(SenderParser.ParseAnswer(id, answer, "resposta?"));
+            client.Send(SenderParser.ParseAnswer(id, answer/*, "resposta?"*/));
             FindObjectOfType<GameManager>().SetTurn(answer == Answer.Unclear ? client.opId : client.myId);
         }
 
