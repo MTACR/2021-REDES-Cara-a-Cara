@@ -135,6 +135,7 @@ namespace Game
                 
                 case Status.Rematch:
                     opRematch = true;
+                    resultText.text = "Your oppnent wants to rematch";
                     DoRematch();
                     break;
                 
@@ -153,6 +154,7 @@ namespace Game
 
         public void Rematch()
         {
+            myRematch = true;
             resultText.text = "You want to rematch";
             client.Send(SenderParser.Status(Status.Rematch));
             DoRematch();
