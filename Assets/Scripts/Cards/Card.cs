@@ -58,9 +58,9 @@ namespace Cards
 
         public void Setup(CardModel card, int id)
         {
+            this.id = id;
             model = card;
             name = card.name;
-            this.id = id;
             picture.GetComponent<Renderer>().material.mainTexture = card.texture;
             text.text = card.name;
             transform.GetChild(0).name = card.name;

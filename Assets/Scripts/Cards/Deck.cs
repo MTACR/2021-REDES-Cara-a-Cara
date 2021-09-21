@@ -12,7 +12,7 @@ namespace Cards
 
         private void Start()
         {
-            Shuffle(models);
+            //Shuffle(models);
             cards = new Card[models.Length];
             var i = 0;
             var j = 0;
@@ -28,7 +28,8 @@ namespace Cards
                     j++;
             }
 
-            chosenCard = Random.Range(1, cards.Length);
+            chosenCard = Random.Range(0, cards.Length);
+            Debug.Log("Your card is " + chosenCard);
         }
 
         private static void Shuffle(IList<CardModel> array)
