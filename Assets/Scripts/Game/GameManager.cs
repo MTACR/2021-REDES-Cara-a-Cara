@@ -21,6 +21,8 @@ namespace Game
         [SerializeField] public TextMeshProUGUI resultText;
         public bool canClick;
         private bool isGuessing;
+        private bool myRematch;
+        private bool opRematch;
         private Client client;
         private Deck deck;
         public bool myTurn { get; private set; }
@@ -132,8 +134,8 @@ namespace Game
                     break;
                 
                 case Status.Rematch:
-                    Debug.Log("Starting new match");
-                    StartCoroutine(Utils.ILoadScene("Game"));
+                    opRematch = true;
+                    DoRematch();
                     break;
                 
                 default:
@@ -141,10 +143,19 @@ namespace Game
             }
         }
 
+        private void DoRematch()
+        {
+            if (!myRematch || !opRematch) return;
+            
+            Debug.Log("Starting new match");
+            StartCoroutine(Utils.ILoadScene("Game"));
+        }
+
         public void Rematch()
         {
             resultText.text = "You want to rematch";
             client.Send(SenderParser.Status(Status.Rematch));
+            DoRematch();
         }
 
         public void OpponentGaveUp()

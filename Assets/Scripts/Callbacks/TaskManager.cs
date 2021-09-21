@@ -8,7 +8,6 @@ namespace Callbacks
 
         private void Awake()
         {
-            Debug.Log("TaskManager instatiated");
             DontDestroyOnLoad(this);
         }
 

@@ -14,10 +14,7 @@ namespace Network
     {
         private static readonly object locker = new object();
         private static Client instance;
-
         private Socket handler;
-
-        //"26.158.168.172"
         private string ip;
         private Action<string> onError;
         private Action onStart;
