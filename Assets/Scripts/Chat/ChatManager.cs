@@ -12,14 +12,12 @@ namespace Chat
         [SerializeField] public GameObject messagePrefab;
         [SerializeField] public GameObject guessPrefab;
         [SerializeField] public TMP_InputField msg;
-        private Client client;
         private Message lastMessage;
         private GameManager manager;
         private Dictionary<int, Message> messages;
 
         private void Awake()
         {
-            client = Client.Instance;
             messages = new Dictionary<int, Message>();
             manager = FindObjectOfType<GameManager>();
         }
@@ -65,8 +63,8 @@ namespace Chat
             msg.Select();
             msg.text = "";
             ShowMessage("Me", message);
-            client.Send(SenderParser.Question(lastMessage.id, message));
-            manager.SetTurn(client.opId);
+            Client.Instance.Send(SenderParser.Question(lastMessage.id, message));
+            manager.SetTurn(Client.Instance.opId);
         }
 
         public void ReactToMessage(int id, Answer answer)

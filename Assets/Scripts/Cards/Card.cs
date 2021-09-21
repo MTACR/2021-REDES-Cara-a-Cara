@@ -13,7 +13,6 @@ namespace Cards
         [SerializeField] public CardModel model;
         private int id;
         private Animator animator;
-        private Client client;
         private float cooldown;
         private bool isVisible;
         public bool isGuessing;
@@ -26,7 +25,6 @@ namespace Cards
             chat = FindObjectOfType<ChatManager>();
             animator = GetComponent<Animator>();
             cooldown = Time.time;
-            client = Client.Instance;
         }
 
         private void Update()
@@ -46,9 +44,9 @@ namespace Cards
             if (isGuessing && isVisible)
             {
                 Debug.Log("Guess card " + id);
-                client.Send(SenderParser.Card(id, Network.Card.Guess));
+                Client.Instance.Send(SenderParser.Card(id, Network.Card.Guess));
                 FindObjectOfType<Deck>().SelectionMode(false);
-                manager.SetTurn(client.opId);
+                manager.SetTurn(Client.Instance.opId);
                 chat.ShowGuess("Me", name);
             }
             else
@@ -57,7 +55,7 @@ namespace Cards
                 
                 cooldown = Time.time + 0.7f;
                 Flip();
-                client.Send(SenderParser.Card(id, isVisible ? Network.Card.Up : Network.Card.Down));
+                Client.Instance.Send(SenderParser.Card(id, isVisible ? Network.Card.Up : Network.Card.Down));
             }
         }
 

@@ -22,7 +22,6 @@ namespace Game
         private bool isGuessing;
         private bool myRematch;
         private bool opRematch;
-        private Client client;
         private Deck deck;
         private ChatManager chat;
         public bool myTurn { get; private set; }
@@ -34,8 +33,7 @@ namespace Game
             
             deck = FindObjectOfType<Deck>();
             chat = FindObjectOfType<ChatManager>();
-            client = Client.Instance;
-            client.SetListeners(() => { }, s =>
+            Client.Instance.SetListeners(() => { }, s =>
             {
                 canClick = false;
                 errorText.text = s;
@@ -43,7 +41,7 @@ namespace Game
                 resultOvrl.SetActive(false);
             });
 
-            myTurn = !client.isHost;
+            myTurn = !Client.Instance.isHost;
             SetTurn(myTurn ? Client.Instance.myId : Client.Instance.opId);
         }
 
@@ -90,15 +88,15 @@ namespace Game
             errorOvrl.SetActive(false);
             resultOvrl.SetActive(false);
             SceneManager.LoadScene("Home");
-            client.Send(SenderParser.Connection(Connection.Disconnect));
-            client.Dispose();
+            Client.Instance.Send(SenderParser.Connection(Connection.Disconnect));
+            Client.Instance.Dispose();
         }
 
         public void SetTurn(int id)
         {
             isGuessing = false;
             
-            if (id == client.myId)
+            if (id == Client.Instance.myId)
             {
                 myTurn = true;
                 turnText.text = "Your turn";
@@ -112,11 +110,11 @@ namespace Game
 
         public void OpponentGuess(int id)
         {
-            SetTurn(client.myId);
+            SetTurn(Client.Instance.myId);
             
             if (deck.chosenCard == id)
             {
-                client.Send(SenderParser.Status(Status.Win));
+                Client.Instance.Send(SenderParser.Status(Status.Win));
                 SetMatchStatus(Status.Lose);
             }
             
@@ -175,7 +173,7 @@ namespace Game
         {
             myRematch = true;
             resultText.text = "You want to rematch";
-            client.Send(SenderParser.Status(Status.Rematch));
+            Client.Instance.Send(SenderParser.Status(Status.Rematch));
             DoRematch();
         }
 
@@ -189,7 +187,7 @@ namespace Game
         public void ErrorOk()
         {
             SceneManager.LoadScene("Home");
-            client.Dispose();
+            Client.Instance.Dispose();
         }
 
     }

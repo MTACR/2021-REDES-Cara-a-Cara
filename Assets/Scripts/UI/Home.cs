@@ -1,11 +1,9 @@
-using System.Collections;
 using System.Linq;
 using Callbacks;
 using Game;
 using Network;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace UI
 {
@@ -16,33 +14,29 @@ namespace UI
         [SerializeField] public TextMeshProUGUI subtext;
         [SerializeField] public TMP_InputField iptext;
         [SerializeField] public TextMeshProUGUI errortext;
-        private Client client;
-        private bool isHost;
 
         private void Awake()
         {
             if (FindObjectOfType<TaskManager>() == null)
                 new GameObject().AddComponent<TaskManager>().name = "Tasks";
             
-            client = Client.Instance;
             iptext.Select();
             iptext.text = "26.158.168.172";
         }
 
         public void StartConnection(bool isHost)
         {
-            this.isHost = isHost;
             var ip = iptext.text.Trim();
 
             if (IsIpValid(ip))
             {
                 loading.SetActive(true);
-                client.SetListeners(() =>
+                Client.Instance.SetListeners(() =>
                 {
                     var msg = isHost ? "Waiting for opponent" : "Connecting to server";
                     subtext.text = msg;
                 }, ShowError);
-                client.StartClient(isHost, ip);
+                Client.Instance.StartClient(isHost, ip);
                 StartCoroutine(Utils.ILoadScene("Game"));
             }
             else
@@ -56,7 +50,7 @@ namespace UI
         {
             subtext.text = "";
             loading.SetActive(false);
-            client.Dispose();
+            Client.Instance.Dispose();
         }
 
         private void ShowError(string message)
