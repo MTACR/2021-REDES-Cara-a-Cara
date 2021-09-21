@@ -16,31 +16,25 @@ namespace Network
 
         public static void Message(State state)
         {
-            var type = state.buffer[0];
-
-            switch ((Message) type)
+            switch ((Message) state.buffer[0])
             {
-                case Network.Message.Connection: //CONNECTION_OP
+                case Network.Message.Connection:
                     Connection(state);
                     break;
 
-                case Network.Message.Card: //CARD_OP
+                case Network.Message.Card:
                     Card(state);
                     break;
 
-                case Network.Message.Status: //MATCH_STATUS //TODO: usar ou remover
+                case Network.Message.Status:
                     Status(state);
                     break;
 
-                /*case Network.Message.TimeUp: //TIME_UP //TODO: remover
-                    TimeUp(state);
-                    break;*/
-
-                case Network.Message.Question: //QUESTION
+                case Network.Message.Question:
                     Question(state);
                     break;
 
-                case Network.Message.Answer: //QUESTION_ANSR
+                case Network.Message.Answer:
                     Answer(state);
                     break;
 
@@ -52,13 +46,12 @@ namespace Network
         private static void Connection(State state)
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
-            var type = state.buffer[5];
             /*var sender = state.buffer.Skip(6).Take(20).ToArray();
             var sender_name = Encoding.Default.GetString(sender);
             var sentMessage = state.buffer.Skip(26).Take(100).ToArray();
             var sentText = Encoding.Default.GetString(sentMessage);*/
 
-            switch ((Connection) type)
+            switch ((Connection) state.buffer[5])
             {
                 case Network.Connection.Connect:
                     Debug.Log("Opponent connected with id " + senderId);

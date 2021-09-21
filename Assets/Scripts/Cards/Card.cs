@@ -45,7 +45,7 @@ namespace Cards
                 Debug.Log("Guess card " + id);
                 client.Send(SenderParser.Card(id, Network.Card.Guess));
                 FindObjectOfType<Deck>().SelectionMode(false);
-                manager.myTurn = false;
+                manager.SetTurn(client.opId);
             }
             else
             {

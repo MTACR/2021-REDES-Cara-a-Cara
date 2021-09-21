@@ -25,7 +25,7 @@ namespace Game
         private bool opRematch;
         private Client client;
         private Deck deck;
-        public bool myTurn;
+        public bool myTurn { get; private set; }
 
         private void Awake()
         {
@@ -106,7 +106,7 @@ namespace Game
 
         public void OpponentGuess(int id)
         {
-            myTurn = true;
+            SetTurn(client.myId);
             
             if (deck.chosenCard == id)
             {
