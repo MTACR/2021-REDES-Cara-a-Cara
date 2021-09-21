@@ -83,5 +83,11 @@ namespace Cards
             animator.Play(isVisible ? "card_down" : "card_up");
         }
 
+        public void SetGuessing(bool isGuessing)
+        {
+            this.isGuessing = isGuessing;
+            gameObject.SetActive(isGuessing);
+        }
+
     }
 }

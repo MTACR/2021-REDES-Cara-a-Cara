@@ -16,6 +16,7 @@ namespace Cards
             cards = new Card[models.Length];
             var i = 0;
             var j = 0;
+            
             foreach (var c in models)
             {
                 var card = Instantiate(prefab, transform).GetComponent<Card>();
@@ -28,7 +29,6 @@ namespace Cards
             }
 
             chosenCard = Random.Range(1, cards.Length);
-            //TODO: highlight the chosen card
         }
 
         private static void Shuffle(IList<CardModel> array)
@@ -64,7 +64,7 @@ namespace Cards
 
         public void SelectionMode(bool isGuessing)
         {
-            foreach (var card in cards) card.isGuessing = isGuessing;
+            foreach (var card in cards) card.SetGuessing(isGuessing);
         }
         
     }

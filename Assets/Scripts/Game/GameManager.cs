@@ -68,6 +68,8 @@ namespace Game
             isGuessing = !isGuessing;
             deck.SelectionMode(isGuessing);
             
+            Debug.Log("Guess mode = " + isGuessing);
+            
             turnText.text = isGuessing ? "Guess the opponent's card" : "Your turn";
         }
 
@@ -157,7 +159,6 @@ namespace Game
             SceneManager.LoadScene("Home");
             client.Dispose();
         }
-        
 
     }
 }
