@@ -357,7 +357,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0107e1243b3c4a344ba3e71603efb6a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 5067669410269082163}
+  card: {fileID: 5067669410269082163}
+  sender: {fileID: 3642638358678868087}
 --- !u!1 &8163434072022204082
 GameObject:
   m_ObjectHideFlags: 0
