@@ -77,6 +77,7 @@ namespace Network
                     handler.BeginAccept(result =>
                     {
                         socket = handler.EndAccept(result);
+                        handler.Close();
                         var state = new State();
                         isReady = true;
                         timer.Enabled = false;
@@ -211,7 +212,7 @@ namespace Network
                 socket?.Close();
                 handler?.Close();
                 thread.Interrupt();
-                thread.Abort();
+                //thread.Abort();
                 timer.Enabled = false;
                 timer.Dispose();
                 instance = null;

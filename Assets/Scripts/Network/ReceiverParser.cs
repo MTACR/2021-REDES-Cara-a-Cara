@@ -12,8 +12,7 @@ namespace Network
 {
     public static class ReceiverParser
     {
-        private static readonly Client client = Client.Instance;
-
+        
         public static void Message(State state)
         {
             switch ((Message) state.buffer[0])
@@ -55,15 +54,14 @@ namespace Network
             {
                 case Network.Connection.Connect:
                     Debug.Log("Opponent connected with id " + senderId);
-                    client.SetOpId(senderId);
+                    Client.Instance.SetOpId(senderId);
                     break;
 
                 case Network.Connection.Disconnect:
                     Debug.Log("Opponent disconnected");
                     TasksDispatcher.Instance.Schedule(delegate
                     {
-                        if (client.opId == senderId) 
-                            Object.FindObjectOfType<GameManager>().OpponentGaveUp();
+                        Object.FindObjectOfType<GameManager>().OpponentGaveUp();
                     });
                     break;
 
@@ -89,7 +87,6 @@ namespace Network
                     Debug.Log($"{cardId} was guessed");
                     TasksDispatcher.Instance.Schedule(delegate
                     {
-                        if (client.opId != senderId) return;
                         Object.FindObjectOfType<GameManager>().OpponentGuess(cardId);
                     });
                     break;
@@ -97,14 +94,14 @@ namespace Network
                     Debug.Log($"{cardId} was raised");
                     TasksDispatcher.Instance.Schedule(delegate
                     {
-                        if (client.opId == senderId) Object.FindObjectOfType<DeckOpponent>().Flip(cardId, true);
+                        Object.FindObjectOfType<DeckOpponent>().Flip(cardId, true);
                     });
                     break;
                 case Network.Card.Down: //DOWN
                     Debug.Log($"{cardId} was lowered");
                     TasksDispatcher.Instance.Schedule(delegate
                     {
-                        if (client.opId == senderId) Object.FindObjectOfType<DeckOpponent>().Flip(cardId, false);
+                        Object.FindObjectOfType<DeckOpponent>().Flip(cardId, false);
                     });
                     break;
                 default:
@@ -119,8 +116,7 @@ namespace Network
 
             TasksDispatcher.Instance.Schedule(delegate
             {
-                if (client.opId == senderId)
-                    Object.FindObjectOfType<GameManager>().SetMatchStatus((Status) status);
+                Object.FindObjectOfType<GameManager>().SetMatchStatus((Status) status);
             });
             
             switch ((Status) status)
@@ -166,8 +162,6 @@ namespace Network
 
             TasksDispatcher.Instance.Schedule(delegate
             {
-                if (client.opId != senderId) return;
-
                 Object.FindObjectOfType<GameManager>().RequireAnswer();
                 Object.FindObjectOfType<ChatManager>().ShowMessage(questionId, "Opponent", questionText);
             });
@@ -181,8 +175,6 @@ namespace Network
 
             TasksDispatcher.Instance.Schedule(delegate
             {
-                if (client.opId != senderId) return;
-
                 var agreementText = answer switch
                 {
                     Network.Answer.Confirm => //CONFIRMED
@@ -193,6 +185,8 @@ namespace Network
                 };
 
                 Debug.Log($"Opponent {agreementText}");
+                
+                Client client = Client.Instance;
 
                 Object.FindObjectOfType<ChatManager>().ReactToMessage(questionId, answer);
                 Object.FindObjectOfType<GameManager>()
