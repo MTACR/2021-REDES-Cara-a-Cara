@@ -48,7 +48,7 @@ namespace Chat
 
         public void ShowGuess(string sender, string card)
         {
-            Instantiate(guessPrefab, container.transform).GetComponent<Guess>().SetMessage(sender, name);
+            Instantiate(guessPrefab, container.transform).GetComponent<Guess>().SetMessage(sender, card);
         }
 
         public void SendMessage()
@@ -73,5 +73,6 @@ namespace Chat
         {
             messages[id].React(answer);
         }
+        
     }
 }

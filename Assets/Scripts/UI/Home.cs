@@ -25,11 +25,6 @@ namespace UI
                 new GameObject().AddComponent<TaskManager>().name = "Tasks";
             
             client = Client.Instance;
-            client.SetListeners(() =>
-            {
-                var msg = isHost ? "Waiting for opponent" : "Connecting to server";
-                subtext.text = msg;
-            }, ShowError);
             iptext.Select();
             iptext.text = "26.158.168.172";
         }
@@ -42,7 +37,12 @@ namespace UI
             if (IsIpValid(ip))
             {
                 loading.SetActive(true);
-                Client.Instance.StartClient(isHost, ip);
+                client.SetListeners(() =>
+                {
+                    var msg = isHost ? "Waiting for opponent" : "Connecting to server";
+                    subtext.text = msg;
+                }, ShowError);
+                client.StartClient(isHost, ip);
                 StartCoroutine(Utils.ILoadScene("Game"));
             }
             else
@@ -56,7 +56,7 @@ namespace UI
         {
             subtext.text = "";
             loading.SetActive(false);
-            Client.Instance.Dispose();
+            client.Dispose();
         }
 
         private void ShowError(string message)
