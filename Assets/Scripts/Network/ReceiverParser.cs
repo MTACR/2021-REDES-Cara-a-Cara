@@ -44,16 +44,10 @@ namespace Network
 
         private static void Connection(State state)
         {
-            var senderId = BitConverter.ToInt32(state.buffer, 1);
-            /*var sender = state.buffer.Skip(6).Take(20).ToArray();
-            var sender_name = Encoding.Default.GetString(sender);
-            var sentMessage = state.buffer.Skip(26).Take(100).ToArray();
-            var sentText = Encoding.Default.GetString(sentMessage);*/
-
             switch ((Connection) state.buffer[5])
             {
                 case Network.Connection.Connect:
-                    Debug.Log("Opponent connected with id " + senderId);
+                    Debug.Log("Opponent connected");
                     break;
 
                 case Network.Connection.Disconnect:
@@ -74,29 +68,24 @@ namespace Network
 
         private static void Card(State state)
         {
-            var senderId = BitConverter.ToInt32(state.buffer, 1);
             var cardId = state.buffer[5];
             switch ((Card) state.buffer[6])
             {
-                /*case CardOpType.Choose: //CHOOSE
-                    Debug.Log($"{characterId} was chosen");
-                    //TODO
-                    break;*/
-                case Network.Card.Guess: //GUESS
+                case Network.Card.Guess:
                     Debug.Log($"{cardId} was guessed");
                     TasksDispatcher.Instance.Schedule(delegate
                     {
                         Object.FindObjectOfType<GameManager>().OpponentGuess(cardId);
                     });
                     break;
-                case Network.Card.Up: //UP
+                case Network.Card.Up:
                     Debug.Log($"{cardId} was raised");
                     TasksDispatcher.Instance.Schedule(delegate
                     {
                         Object.FindObjectOfType<DeckOpponent>().Flip(cardId, true);
                     });
                     break;
-                case Network.Card.Down: //DOWN
+                case Network.Card.Down:
                     Debug.Log($"{cardId} was lowered");
                     TasksDispatcher.Instance.Schedule(delegate
                     {
@@ -110,36 +99,12 @@ namespace Network
 
         private static void Status(State state)
         {
-            var senderId = BitConverter.ToInt32(state.buffer, 1);
             var status = state.buffer[5];
 
             TasksDispatcher.Instance.Schedule(delegate
             {
                 Object.FindObjectOfType<GameManager>().SetMatchStatus((Status) status);
             });
-            
-            switch ((Status) status)
-            {
-                /*case Network.Status.Start: //START
-                    Debug.Log("Match was started");
-                    TasksDispatcher.Instance.Schedule(delegate
-                    {
-                        if (client.opId == senderId) Object.FindObjectOfType<GameManager>().StartMatch();
-                    });
-                    break;*/
-
-                case Network.Status.Win:
-                    break;
-
-                case Network.Status.Lose:
-                    break;
-
-                case Network.Status.Rematch:
-                    break;
-                
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
         }
 
         /*private static void TimeUp(State state) //TODO: remover

@@ -4,15 +4,13 @@ namespace Network
 {
     public static class SenderParser
     {
-        public static byte[] Connection(Connection op /*, string senderName, string message*/)
+        public static byte[] Connection(Connection op)
         {
             const int length = 1 + 4 + 1;
             var bytes = new byte[length];
             bytes[0] = (byte) Message.Connection;
             bytes = OffsetIntToByte(bytes, Client.Instance.myId, 1);
             bytes[5] = (byte) op;
-            /*messageByte = OffsetStringtoByte(messageByte, senderName, 6);
-            messageByte = OffsetStringtoByte(messageByte, message, 26);*/
             return bytes;
         }
 
@@ -38,15 +36,6 @@ namespace Network
             return bytes;
         }
 
-        /*public static byte[] ParseTimeUp(byte secondsPassed) { //TODO: provavelmente remover
-        int length = 1 + 4 + 1;
-        byte[] messageByte = new byte[length];
-        messageByte[0] = (byte) MessageType.TimeUp;
-        messageByte = OffsetIntToByte(messageByte, Client.Instance.myId, 1);
-        messageByte[5] =        secondsPassed;
-        return messageByte;
-    }*/
-
         public static byte[] Question(int id, string message)
         {
             const int length = 1 + 4 + 4 + 100;
@@ -58,7 +47,7 @@ namespace Network
             return bytes;
         }
 
-        public static byte[] Answer(int id, Answer answer /*, string response*/)
+        public static byte[] Answer(int id, Answer answer)
         {
             const int length = 1 + 4 + 4 + 1;
             var bytes = new byte[length];
@@ -66,7 +55,6 @@ namespace Network
             bytes = OffsetIntToByte(bytes, Client.Instance.myId, 1);
             bytes = OffsetIntToByte(bytes, id, 5);
             bytes[9] = (byte) answer;
-            /*messageByte = OffsetStringtoByte(messageByte, response, 10);*/
             return bytes;
         }
 
