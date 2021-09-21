@@ -42,7 +42,7 @@ namespace Game
             });
 
             myTurn = !Client.Instance.isHost;
-            SetTurn(myTurn ? Client.Instance.myId : Client.Instance.opId);
+            SetTurn(myTurn);
         }
 
         public void ShowCards()
@@ -92,25 +92,16 @@ namespace Game
             Client.Instance.Dispose();
         }
 
-        public void SetTurn(int id)
+        public void SetTurn(bool myTurn)
         {
+            this.myTurn = myTurn;
             isGuessing = false;
-            
-            if (id == Client.Instance.myId)
-            {
-                myTurn = true;
-                turnText.text = "Your turn";
-            }
-            else
-            {
-                myTurn = false;
-                turnText.text = "Opponent's turn";
-            }
+            turnText.text = myTurn ? "Your turn" : "Opponent's turn";
         }
 
         public void OpponentGuess(int id)
         {
-            SetTurn(Client.Instance.myId);
+            SetTurn(true);
             
             if (deck.chosenCard == id)
             {
@@ -187,7 +178,7 @@ namespace Game
         public void ErrorOk()
         {
             SceneManager.LoadScene("Home");
-            Client.Instance.Dispose();
+            Client.Instance?.Dispose();
         }
 
     }

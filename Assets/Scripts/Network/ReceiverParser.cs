@@ -54,7 +54,6 @@ namespace Network
             {
                 case Network.Connection.Connect:
                     Debug.Log("Opponent connected with id " + senderId);
-                    Client.Instance.SetOpId(senderId);
                     break;
 
                 case Network.Connection.Disconnect:
@@ -186,11 +185,8 @@ namespace Network
 
                 Debug.Log($"Opponent {agreementText}");
                 
-                Client client = Client.Instance;
-
                 Object.FindObjectOfType<ChatManager>().ReactToMessage(questionId, answer);
-                Object.FindObjectOfType<GameManager>()
-                    .SetTurn(answer == Network.Answer.Unclear ? client.myId : client.opId);
+                Object.FindObjectOfType<GameManager>().SetTurn(answer == Network.Answer.Unclear);
 
                 if (answer == Network.Answer.Unclear)
                     Object.FindObjectOfType<GameManager>().Unclear();

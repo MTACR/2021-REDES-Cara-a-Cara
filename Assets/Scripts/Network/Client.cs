@@ -22,14 +22,8 @@ namespace Network
         private Thread thread;
         private Timer timer;
 
-        private Client()
-        {
-            myId = GetHashCode();
-            Debug.Log("My id: " + myId);
-        }
+        private Client() { }
 
-        public int myId { get; }
-        public int opId { get; private set; }
         public bool isHost { get; private set; }
         public bool isReady { get; private set; }
 
@@ -120,17 +114,6 @@ namespace Network
             }
         }
 
-        public void SetOpId(int id)
-        {
-            if (opId != 0)
-            {
-                CallError("Opponent ID already defined");
-                return;
-            }
-
-            opId = id;
-        }
-
         public void Send(byte[] bytes)
         {
             if (socket == null)
@@ -212,7 +195,6 @@ namespace Network
                 socket?.Close();
                 handler?.Close();
                 thread.Interrupt();
-                //thread.Abort();
                 timer.Enabled = false;
                 timer.Dispose();
                 instance = null;
