@@ -27,7 +27,6 @@ namespace Network
 
         public static byte[] Status(Status status)
         {
-            //TODO: usar para informar vitoria ou remover
             const int length = 1 + 4 + 1;
             var bytes = new byte[length];
             bytes[0] = (byte) Message.Status;
