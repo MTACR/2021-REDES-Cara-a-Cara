@@ -1,8 +1,10 @@
+using System;
 using Callbacks;
 using Cards;
 using Network;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Card = Cards.Card;
 
 namespace Game
@@ -13,26 +15,27 @@ namespace Game
         [SerializeField] public GameObject message;
         [SerializeField] public GameObject myCard;
         [SerializeField] public GameObject errorOvrl;
+        [SerializeField] public GameObject resultOvrl;
         [SerializeField] public TextMeshProUGUI errorText;
         [SerializeField] public TextMeshProUGUI turnText;
+        [SerializeField] public TextMeshProUGUI resultText;
         public bool canClick;
+        private bool isGuessing;
         private Client client;
         private Deck deck;
         public bool myTurn { get; private set; }
 
         private void Awake()
         {
-            if (FindObjectOfType<TaskManager>() == null)
-                new GameObject().AddComponent<TaskManager>();
-
             deck = FindObjectOfType<Deck>();
             client = Client.Instance;
-            client.SetListeners(() => { }, s =>
+            /*client.SetListeners(() => { }, s =>
             {
                 canClick = false;
                 errorText.text = s;
                 errorOvrl.SetActive(true);
-            });
+                resultOvrl.SetActive(false);
+            });*/
 
             myTurn = !client.isHost;
             SetTurn(myTurn ? Client.Instance.myId : Client.Instance.opId);
@@ -62,7 +65,10 @@ namespace Game
         {
             if (!myTurn) return;
 
-            canClick = false;
+            isGuessing = !isGuessing;
+            deck.SelectionMode(isGuessing);
+            
+            turnText.text = isGuessing ? "Guess the opponent's card" : "Your turn";
         }
 
         public void ShowGiveUp()
@@ -72,11 +78,12 @@ namespace Game
 
         public void DoGiveUp()
         {
-        }
-
-        public void StartMatch()
-        {
-            //TODO
+            canClick = true;
+            errorOvrl.SetActive(false);
+            resultOvrl.SetActive(false);
+            SceneManager.LoadScene("Home");
+            client.Send(SenderParser.Connection(Connection.Disconnect));
+            client.Dispose();
         }
 
         public void SetTurn(int id)
@@ -103,33 +110,54 @@ namespace Game
             turnText.text = "Unclear message. Try a yes/no question";
         }
 
-        public void EndMatch(Status status)
+        public void SetMatchStatus(Status status)
         {
-            //TODO
+            canClick = false;
+            errorOvrl.SetActive(false);
+            
             switch (status)
             {
-                case Status.Win: //WIN
+                case Status.Win:
                     Debug.Log("Match was won");
-                    //TODO
+                    resultText.text = "You win";
+                    resultOvrl.SetActive(true);
                     break;
-                case Status.Lose: //LOSE          
+                
+                case Status.Lose:      
                     Debug.Log("Match was lost");
-                    //TODO
+                    resultText.text = "You lose";
+                    resultOvrl.SetActive(true);
                     break;
-                case Status.Tie: //TIE
-                    Debug.Log("Match was tied");
-                    //TODO
+                
+                case Status.Rematch:
+                    Debug.Log("Starting new match");
+                    StartCoroutine(Utils.ILoadScene("Game"));
                     break;
-                case Status.End: //END
-                    Debug.Log("Match was ended");
-                    //TODO
-                    break;
+                
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(status), status, null);
             }
         }
 
-        public void ReturnHome()
+        public void Rematch()
         {
-            //TODO: loading para o Home
+            resultText.text = "You want to rematch";
+            client.Send(SenderParser.Status(Status.Rematch));
         }
+
+        public void OpponentGaveUp()
+        {
+            errorText.text = "Your opponent gave up";
+            errorOvrl.SetActive(true);
+            resultOvrl.SetActive(false);
+        }
+
+        public void ErrorOk()
+        {
+            SceneManager.LoadScene("Home");
+            client.Dispose();
+        }
+        
+
     }
 }

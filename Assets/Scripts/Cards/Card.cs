@@ -15,6 +15,7 @@ namespace Cards
         private Client client;
         private float cooldown;
         private bool isVisible;
+        private bool isGuessing;
         private GameManager manager;
 
         private void Start()
@@ -27,7 +28,7 @@ namespace Cards
 
         private void Update()
         {
-            if (!Input.GetMouseButton(0) || !manager.canClick) return;
+            if (!Input.GetMouseButtonDown(0) || !manager.canClick) return;
 
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -37,11 +38,22 @@ namespace Cards
             var c = hit.collider.gameObject.transform.parent.GetComponent<Card>();
 
             if (!c) return;
-            if (!c.name.Equals(name) || c.id != id || !(cooldown < Time.time)) return;
-
-            cooldown = Time.time + 0.7f;
-            Flip();
-            client.Send(SenderParser.Card(id, isVisible ? Network.Card.Up : Network.Card.Down));
+            if (!c.name.Equals(name) || c.id != id) return;
+            
+            if (isGuessing && isVisible)
+            {
+                Debug.Log("Guess card " + id);
+                client.Send(SenderParser.Card(id, Network.Card.Guess));
+                isGuessing = false;
+            }
+            else
+            {
+                if (!(cooldown < Time.time)) return;
+                
+                cooldown = Time.time + 0.7f;
+                Flip();
+                client.Send(SenderParser.Card(id, isVisible ? Network.Card.Up : Network.Card.Down));
+            }
         }
 
         public void Setup(CardModel card, int id)
@@ -70,5 +82,11 @@ namespace Cards
             this.isVisible = isVisible;
             animator.Play(isVisible ? "card_down" : "card_up");
         }
+
+        public void SelectionMode(bool isGuessing)
+        {
+            this.isGuessing = isGuessing;
+        }
+        
     }
 }

@@ -60,33 +60,18 @@ namespace Network
 
             switch ((Connection) type)
             {
-                /*case Network.Connection.Request: //REQUEST
-                    Debug.Log($"Opponent sent a request");
-                    //TODO
-                    break;
-
-                case Network.Connection.Positive: //POSITIVE
-                    Debug.Log($"Opponent accepted your request");
-                    //TODO
-                    break;
-
-                case Network.Connection.Negative: //NEGATIVE
-                    Debug.Log($"Opponent declined your request");
-                    //TODO
-                    break;*/
-
                 case Network.Connection.Connect:
                     Debug.Log("Opponent connected with id " + senderId);
                     client.SetOpId(senderId);
                     break;
 
-                case Network.Connection.Disconnect: //DISCONNECT
+                case Network.Connection.Disconnect:
                     Debug.Log("Opponent disconnected");
                     TasksDispatcher.Instance.Schedule(delegate
                     {
-                        if (client.opId == senderId) Object.FindObjectOfType<GameManager>().ReturnHome();
+                        if (client.opId == senderId) 
+                            Object.FindObjectOfType<GameManager>().OpponentGaveUp();
                     });
-                    //TODO
                     break;
 
                 default:
@@ -116,7 +101,7 @@ namespace Network
                         if (!Object.FindObjectOfType<Deck>().IsChosen(characterId)) return;
 
                         client.Send(SenderParser.Status(Network.Status.Win));
-                        Object.FindObjectOfType<GameManager>().EndMatch(Network.Status.Lose);
+                        Object.FindObjectOfType<GameManager>().SetMatchStatus(Network.Status.Lose);
                     });
                     break;
                 case Network.Card.Up: //UP
@@ -143,15 +128,21 @@ namespace Network
             var senderId = BitConverter.ToInt32(state.buffer, 1);
             var status = state.buffer[5];
 
+            TasksDispatcher.Instance.Schedule(delegate
+            {
+                if (client.opId == senderId)
+                    Object.FindObjectOfType<GameManager>().SetMatchStatus((Status) status);
+            });
+            
             switch ((Status) status)
             {
-                case Network.Status.Start: //START
+                /*case Network.Status.Start: //START
                     Debug.Log("Match was started");
                     TasksDispatcher.Instance.Schedule(delegate
                     {
                         if (client.opId == senderId) Object.FindObjectOfType<GameManager>().StartMatch();
                     });
-                    break;
+                    break;*/
 
                 case Network.Status.Win:
                     break;
@@ -159,18 +150,11 @@ namespace Network
                 case Network.Status.Lose:
                     break;
 
-                case Network.Status.Tie:
+                case Network.Status.Rematch:
                     break;
-
-                case Network.Status.End:
-                    break;
-
+                
                 default:
-                    TasksDispatcher.Instance.Schedule(delegate
-                    {
-                        if (client.opId == senderId) Object.FindObjectOfType<GameManager>().EndMatch((Status) status);
-                    });
-                    break;
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

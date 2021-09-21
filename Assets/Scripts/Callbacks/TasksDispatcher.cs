@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Callbacks
 {
@@ -13,6 +14,9 @@ namespace Callbacks
         private TasksDispatcher()
         {
             queue = new Queue<Task>();
+            
+            if (Object.FindObjectOfType<TaskManager>() == null)
+                new GameObject().AddComponent<TaskManager>().name = "Tasks";
         }
 
         public static TasksDispatcher Instance

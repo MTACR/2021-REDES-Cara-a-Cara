@@ -61,5 +61,11 @@ namespace Cards
         {
             return cards[Random.Range(1, cards.Length)];
         }
+
+        public void SelectionMode(bool isGuessing)
+        {
+            foreach (var card in cards) card.SelectionMode(isGuessing);
+        }
+        
     }
 }

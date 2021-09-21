@@ -188,6 +188,7 @@ namespace Network
 
         private void OnElapsed(object source, ElapsedEventArgs e)
         {
+            Dispose();
             CallError("No connection received");
         }
 
@@ -218,10 +219,5 @@ namespace Network
             }
         }
 
-        public void OnDestroy()
-        {
-            //TODO: isso faz o minimo de sentido?
-            Send(SenderParser.Connection(Connection.Disconnect));
-        }
     }
 }

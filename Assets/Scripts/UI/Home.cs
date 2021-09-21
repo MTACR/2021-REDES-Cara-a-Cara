@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Linq;
 using Callbacks;
+using Game;
 using Network;
 using TMPro;
 using UnityEngine;
@@ -42,7 +43,7 @@ namespace UI
             {
                 loading.SetActive(true);
                 Client.Instance.StartClient(isHost, ip);
-                StartCoroutine(LoadScene());
+                StartCoroutine(Utils.ILoadScene("Game"));
             }
             else
             {
@@ -78,16 +79,6 @@ namespace UI
             var splitValues = ip.Split('.');
 
             return splitValues.Length == 4 && splitValues.All(r => byte.TryParse(r, out _));
-        }
-
-        private static IEnumerator LoadScene()
-        {
-            var asyncLoad = SceneManager.LoadSceneAsync("Game");
-            asyncLoad.allowSceneActivation = false;
-
-            while (!asyncLoad.isDone && !Client.Instance.isReady) yield return null;
-
-            asyncLoad.allowSceneActivation = true;
         }
     }
 }

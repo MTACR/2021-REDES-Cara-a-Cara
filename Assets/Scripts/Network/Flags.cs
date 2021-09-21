@@ -29,11 +29,12 @@ namespace Network
 
     public enum Status : byte
     {
-        Start = 0,
+        //Start = 0,
         Win = 1,
         Lose = 2,
-        Tie = 3,
-        End = 4
+        Rematch = 5,
+        //Tie = 3,
+        //End = 4
     }
 
     public enum Answer : byte
