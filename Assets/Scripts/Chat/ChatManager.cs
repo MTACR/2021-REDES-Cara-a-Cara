@@ -9,7 +9,8 @@ namespace Chat
     public class ChatManager : MonoBehaviour
     {
         [SerializeField] public GameObject container;
-        [SerializeField] public GameObject prefab;
+        [SerializeField] public GameObject messagePrefab;
+        [SerializeField] public GameObject guessPrefab;
         [SerializeField] public TMP_InputField msg;
         private Client client;
         private Message lastMessage;
@@ -31,7 +32,7 @@ namespace Chat
 
         public void ShowMessage(int id, string sender, string text)
         {
-            var message = Instantiate(prefab, container.transform).GetComponent<Message>();
+            var message = Instantiate(messagePrefab, container.transform).GetComponent<Message>();
             message.Setup(id, sender, text);
             messages[id] = message;
             lastMessage = message;
@@ -39,10 +40,15 @@ namespace Chat
 
         private void ShowMessage(string sender, string text)
         {
-            var message = Instantiate(prefab, container.transform).GetComponent<Message>();
+            var message = Instantiate(messagePrefab, container.transform).GetComponent<Message>();
             var id = message.Setup(sender, text);
             messages[id] = message;
             lastMessage = message;
+        }
+
+        public void ShowGuess(string name)
+        {
+            Instantiate(guessPrefab, container.transform).GetComponent<Guess>().SetMessage(name);
         }
 
         public void SendMessage()

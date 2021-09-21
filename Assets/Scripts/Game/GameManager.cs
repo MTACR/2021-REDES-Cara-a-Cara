@@ -1,6 +1,7 @@
 using System;
 using Callbacks;
 using Cards;
+using Chat;
 using Network;
 using TMPro;
 using UnityEngine;
@@ -11,8 +12,6 @@ namespace Game
 {
     public class GameManager : MonoBehaviour
     {
-        [SerializeField] public GameObject scrollView;
-        [SerializeField] public GameObject message;
         [SerializeField] public GameObject myCard;
         [SerializeField] public GameObject errorOvrl;
         [SerializeField] public GameObject resultOvrl;
@@ -25,11 +24,16 @@ namespace Game
         private bool opRematch;
         private Client client;
         private Deck deck;
+        private ChatManager chat;
         public bool myTurn { get; private set; }
 
         private void Awake()
         {
+            if (FindObjectOfType<TaskManager>() == null)
+                new GameObject().AddComponent<TaskManager>().name = "Tasks";
+            
             deck = FindObjectOfType<Deck>();
+            chat = FindObjectOfType<ChatManager>();
             client = Client.Instance;
             client.SetListeners(() => { }, s =>
             {
@@ -92,6 +96,8 @@ namespace Game
 
         public void SetTurn(int id)
         {
+            isGuessing = false;
+            
             if (id == client.myId)
             {
                 myTurn = true;
@@ -113,11 +119,8 @@ namespace Game
                 client.Send(SenderParser.Status(Status.Win));
                 SetMatchStatus(Status.Lose);
             }
-            else
-            {
-                //TODO
-                Debug.Log("Oponente errou chute");
-            }
+            
+            chat.ShowGuess(deck.GetCard(id).name);
         }
 
         public void RequireAnswer()

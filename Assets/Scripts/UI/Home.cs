@@ -22,8 +22,8 @@ namespace UI
         private void Awake()
         {
             if (FindObjectOfType<TaskManager>() == null)
-                new GameObject().AddComponent<TaskManager>();
-
+                new GameObject().AddComponent<TaskManager>().name = "Tasks";
+            
             client = Client.Instance;
             client.SetListeners(() =>
             {

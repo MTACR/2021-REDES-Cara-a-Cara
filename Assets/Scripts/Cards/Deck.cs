@@ -12,7 +12,6 @@ namespace Cards
 
         private void Start()
         {
-            //Shuffle(models);
             cards = new Card[models.Length];
             var i = 0;
             var j = 0;
@@ -32,25 +31,9 @@ namespace Cards
             Debug.Log("Your card is " + chosenCard);
         }
 
-        private static void Shuffle(IList<CardModel> array)
-        {
-            for (var i = 0; i < array.Count; i++)
-            {
-                var tmp = array[i];
-                var r = Random.Range(i, array.Count);
-                array[i] = array[r];
-                array[r] = tmp;
-            }
-        }
-
         public void FlipAll()
         {
             foreach (var card in cards) card.Flip();
-        }
-
-        public bool IsChosen(int characterId)
-        {
-            return chosenCard == characterId;
         }
 
         public Card ChoosenCard()
@@ -66,6 +49,11 @@ namespace Cards
         public void SelectionMode(bool isGuessing)
         {
             foreach (var card in cards) card.SetGuessing(isGuessing);
+        }
+
+        public Card GetCard(int id)
+        {
+            return cards[id];
         }
         
     }

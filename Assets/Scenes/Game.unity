@@ -4213,7 +4213,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   container: {fileID: 1203361748}
-  prefab: {fileID: 5067669411451148671, guid: 1fe99bb70ba7e6e4685c85bf326f88a0, type: 3}
+  messagePrefab: {fileID: 5067669411451148671, guid: 1fe99bb70ba7e6e4685c85bf326f88a0, type: 3}
+  guessPrefab: {fileID: 5067669411451148671, guid: 77b1a2145fc094842b71755456c6132b, type: 3}
   msg: {fileID: 1616779533}
 --- !u!1 &1579275949
 GameObject:
