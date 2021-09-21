@@ -25,6 +25,7 @@ namespace Network
         private Client()
         {
             myId = GetHashCode();
+            Debug.Log("My id: " + myId);
         }
 
         public int myId { get; }
@@ -185,7 +186,6 @@ namespace Network
 
         private void OnElapsed(object source, ElapsedEventArgs e)
         {
-            Dispose();
             CallError("No connection received");
         }
 
@@ -193,6 +193,7 @@ namespace Network
         {
             Debug.LogError(message);
             TasksDispatcher.Instance.Schedule(delegate { onError(message); });
+            Dispose();
         }
 
         public void SetListeners(Action onStart, Action<string> onError)
@@ -213,6 +214,7 @@ namespace Network
                 thread.Abort();
                 timer.Enabled = false;
                 timer.Dispose();
+                instance = null;
             }
         }
 
