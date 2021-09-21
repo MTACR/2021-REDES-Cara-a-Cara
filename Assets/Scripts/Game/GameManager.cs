@@ -120,7 +120,7 @@ namespace Game
                 SetMatchStatus(Status.Lose);
             }
             
-            chat.ShowGuess(deck.GetCard(id).name);
+            chat.ShowGuess("Opponent", deck.GetCard(id).name);
         }
 
         public void RequireAnswer()

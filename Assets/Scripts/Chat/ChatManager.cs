@@ -46,9 +46,9 @@ namespace Chat
             lastMessage = message;
         }
 
-        public void ShowGuess(string name)
+        public void ShowGuess(string sender, string card)
         {
-            Instantiate(guessPrefab, container.transform).GetComponent<Guess>().SetMessage(name);
+            Instantiate(guessPrefab, container.transform).GetComponent<Guess>().SetMessage(sender, name);
         }
 
         public void SendMessage()

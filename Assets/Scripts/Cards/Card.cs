@@ -1,3 +1,4 @@
+using Chat;
 using Game;
 using Network;
 using TMPro;
@@ -17,10 +18,12 @@ namespace Cards
         private bool isVisible;
         public bool isGuessing;
         private GameManager manager;
+        private ChatManager chat;
 
         private void Start()
         {
             manager = FindObjectOfType<GameManager>();
+            chat = FindObjectOfType<ChatManager>();
             animator = GetComponent<Animator>();
             cooldown = Time.time;
             client = Client.Instance;
@@ -46,6 +49,7 @@ namespace Cards
                 client.Send(SenderParser.Card(id, Network.Card.Guess));
                 FindObjectOfType<Deck>().SelectionMode(false);
                 manager.SetTurn(client.opId);
+                chat.ShowGuess("Me", name);
             }
             else
             {
