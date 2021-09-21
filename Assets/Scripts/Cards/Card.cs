@@ -86,7 +86,7 @@ namespace Cards
         public void SetGuessing(bool isGuessing)
         {
             this.isGuessing = isGuessing;
-            gameObject.SetActive(isGuessing);
+            gameObject.SetActive(!isGuessing || isVisible);
         }
 
     }

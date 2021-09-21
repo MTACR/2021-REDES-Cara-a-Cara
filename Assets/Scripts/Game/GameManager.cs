@@ -135,7 +135,7 @@ namespace Game
                 
                 case Status.Rematch:
                     opRematch = true;
-                    resultText.text = "Your oppnent wants to rematch";
+                    resultText.text = "Your opponent wants to rematch";
                     DoRematch();
                     break;
                 
