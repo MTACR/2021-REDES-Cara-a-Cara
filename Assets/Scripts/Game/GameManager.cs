@@ -25,7 +25,7 @@ namespace Game
         private bool opRematch;
         private Client client;
         private Deck deck;
-        public bool myTurn { get; private set; }
+        public bool myTurn;
 
         private void Awake()
         {
@@ -101,6 +101,22 @@ namespace Game
             {
                 myTurn = false;
                 turnText.text = "Opponent's turn";
+            }
+        }
+
+        public void OpponentGuess(int id)
+        {
+            myTurn = true;
+            
+            if (deck.chosenCard == id)
+            {
+                client.Send(SenderParser.Status(Status.Win));
+                SetMatchStatus(Status.Lose);
+            }
+            else
+            {
+                //TODO
+                Debug.Log("Oponente errou chute");
             }
         }
 

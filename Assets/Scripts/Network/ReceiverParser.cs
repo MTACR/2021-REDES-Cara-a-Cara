@@ -85,37 +85,33 @@ namespace Network
         private static void Card(State state)
         {
             var senderId = BitConverter.ToInt32(state.buffer, 1);
-            var characterId = state.buffer[5];
-            var opCode = state.buffer[6];
-            switch ((Card) opCode)
+            var cardId = state.buffer[5];
+            switch ((Card) state.buffer[6])
             {
                 /*case CardOpType.Choose: //CHOOSE
                     Debug.Log($"{characterId} was chosen");
                     //TODO
                     break;*/
                 case Network.Card.Guess: //GUESS
-                    Debug.Log($"{characterId} was guessed");
+                    Debug.Log($"{cardId} was guessed");
                     TasksDispatcher.Instance.Schedule(delegate
                     {
                         if (client.opId != senderId) return;
-                        if (!Object.FindObjectOfType<Deck>().IsChosen(characterId)) return;
-
-                        client.Send(SenderParser.Status(Network.Status.Win));
-                        Object.FindObjectOfType<GameManager>().SetMatchStatus(Network.Status.Lose);
+                        Object.FindObjectOfType<GameManager>().OpponentGuess(cardId);
                     });
                     break;
                 case Network.Card.Up: //UP
-                    Debug.Log($"{characterId} was raised");
+                    Debug.Log($"{cardId} was raised");
                     TasksDispatcher.Instance.Schedule(delegate
                     {
-                        if (client.opId == senderId) Object.FindObjectOfType<DeckOpponent>().Flip(characterId, true);
+                        if (client.opId == senderId) Object.FindObjectOfType<DeckOpponent>().Flip(cardId, true);
                     });
                     break;
                 case Network.Card.Down: //DOWN
-                    Debug.Log($"{characterId} was lowered");
+                    Debug.Log($"{cardId} was lowered");
                     TasksDispatcher.Instance.Schedule(delegate
                     {
-                        if (client.opId == senderId) Object.FindObjectOfType<DeckOpponent>().Flip(characterId, false);
+                        if (client.opId == senderId) Object.FindObjectOfType<DeckOpponent>().Flip(cardId, false);
                     });
                     break;
                 default:
