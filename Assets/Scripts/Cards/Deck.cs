@@ -64,7 +64,7 @@ namespace Cards
 
         public void SelectionMode(bool isGuessing)
         {
-            foreach (var card in cards) card.SelectionMode(isGuessing);
+            foreach (var card in cards) card.isGuessing = isGuessing;
         }
         
     }

@@ -15,7 +15,7 @@ namespace Cards
         private Client client;
         private float cooldown;
         private bool isVisible;
-        private bool isGuessing;
+        public bool isGuessing;
         private GameManager manager;
 
         private void Start()
@@ -44,7 +44,7 @@ namespace Cards
             {
                 Debug.Log("Guess card " + id);
                 client.Send(SenderParser.Card(id, Network.Card.Guess));
-                isGuessing = false;
+                FindObjectOfType<Deck>().SelectionMode(false);
             }
             else
             {
@@ -83,10 +83,5 @@ namespace Cards
             animator.Play(isVisible ? "card_down" : "card_up");
         }
 
-        public void SelectionMode(bool isGuessing)
-        {
-            this.isGuessing = isGuessing;
-        }
-        
     }
 }

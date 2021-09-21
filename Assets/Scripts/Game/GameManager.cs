@@ -29,13 +29,13 @@ namespace Game
         {
             deck = FindObjectOfType<Deck>();
             client = Client.Instance;
-            /*client.SetListeners(() => { }, s =>
+            client.SetListeners(() => { }, s =>
             {
                 canClick = false;
                 errorText.text = s;
                 errorOvrl.SetActive(true);
                 resultOvrl.SetActive(false);
-            });*/
+            });
 
             myTurn = !client.isHost;
             SetTurn(myTurn ? Client.Instance.myId : Client.Instance.opId);
