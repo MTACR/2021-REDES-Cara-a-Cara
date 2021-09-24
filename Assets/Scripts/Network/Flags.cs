@@ -5,21 +5,23 @@ namespace Network
         Connection = 0,
         Card = 1,
         Status = 2,
-        Question = 4,
-        Answer = 5
+        Question = 3,
+        Answer = 4
     }
 
     public enum Connection : byte
     {
-        Connect = 4,
-        Disconnect = 3
+        Connect = 0,
+        Disconnect = 1,
+        Ping = 2,
+        Pong
     }
 
     public enum Card : byte
     {
-        Guess = 1,
-        Up = 2,
-        Down = 3
+        Guess = 0,
+        Up = 1,
+        Down = 2
     }
 
     public enum Status : byte
@@ -27,7 +29,7 @@ namespace Network
         Start = 0,
         Win = 1,
         Lose = 2,
-        Rematch = 5,
+        Rematch = 3,
     }
 
     public enum Answer : byte
