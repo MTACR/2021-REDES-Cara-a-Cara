@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Timers;
 using Callbacks;
@@ -20,10 +19,12 @@ namespace Network
         private Action onStart;
         private Socket socket;
         private Thread thread;
-        private Timer timerTimeOut;
         private Timer timerPingPong;
+        private Timer timerTimeOut;
 
-        private Client() { }
+        private Client()
+        {
+        }
 
         public bool isHost { get; private set; }
         public bool isReady { get; private set; }
@@ -166,13 +167,13 @@ namespace Network
             this.ip = ip;
 
             Debug.Log("Starting " + (isHost ? "host" : "client"));
-            
+
             timerTimeOut = new Timer(30000) {AutoReset = true};
             timerTimeOut.Elapsed += OnTimeOut;
-            
+
             timerPingPong = new Timer(10000) {AutoReset = true};
             timerPingPong.Elapsed += OnPing;
-            
+
             thread = new Thread(Init) {IsBackground = true};
             thread.Start();
         }
@@ -181,7 +182,7 @@ namespace Network
         {
             CallError("Connection timed out");
         }
-        
+
         private void OnPing(object source, ElapsedEventArgs e)
         {
             Ping();
@@ -229,6 +230,5 @@ namespace Network
                 instance = null;
             }
         }
-
     }
 }

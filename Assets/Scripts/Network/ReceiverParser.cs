@@ -12,7 +12,6 @@ namespace Network
 {
     public static class ReceiverParser
     {
-        
         public static void Message(State state)
         {
             switch ((Message) state.buffer[0])
@@ -65,7 +64,7 @@ namespace Network
                 case Network.Connection.Pong:
                     Client.Instance.Pong();
                     break;
-                
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -83,7 +82,7 @@ namespace Network
                         Object.FindObjectOfType<GameManager>().OpponentGuess(cardId);
                     });
                     break;
-                
+
                 case Network.Card.Up:
                     Debug.Log($"{cardId} was raised");
                     TasksDispatcher.Instance.Schedule(delegate
@@ -91,7 +90,7 @@ namespace Network
                         Object.FindObjectOfType<DeckOpponent>().Flip(cardId, true);
                     });
                     break;
-                
+
                 case Network.Card.Down:
                     Debug.Log($"{cardId} was lowered");
                     TasksDispatcher.Instance.Schedule(delegate
@@ -99,7 +98,7 @@ namespace Network
                         Object.FindObjectOfType<DeckOpponent>().Flip(cardId, false);
                     });
                     break;
-                
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

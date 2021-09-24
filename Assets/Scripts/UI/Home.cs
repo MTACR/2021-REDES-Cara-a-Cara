@@ -19,9 +19,15 @@ namespace UI
         {
             if (FindObjectOfType<TaskManager>() == null)
                 new GameObject().AddComponent<TaskManager>().name = "Tasks";
-            
+
             iptext.Select();
-            iptext.text = "26.158.168.172";
+            //iptext.text = "26.158.168.172";
+        }
+
+        private void OnApplicationQuit()
+        {
+            Debug.Log("Application ending after " + Time.time + " seconds");
+            Client.Instance?.Dispose();
         }
 
         public void StartConnection(bool isHost)
@@ -74,12 +80,5 @@ namespace UI
 
             return splitValues.Length == 4 && splitValues.All(r => byte.TryParse(r, out _));
         }
-        
-        private void OnApplicationQuit()
-        {
-            Debug.Log("Application ending after " + Time.time + " seconds");
-            Client.Instance?.Dispose();
-        }
-        
     }
 }

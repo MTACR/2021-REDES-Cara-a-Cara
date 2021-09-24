@@ -19,22 +19,22 @@ namespace Game
         [SerializeField] public TextMeshProUGUI turnText;
         [SerializeField] public TextMeshProUGUI resultText;
         public bool canClick;
+        private ChatManager chat;
+        private Deck deck;
         private bool isGuessing;
         private bool myRematch;
         private bool opRematch;
         public bool matchRunning { get; private set; }
-        private Deck deck;
-        private ChatManager chat;
         public bool myTurn { get; private set; }
 
         private void Awake()
         {
             if (FindObjectOfType<TaskManager>() == null)
                 new GameObject().AddComponent<TaskManager>().name = "Tasks";
-            
+
             deck = FindObjectOfType<Deck>();
             chat = FindObjectOfType<ChatManager>();
-            
+
             Client.Instance.SetListeners(() => { }, s =>
             {
                 canClick = false;
@@ -44,6 +44,12 @@ namespace Game
             });
 
             myTurn = !Client.Instance.isHost;
+        }
+
+        private void OnApplicationQuit()
+        {
+            Debug.Log("Application ending after " + Time.time + " seconds");
+            Client.Instance?.Dispose();
         }
 
         public void ShowCards()
@@ -72,9 +78,9 @@ namespace Game
 
             isGuessing = !isGuessing;
             deck.SelectionMode(isGuessing);
-            
+
             Debug.Log("Guess mode = " + isGuessing);
-            
+
             turnText.text = isGuessing ? "Guess the opponent's card" : "Your turn";
         }
 
@@ -103,7 +109,7 @@ namespace Game
         public void OpponentGuess(int id)
         {
             SetMyTurn(true);
-            
+
             if (deck.chosenCard == id)
             {
                 Client.Instance.Send(SenderParser.Status(Status.Win));
@@ -114,7 +120,7 @@ namespace Game
                 Client.Instance.Send(SenderParser.Status(Status.Lose));
                 SetMatchStatus(Status.Win);
             }
-            
+
             chat.ShowGuess("Opponent", deck.GetCard(id).name);
         }
 
@@ -132,7 +138,7 @@ namespace Game
         {
             canClick = false;
             errorOvrl.SetActive(false);
-            
+
             switch (status)
             {
                 case Status.Start:
@@ -141,19 +147,19 @@ namespace Game
                     canClick = true;
                     SetMyTurn(myTurn);
                     break;
-                
+
                 case Status.Win:
                     Debug.Log("Match was won");
                     resultText.text = "You win";
                     resultOvrl.SetActive(true);
                     break;
-                
-                case Status.Lose:      
+
+                case Status.Lose:
                     Debug.Log("Match was lost");
                     resultText.text = "You lose";
                     resultOvrl.SetActive(true);
                     break;
-                
+
                 case Status.Rematch:
                     opRematch = true;
                     resultText.text = "Your opponent wants to rematch";
@@ -168,7 +174,7 @@ namespace Game
         private void DoRematch()
         {
             if (!myRematch || !opRematch) return;
-            
+
             Debug.Log("Starting new match");
             StartCoroutine(Utils.ILoadScene("Game"));
         }
@@ -204,12 +210,5 @@ namespace Game
             Debug.Log("I'm ready to play");
             Client.Instance.Send(SenderParser.Status(Status.Start));
         }
-        
-        private void OnApplicationQuit()
-        {
-            Debug.Log("Application ending after " + Time.time + " seconds");
-            Client.Instance?.Dispose();
-        }
-
     }
 }

@@ -29,7 +29,7 @@ namespace Network
         Start = 0,
         Win = 1,
         Lose = 2,
-        Rematch = 3,
+        Rematch = 3
     }
 
     public enum Answer : byte

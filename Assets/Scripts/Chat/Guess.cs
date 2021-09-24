@@ -13,6 +13,5 @@ namespace Chat
             this.sender.text = sender;
             this.card.text = "Guessed card " + card;
         }
-    
     }
 }

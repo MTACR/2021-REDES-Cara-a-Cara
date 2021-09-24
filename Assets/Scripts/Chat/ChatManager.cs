@@ -71,6 +71,5 @@ namespace Chat
         {
             messages[id].React(answer);
         }
-        
     }
 }

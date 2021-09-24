@@ -11,13 +11,13 @@ namespace Cards
         [SerializeField] public MeshRenderer picture;
         [SerializeField] public TextMeshPro text;
         [SerializeField] public CardModel model;
-        private int id;
-        private Animator animator;
-        private float cooldown;
-        private bool isVisible;
         public bool isGuessing;
-        private GameManager manager;
+        private Animator animator;
         private ChatManager chat;
+        private float cooldown;
+        private int id;
+        private bool isVisible;
+        private GameManager manager;
 
         private void Start()
         {
@@ -40,7 +40,7 @@ namespace Cards
 
             if (!c) return;
             if (!c.name.Equals(name) || c.id != id) return;
-            
+
             if (isGuessing && isVisible)
             {
                 Debug.Log("Guess card " + id);
@@ -52,7 +52,7 @@ namespace Cards
             else
             {
                 if (!(cooldown < Time.time)) return;
-                
+
                 cooldown = Time.time + 0.7f;
                 Flip();
                 Client.Instance.Send(SenderParser.Card(id, isVisible ? Network.Card.Up : Network.Card.Down));
@@ -91,6 +91,5 @@ namespace Cards
             this.isGuessing = isGuessing;
             gameObject.SetActive(!isGuessing || isVisible);
         }
-
     }
 }

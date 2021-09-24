@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Cards
 {
@@ -15,7 +14,7 @@ namespace Cards
             cards = new Card[models.Length];
             var i = 0;
             var j = 0;
-            
+
             foreach (var c in models)
             {
                 var card = Instantiate(prefab, transform).GetComponent<Card>();
@@ -55,6 +54,5 @@ namespace Cards
         {
             return cards[id];
         }
-        
     }
 }

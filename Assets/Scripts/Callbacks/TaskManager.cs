@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Callbacks
 {
@@ -33,6 +32,5 @@ namespace Callbacks
                 task = dispatcher.Dequeue();
             }
         }
-        
     }
 }

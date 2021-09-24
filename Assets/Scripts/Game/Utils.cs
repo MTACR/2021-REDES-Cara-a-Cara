@@ -6,7 +6,6 @@ namespace Game
 {
     public static class Utils
     {
-
         public static IEnumerator ILoadScene(string name)
         {
             var asyncLoad = SceneManager.LoadSceneAsync(name);
@@ -16,6 +15,5 @@ namespace Game
 
             asyncLoad.allowSceneActivation = true;
         }
-        
     }
 }
