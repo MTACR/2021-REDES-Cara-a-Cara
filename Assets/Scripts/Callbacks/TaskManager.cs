@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Callbacks
 {
@@ -24,7 +25,16 @@ namespace Callbacks
 
             while (task != null)
             {
-                task();
+                try
+                {
+                    task();
+                }
+                catch (Exception e)
+                {
+                    Debug.Log("Deu ruim:");
+                    Debug.Log(e);
+                    dispatcher.Schedule(task);
+                }
 
                 if (Time.realtimeSinceStartup > timeout)
                     break;
