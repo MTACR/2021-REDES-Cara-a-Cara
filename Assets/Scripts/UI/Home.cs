@@ -77,8 +77,8 @@ namespace UI
         
         private void OnApplicationQuit()
         {
-            Client.Instance?.Dispose();
             Debug.Log("Application ending after " + Time.time + " seconds");
+            Client.Instance?.Dispose();
         }
         
     }

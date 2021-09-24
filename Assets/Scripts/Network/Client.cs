@@ -217,17 +217,15 @@ namespace Network
 
         public void Dispose()
         {
-            Debug.Log("Connection ended");
+            Debug.Log("Client disposed");
 
             lock (locker)
             {
                 socket?.Close();
                 handler?.Close();
-                thread.Interrupt();
-                timerTimeOut.Enabled = false;
-                timerTimeOut.Dispose();
-                timerPingPong.Enabled = false;
-                timerPingPong.Dispose();
+                thread?.Interrupt();
+                timerTimeOut?.Dispose();
+                timerPingPong?.Dispose();
                 instance = null;
             }
         }
