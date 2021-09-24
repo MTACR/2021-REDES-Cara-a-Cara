@@ -22,30 +22,15 @@ namespace Chat
         [SerializeField] public TextMeshProUGUI message;
         [SerializeField] public bool isMine;
         private GameManager manager;
-        public int id { get; private set; }
 
         private void Start()
         {
             manager = FindObjectOfType<GameManager>();
         }
 
-        public void Setup(int id, string sender, string message)
-        {
-            this.id = id;
-            Setup(false, sender, message, id);
-        }
-
-        public int Setup(string sender, string message)
-        {
-            id = GetHashCode();
-            Setup(true, sender, message, id);
-            return id;
-        }
-
-        private void Setup(bool isMine, string sender, string message, int id)
+        public void Setup(bool isMine, string sender, string message)
         {
             this.isMine = isMine;
-            this.id = id;
 
             if (isMine)
             {
@@ -75,7 +60,7 @@ namespace Chat
             if (isMine) return;
 
             var client = Client.Instance;
-            client.Send(SenderParser.Answer(id, answer));
+            client.Send(SenderParser.Answer(answer));
             manager.SetMyTurn(answer != Answer.Unclear);
         }
 

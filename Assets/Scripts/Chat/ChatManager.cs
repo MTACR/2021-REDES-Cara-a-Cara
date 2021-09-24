@@ -16,11 +16,9 @@ namespace Chat
         [SerializeField] public ScrollRect scroll;
         private Message lastMessage;
         private GameManager manager;
-        //private Dictionary<int, Message> messages;
 
         private void Awake()
         {
-            //messages = new Dictionary<int, Message>();
             manager = FindObjectOfType<GameManager>();
         }
 
@@ -30,11 +28,10 @@ namespace Chat
                 SendMessage();
         }
 
-        public void ShowMessage(int id, string sender, string text)
+        public void ShowOpMessage(string sender, string text)
         {
             var message = Instantiate(messagePrefab, container.transform).GetComponent<Message>();
-            message.Setup(id, sender, text);
-           // messages[id] = message;
+            message.Setup(false, sender, text);
             lastMessage = message;
             
             Canvas.ForceUpdateCanvases();
@@ -42,11 +39,10 @@ namespace Chat
             Canvas.ForceUpdateCanvases();
         }
 
-        private void ShowMessage(string sender, string text)
+        private void ShowMyMessage(string sender, string text)
         {
             var message = Instantiate(messagePrefab, container.transform).GetComponent<Message>();
-            var id = message.Setup(sender, text);
-           // messages[id] = message;
+            message.Setup(true, sender, text);
             lastMessage = message;
             
             Canvas.ForceUpdateCanvases();
@@ -76,12 +72,12 @@ namespace Chat
 
             msg.Select();
             msg.text = "";
-            ShowMessage("Me", message);
-            Client.Instance.Send(SenderParser.Question(lastMessage.id, message));
+            ShowMyMessage("Me", message);
+            Client.Instance.Send(SenderParser.Question(message));
             manager.SetMyTurn(false);
         }
 
-        public void ReactToMessage(int id, Answer answer)
+        public void ReactToMessage(Answer answer)
         {
             lastMessage.React(answer);
         }

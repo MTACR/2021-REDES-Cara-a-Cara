@@ -116,7 +116,7 @@ namespace Network
 
         private static void Question(State state)
         {
-            var id = BitConverter.ToInt32(state.buffer, 5);
+            //var id = BitConverter.ToInt32(state.buffer, 5);
             var question = Encoding.Default.GetString(state.buffer.Skip(9).Take(100).ToArray());
 
             Debug.Log($"Opponent asked {question}");
@@ -124,18 +124,18 @@ namespace Network
             TasksDispatcher.Instance.Schedule(delegate
             {
                 Object.FindObjectOfType<GameManager>().RequireAnswer();
-                Object.FindObjectOfType<ChatManager>().ShowMessage(id, "Opponent", question);
+                Object.FindObjectOfType<ChatManager>().ShowOpMessage("Opponent", question);
             });
         }
 
         private static void Answer(State state)
         {
-            var id = BitConverter.ToInt32(state.buffer, 5);
+            //var id = BitConverter.ToInt32(state.buffer, 5);
             var answer = (Answer) state.buffer[9];
 
             TasksDispatcher.Instance.Schedule(delegate
             {
-                Object.FindObjectOfType<ChatManager>().ReactToMessage(id, answer);
+                Object.FindObjectOfType<ChatManager>().ReactToMessage(answer);
                 Object.FindObjectOfType<GameManager>().SetMyTurn(answer == Network.Answer.Unclear);
 
                 if (answer == Network.Answer.Unclear)
