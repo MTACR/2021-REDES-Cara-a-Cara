@@ -127,7 +127,7 @@ namespace Network
             TasksDispatcher.Instance.Schedule(delegate
             {
                 Object.FindObjectOfType<ChatManager>().ReactToMessage(id, answer);
-                Object.FindObjectOfType<GameManager>().SetTurn(answer == Network.Answer.Unclear);
+                Object.FindObjectOfType<GameManager>().SetMyTurn(answer == Network.Answer.Unclear);
 
                 if (answer == Network.Answer.Unclear)
                     Object.FindObjectOfType<GameManager>().Unclear();

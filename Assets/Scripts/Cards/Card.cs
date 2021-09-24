@@ -46,7 +46,7 @@ namespace Cards
                 Debug.Log("Guess card " + id);
                 Client.Instance.Send(SenderParser.Card(id, Network.Card.Guess));
                 FindObjectOfType<Deck>().SelectionMode(false);
-                manager.SetTurn(false);
+                manager.SetMyTurn(false);
                 chat.ShowGuess("Me", name);
             }
             else

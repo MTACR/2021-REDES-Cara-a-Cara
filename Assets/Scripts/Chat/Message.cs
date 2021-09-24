@@ -65,7 +65,7 @@ namespace Chat
             this.message.text = message;
         }
 
-        private void OnAnswer(Answer answer)
+        private void SendAnswer(Answer answer)
         {
             React(answer);
             pannel.SetActive(false);
@@ -76,7 +76,7 @@ namespace Chat
 
             var client = Client.Instance;
             client.Send(SenderParser.Answer(id, answer));
-            manager.SetTurn(answer == Answer.Unclear ? client.opId : client.myId);
+            manager.SetMyTurn(answer != Answer.Unclear);
         }
 
         public void React(Answer answer)
@@ -86,6 +86,14 @@ namespace Chat
                 Answer.Confirm => yes,
                 Answer.Deny => no,
                 Answer.Unclear => reject,
+                _ => throw new ArgumentOutOfRangeException(nameof(answer), answer, null)
+            };
+            
+            image.color = answer switch
+            {
+                Answer.Confirm => new Color32(36, 207,36, 255),
+                Answer.Deny => new Color32(207, 36, 36, 255),
+                Answer.Unclear => new Color32(255, 207, 36, 255),
                 _ => throw new ArgumentOutOfRangeException(nameof(answer), answer, null)
             };
         }
@@ -105,19 +113,19 @@ namespace Chat
         public void Yes()
         {
             if (manager.canClick)
-                OnAnswer(Answer.Confirm);
+                SendAnswer(Answer.Confirm);
         }
 
         public void No()
         {
             if (manager.canClick)
-                OnAnswer(Answer.Deny);
+                SendAnswer(Answer.Deny);
         }
 
         public void Reject()
         {
             if (manager.canClick)
-                OnAnswer(Answer.Unclear);
+                SendAnswer(Answer.Unclear);
         }
     }
 }
