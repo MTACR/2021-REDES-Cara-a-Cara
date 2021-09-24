@@ -31,9 +31,7 @@ namespace Callbacks
                 }
                 catch (Exception e)
                 {
-                    Debug.Log("Deu ruim:");
-                    Debug.Log(e);
-                    dispatcher.Schedule(task);
+                    Debug.LogError(e);
                 }
 
                 if (Time.realtimeSinceStartup > timeout)
