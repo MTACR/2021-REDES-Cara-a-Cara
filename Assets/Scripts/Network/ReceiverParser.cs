@@ -59,6 +59,10 @@ namespace Network
                     break;
 
                 case Network.Connection.Ping:
+                    Client.Instance.Send(SenderParser.Connection(Network.Connection.Pong));
+                    break;
+
+                case Network.Connection.Pong:
                     Client.Instance.Pong();
                     break;
                 

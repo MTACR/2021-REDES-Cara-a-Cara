@@ -76,7 +76,7 @@ namespace Network
                         var state = new State();
                         isReady = true;
                         //timerTimeOut.Enabled = false;
-                        ConfigPingPong();
+                        timerTimeOut.Stop();
                         Ping();
 
                         Debug.Log("Connection received from " + socket.RemoteEndPoint);
@@ -98,7 +98,8 @@ namespace Network
                         var state = new State();
                         isReady = true;
                         //timerTimeOut.Enabled = false;
-                        ConfigPingPong();
+                        timerTimeOut.Stop();
+                        Ping();
 
                         Debug.Log("Connected to " + socket.RemoteEndPoint);
 
@@ -131,7 +132,7 @@ namespace Network
                 try
                 {
                     socket.EndSend(result);
-                    Debug.Log("-> " + Encoding.Default.GetString(bytes) + " :: " + bytes.Length + " bytes");
+                    //Debug.Log("-> " + Encoding.Default.GetString(bytes) + " :: " + bytes.Length + " bytes");
                 }
                 catch (Exception e)
                 {
@@ -153,7 +154,7 @@ namespace Network
             var bytes = socket.EndReceive(result);
             if (bytes <= 0) return;
 
-            Debug.Log("<- " + Encoding.Default.GetString(state.buffer) + " :: " + bytes + " bytes");
+            //Debug.Log("<- " + Encoding.Default.GetString(state.buffer) + " :: " + bytes + " bytes");
             ReceiverParser.Message(state);
 
             socket.BeginReceive(state.buffer, 0, State.BufferSize, 0, ReceiveCallback, state);
@@ -165,10 +166,14 @@ namespace Network
             this.ip = ip;
 
             Debug.Log("Starting " + (isHost ? "host" : "client"));
-
-            thread = new Thread(Init) {IsBackground = true};
-            timerTimeOut = new Timer(30000) {Enabled = true, AutoReset = false};
+            
+            timerTimeOut = new Timer(30000) {AutoReset = true};
             timerTimeOut.Elapsed += OnTimeOut;
+            
+            timerPingPong = new Timer(10000) {AutoReset = true};
+            timerPingPong.Elapsed += OnPing;
+            
+            thread = new Thread(Init) {IsBackground = true};
             thread.Start();
         }
 
@@ -187,15 +192,6 @@ namespace Network
             Debug.LogError(message);
             TasksDispatcher.Instance.Schedule(delegate { onError(message); });
             Dispose();
-        }
-
-        private void ConfigPingPong()
-        {
-            timerTimeOut = new Timer(20000);
-            timerTimeOut.Elapsed += OnTimeOut;
-            
-            timerPingPong = new Timer(10000);
-            timerPingPong.Elapsed += OnPing;
         }
 
         private void Ping()

@@ -13,7 +13,8 @@ namespace Network
     {
         Connect = 0,
         Disconnect = 1,
-        Ping = 2
+        Ping = 2,
+        Pong = 3
     }
 
     public enum Card : byte
