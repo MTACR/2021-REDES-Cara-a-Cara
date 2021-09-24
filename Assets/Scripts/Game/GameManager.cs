@@ -204,6 +204,12 @@ namespace Game
             Debug.Log("I'm ready to play");
             Client.Instance.Send(SenderParser.Status(Status.Start));
         }
+        
+        private void OnApplicationQuit()
+        {
+            Client.Instance?.Dispose();
+            Debug.Log("Application ending after " + Time.time + " seconds");
+        }
 
     }
 }

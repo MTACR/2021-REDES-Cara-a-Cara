@@ -74,5 +74,12 @@ namespace UI
 
             return splitValues.Length == 4 && splitValues.All(r => byte.TryParse(r, out _));
         }
+        
+        private void OnApplicationQuit()
+        {
+            Client.Instance?.Dispose();
+            Debug.Log("Application ending after " + Time.time + " seconds");
+        }
+        
     }
 }
