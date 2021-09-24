@@ -14,6 +14,8 @@ namespace Network
     {
         public static void Message(State state)
         {
+            Client.Instance.Pong();
+            
             switch ((Message) state.buffer[0])
             {
                 case Network.Message.Connection:

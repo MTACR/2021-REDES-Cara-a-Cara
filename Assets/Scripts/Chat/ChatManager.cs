@@ -3,6 +3,7 @@ using Game;
 using Network;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Chat
 {
@@ -12,6 +13,7 @@ namespace Chat
         [SerializeField] public GameObject messagePrefab;
         [SerializeField] public GameObject guessPrefab;
         [SerializeField] public TMP_InputField msg;
+        [SerializeField] public ScrollRect scroll;
         private Message lastMessage;
         private GameManager manager;
         //private Dictionary<int, Message> messages;
@@ -34,6 +36,10 @@ namespace Chat
             message.Setup(id, sender, text);
            // messages[id] = message;
             lastMessage = message;
+            
+            Canvas.ForceUpdateCanvases();
+            scroll.verticalScrollbar.value = 0f;
+            Canvas.ForceUpdateCanvases();
         }
 
         private void ShowMessage(string sender, string text)
@@ -42,11 +48,19 @@ namespace Chat
             var id = message.Setup(sender, text);
            // messages[id] = message;
             lastMessage = message;
+            
+            Canvas.ForceUpdateCanvases();
+            scroll.verticalScrollbar.value = 0f;
+            Canvas.ForceUpdateCanvases();
         }
 
         public void ShowGuess(string sender, string card)
         {
             Instantiate(guessPrefab, container.transform).GetComponent<Guess>().SetMessage(sender, card);
+            
+            Canvas.ForceUpdateCanvases();
+            scroll.verticalScrollbar.value = 0f;
+            Canvas.ForceUpdateCanvases();
         }
 
         public void SendMessage()

@@ -19,11 +19,16 @@ namespace Network
         private Action onStart;
         private Socket socket;
         private Thread thread;
-        private Timer timerPingPong;
-        private Timer timerTimeOut;
+        private readonly Timer timerPingPong;
+        private readonly Timer timerTimeOut;
 
         private Client()
         {
+            timerTimeOut = new Timer(30000) {AutoReset = true};
+            timerTimeOut.Elapsed += OnTimeOut;
+
+            timerPingPong = new Timer(10000) {AutoReset = true};
+            timerPingPong.Elapsed += OnPing;
         }
 
         public bool isHost { get; private set; }
@@ -76,7 +81,6 @@ namespace Network
                         handler.Close();
                         var state = new State();
                         isReady = true;
-                        //timerTimeOut.Enabled = false;
                         timerTimeOut.Stop();
                         Ping();
 
@@ -98,7 +102,6 @@ namespace Network
                         socket.EndConnect(result);
                         var state = new State();
                         isReady = true;
-                        //timerTimeOut.Enabled = false;
                         timerTimeOut.Stop();
                         Ping();
 
@@ -167,13 +170,7 @@ namespace Network
             this.ip = ip;
 
             Debug.Log("Starting " + (isHost ? "host" : "client"));
-
-            timerTimeOut = new Timer(30000) {AutoReset = true};
-            timerTimeOut.Elapsed += OnTimeOut;
-
-            timerPingPong = new Timer(10000) {AutoReset = true};
-            timerPingPong.Elapsed += OnPing;
-
+            
             thread = new Thread(Init) {IsBackground = true};
             thread.Start();
         }
