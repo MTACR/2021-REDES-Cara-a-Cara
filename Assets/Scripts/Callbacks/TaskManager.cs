@@ -25,14 +25,7 @@ namespace Callbacks
 
             while (task != null)
             {
-                try
-                {
-                    task();
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError(e);
-                }
+                task();
 
                 if (Time.realtimeSinceStartup > timeout)
                     break;
