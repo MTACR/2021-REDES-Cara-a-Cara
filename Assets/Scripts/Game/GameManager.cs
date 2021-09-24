@@ -138,6 +138,7 @@ namespace Game
                 case Status.Start:
                     Debug.Log("Opponent is ready to play");
                     matchRunning = true;
+                    canClick = true;
                     SetMyTurn(myTurn);
                     break;
                 

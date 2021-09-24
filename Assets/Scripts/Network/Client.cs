@@ -226,6 +226,8 @@ namespace Network
                 thread.Interrupt();
                 timerTimeOut.Enabled = false;
                 timerTimeOut.Dispose();
+                timerPingPong.Enabled = false;
+                timerPingPong.Dispose();
                 instance = null;
             }
         }
