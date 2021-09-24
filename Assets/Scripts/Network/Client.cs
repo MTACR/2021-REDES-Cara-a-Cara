@@ -20,7 +20,8 @@ namespace Network
         private Action onStart;
         private Socket socket;
         private Thread thread;
-        private Timer timer;
+        private Timer timerTimeOut;
+        private Timer timerPingPong;
 
         private Client() { }
 
@@ -66,7 +67,7 @@ namespace Network
                     Debug.Log("Waiting for connection...");
 
                     TasksDispatcher.Instance.Schedule(delegate { onStart(); });
-                    timer.Start();
+                    timerTimeOut.Start();
 
                     handler.BeginAccept(result =>
                     {
@@ -74,7 +75,9 @@ namespace Network
                         handler.Close();
                         var state = new State();
                         isReady = true;
-                        timer.Enabled = false;
+                        //timerTimeOut.Enabled = false;
+                        ConfigPingPong();
+                        Ping();
 
                         Debug.Log("Connection received from " + socket.RemoteEndPoint);
 
@@ -94,7 +97,8 @@ namespace Network
                         socket.EndConnect(result);
                         var state = new State();
                         isReady = true;
-                        timer.Enabled = false;
+                        //timerTimeOut.Enabled = false;
+                        ConfigPingPong();
 
                         Debug.Log("Connected to " + socket.RemoteEndPoint);
 
@@ -163,14 +167,19 @@ namespace Network
             Debug.Log("Starting " + (isHost ? "host" : "client"));
 
             thread = new Thread(Init) {IsBackground = true};
-            timer = new Timer(30000) {Enabled = true, AutoReset = false};
-            timer.Elapsed += OnElapsed;
+            timerTimeOut = new Timer(30000) {Enabled = true, AutoReset = false};
+            timerTimeOut.Elapsed += OnTimeOut;
             thread.Start();
         }
 
-        private void OnElapsed(object source, ElapsedEventArgs e)
+        private void OnTimeOut(object source, ElapsedEventArgs e)
         {
-            CallError("No connection received");
+            CallError("Connection timed out");
+        }
+        
+        private void OnPing(object source, ElapsedEventArgs e)
+        {
+            Ping();
         }
 
         private void CallError(string message)
@@ -178,6 +187,30 @@ namespace Network
             Debug.LogError(message);
             TasksDispatcher.Instance.Schedule(delegate { onError(message); });
             Dispose();
+        }
+
+        private void ConfigPingPong()
+        {
+            timerTimeOut = new Timer(20000);
+            timerTimeOut.Elapsed += OnTimeOut;
+            
+            timerPingPong = new Timer(10000);
+            timerPingPong.Elapsed += OnPing;
+        }
+
+        private void Ping()
+        {
+            Debug.Log("Ping");
+            Send(SenderParser.Connection(Connection.Ping));
+            timerTimeOut.Start();
+            timerPingPong.Stop();
+        }
+
+        public void Pong()
+        {
+            Debug.Log("Pong");
+            timerTimeOut.Stop();
+            timerPingPong.Start();
         }
 
         public void SetListeners(Action onStart, Action<string> onError)
@@ -195,8 +228,8 @@ namespace Network
                 socket?.Close();
                 handler?.Close();
                 thread.Interrupt();
-                timer.Enabled = false;
-                timer.Dispose();
+                timerTimeOut.Enabled = false;
+                timerTimeOut.Dispose();
                 instance = null;
             }
         }

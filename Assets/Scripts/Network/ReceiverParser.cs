@@ -58,6 +58,10 @@ namespace Network
                     });
                     break;
 
+                case Network.Connection.Ping:
+                    Client.Instance.Pong();
+                    break;
+                
                 default:
                     throw new ArgumentOutOfRangeException();
             }
