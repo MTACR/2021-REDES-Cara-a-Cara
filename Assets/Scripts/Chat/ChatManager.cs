@@ -51,7 +51,7 @@ namespace Chat
 
         public void SendMessage()
         {
-            if (!manager.myTurn || !manager.canClick) return;
+            if (!manager.myTurn || !manager.canClick || !manager.matchRunning) return;
 
             var message = msg.text.Trim();
 

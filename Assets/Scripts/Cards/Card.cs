@@ -29,7 +29,7 @@ namespace Cards
 
         private void Update()
         {
-            if (!Input.GetMouseButtonDown(0) || !manager.canClick) return;
+            if (!Input.GetMouseButtonDown(0) || !manager.canClick || !manager.matchRunning) return;
 
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;

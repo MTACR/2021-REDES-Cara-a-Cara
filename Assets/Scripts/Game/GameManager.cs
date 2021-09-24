@@ -22,6 +22,7 @@ namespace Game
         private bool isGuessing;
         private bool myRematch;
         private bool opRematch;
+        public bool matchRunning { get; private set; }
         private Deck deck;
         private ChatManager chat;
         public bool myTurn { get; private set; }
@@ -33,6 +34,7 @@ namespace Game
             
             deck = FindObjectOfType<Deck>();
             chat = FindObjectOfType<ChatManager>();
+            
             Client.Instance.SetListeners(() => { }, s =>
             {
                 canClick = false;
@@ -42,7 +44,6 @@ namespace Game
             });
 
             myTurn = !Client.Instance.isHost;
-            SetMyTurn(myTurn);
         }
 
         public void ShowCards()
@@ -108,6 +109,11 @@ namespace Game
                 Client.Instance.Send(SenderParser.Status(Status.Win));
                 SetMatchStatus(Status.Lose);
             }
+            else
+            {
+                Client.Instance.Send(SenderParser.Status(Status.Lose));
+                SetMatchStatus(Status.Win);
+            }
             
             chat.ShowGuess("Opponent", deck.GetCard(id).name);
         }
@@ -129,6 +135,12 @@ namespace Game
             
             switch (status)
             {
+                case Status.Start:
+                    Debug.Log("Opponent is ready to play");
+                    matchRunning = true;
+                    SetMyTurn(myTurn);
+                    break;
+                
                 case Status.Win:
                     Debug.Log("Match was won");
                     resultText.text = "You win";
@@ -146,7 +158,7 @@ namespace Game
                     resultText.text = "Your opponent wants to rematch";
                     DoRematch();
                     break;
-                
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(status), status, null);
             }
@@ -179,6 +191,17 @@ namespace Game
         {
             SceneManager.LoadScene("Home");
             Client.Instance?.Dispose();
+        }
+
+        public void EnableClick()
+        {
+            canClick = true;
+        }
+
+        public void StartMatch()
+        {
+            Debug.Log("I'm ready to play");
+            Client.Instance.Send(SenderParser.Status(Status.Start));
         }
 
     }
