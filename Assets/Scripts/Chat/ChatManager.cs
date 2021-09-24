@@ -14,11 +14,11 @@ namespace Chat
         [SerializeField] public TMP_InputField msg;
         private Message lastMessage;
         private GameManager manager;
-        private Dictionary<int, Message> messages;
+        //private Dictionary<int, Message> messages;
 
         private void Awake()
         {
-            messages = new Dictionary<int, Message>();
+            //messages = new Dictionary<int, Message>();
             manager = FindObjectOfType<GameManager>();
         }
 
@@ -32,7 +32,7 @@ namespace Chat
         {
             var message = Instantiate(messagePrefab, container.transform).GetComponent<Message>();
             message.Setup(id, sender, text);
-            messages[id] = message;
+           // messages[id] = message;
             lastMessage = message;
         }
 
@@ -40,7 +40,7 @@ namespace Chat
         {
             var message = Instantiate(messagePrefab, container.transform).GetComponent<Message>();
             var id = message.Setup(sender, text);
-            messages[id] = message;
+           // messages[id] = message;
             lastMessage = message;
         }
 
@@ -69,7 +69,7 @@ namespace Chat
 
         public void ReactToMessage(int id, Answer answer)
         {
-            messages[id].React(answer);
+            lastMessage.React(answer);
         }
     }
 }
