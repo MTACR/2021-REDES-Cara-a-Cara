@@ -142,10 +142,12 @@ namespace Game
             switch (status)
             {
                 case Status.Start:
-                    Debug.Log("Opponent is ready to play");
-                    matchRunning = true;
-                    canClick = true;
-                    SetMyTurn(myTurn);
+                    if (!matchRunning && Client.Instance.imReady)
+                    {
+                        matchRunning = true;
+                        canClick = true;
+                        SetMyTurn(myTurn);
+                    }
                     break;
 
                 case Status.Win:
@@ -209,6 +211,13 @@ namespace Game
         {
             Debug.Log("I'm ready to play");
             Client.Instance.Send(SenderParser.Status(Status.Start));
+            Client.Instance.imReady = true;
+            
+            if (!Client.Instance.opReady) return;
+            
+            matchRunning = true;
+            canClick = true;
+            SetMyTurn(myTurn);
         }
     }
 }

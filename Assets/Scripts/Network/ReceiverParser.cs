@@ -64,6 +64,7 @@ namespace Network
                     break;
 
                 case Network.Connection.Pong:
+                    Debug.Log("Pong");
                     Client.Instance.Pong();
                     break;
 
@@ -108,15 +109,29 @@ namespace Network
 
         private static void Status(State state)
         {
+            Status status = (Status) state.buffer[5];
+
+            if (status == Network.Status.Start)
+            {
+                Debug.Log("Opponent is ready to play");
+                Client.Instance.opReady = true;
+            }
+
             TasksDispatcher.Instance.Schedule(delegate
             {
-                Object.FindObjectOfType<GameManager>().SetMatchStatus((Status) state.buffer[5]);
+                try
+                {
+                    Object.FindObjectOfType<GameManager>().SetMatchStatus(status);
+                }
+                catch (NullReferenceException e)
+                {
+                    Debug.Log("I'm not ready yet");
+                }
             });
         }
 
         private static void Question(State state)
         {
-            //var id = BitConverter.ToInt32(state.buffer, 5);
             var question = Encoding.Default.GetString(state.buffer.Skip(9).Take(100).ToArray());
 
             Debug.Log($"Opponent asked {question}");
@@ -130,7 +145,6 @@ namespace Network
 
         private static void Answer(State state)
         {
-            //var id = BitConverter.ToInt32(state.buffer, 5);
             var answer = (Answer) state.buffer[9];
 
             TasksDispatcher.Instance.Schedule(delegate

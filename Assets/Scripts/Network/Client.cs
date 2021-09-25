@@ -21,6 +21,8 @@ namespace Network
         private Thread thread;
         private readonly Timer timerPingPong;
         private readonly Timer timerTimeOut;
+        public bool imReady;
+        public bool opReady;
 
         private Client()
         {
@@ -202,7 +204,7 @@ namespace Network
 
         public void Pong()
         {
-            Debug.Log("Pong");
+            //Debug.Log("Pong");
             timerTimeOut.Stop();
             timerPingPong.Start();
         }
