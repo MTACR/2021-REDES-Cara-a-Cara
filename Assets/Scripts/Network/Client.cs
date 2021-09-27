@@ -88,7 +88,7 @@ namespace Network
 
                         Debug.Log("Connection received from " + socket.RemoteEndPoint);
 
-                        Send(SenderParser.Connection(Connection.Connect));
+                        //Send(SenderParser.Connection(Connection.Connect));
 
                         socket.BeginReceive(state.buffer, 0, State.BufferSize, 0, ReceiveCallback, state);
                     }, handler);
@@ -109,7 +109,7 @@ namespace Network
 
                         Debug.Log("Connected to " + socket.RemoteEndPoint);
 
-                        Send(SenderParser.Connection(Connection.Connect));
+                        //Send(SenderParser.Connection(Connection.Connect));
 
                         socket.BeginReceive(state.buffer, 0, State.BufferSize, 0, ReceiveCallback, state);
                     }, socket);

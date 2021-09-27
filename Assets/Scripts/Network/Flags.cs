@@ -11,7 +11,7 @@ namespace Network
 
     public enum Connection : byte
     {
-        Connect = 0,
+        //Connect = 0,
         Disconnect = 1,
         Ping = 2,
         Pong = 3

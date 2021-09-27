@@ -47,9 +47,9 @@ namespace Network
         {
             switch ((Connection) state.buffer[5])
             {
-                case Network.Connection.Connect:
+                /*case Network.Connection.Connect:
                     Debug.Log("Opponent connected");
-                    break;
+                    break;*/
 
                 case Network.Connection.Disconnect:
                     Debug.Log("Opponent disconnected");
