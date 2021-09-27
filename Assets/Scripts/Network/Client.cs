@@ -19,8 +19,8 @@ namespace Network
         private Action onStart;
         private Socket socket;
         private Thread thread;
-        private readonly Timer timerPingPong;
-        private readonly Timer timerTimeOut;
+        private Timer timerPingPong;
+        private Timer timerTimeOut;
         public bool imReady;
         public bool opReady;
 
@@ -75,7 +75,7 @@ namespace Network
                     Debug.Log("Waiting for connection...");
 
                     TasksDispatcher.Instance.Schedule(delegate { onStart(); });
-                    timerTimeOut.Start();
+                    timerTimeOut?.Start();
 
                     handler.BeginAccept(result =>
                     {
@@ -83,7 +83,7 @@ namespace Network
                         handler.Close();
                         var state = new State();
                         isReady = true;
-                        timerTimeOut.Stop();
+                        timerTimeOut?.Stop();
                         Ping();
 
                         Debug.Log("Connection received from " + socket.RemoteEndPoint);
@@ -104,7 +104,7 @@ namespace Network
                         socket.EndConnect(result);
                         var state = new State();
                         isReady = true;
-                        timerTimeOut.Stop();
+                        timerTimeOut?.Stop();
                         Ping();
 
                         Debug.Log("Connected to " + socket.RemoteEndPoint);
@@ -221,11 +221,16 @@ namespace Network
 
             lock (locker)
             {
-                socket?.Close();
-                handler?.Close();
                 thread?.Interrupt();
+                thread?.Abort();
+                socket?.Close();
+                socket?.Dispose();
+                handler?.Close();
+                handler?.Dispose();
                 timerTimeOut?.Dispose();
                 timerPingPong?.Dispose();
+                timerTimeOut = null;
+                timerPingPong = null;
                 instance = null;
             }
         }
