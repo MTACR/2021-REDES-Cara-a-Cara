@@ -45,12 +45,8 @@ namespace Network
 
         private static void Connection(State state)
         {
-            switch ((Connection) state.buffer[5])
+            switch ((Connection) state.buffer[1])
             {
-                /*case Network.Connection.Connect:
-                    Debug.Log("Opponent connected");
-                    break;*/
-
                 case Network.Connection.Disconnect:
                     Debug.Log("Opponent disconnected");
                     TasksDispatcher.Instance.Schedule(delegate
@@ -75,8 +71,8 @@ namespace Network
 
         private static void Card(State state)
         {
-            var cardId = state.buffer[5];
-            switch ((Card) state.buffer[6])
+            var cardId = state.buffer[1];
+            switch ((Card) state.buffer[2])
             {
                 case Network.Card.Guess:
                     Debug.Log($"{cardId} was guessed");
@@ -109,7 +105,7 @@ namespace Network
 
         private static void Status(State state)
         {
-            Status status = (Status) state.buffer[5];
+            Status status = (Status) state.buffer[1];
 
             if (status == Network.Status.Start)
             {
@@ -132,7 +128,7 @@ namespace Network
 
         private static void Question(State state)
         {
-            var question = Encoding.Default.GetString(state.buffer.Skip(9).Take(100).ToArray());
+            var question = Encoding.Default.GetString(state.buffer.Skip(1).Take(100).ToArray());
 
             Debug.Log($"Opponent asked {question}");
 
@@ -145,7 +141,7 @@ namespace Network
 
         private static void Answer(State state)
         {
-            var answer = (Answer) state.buffer[9];
+            var answer = (Answer) state.buffer[1];
 
             TasksDispatcher.Instance.Schedule(delegate
             {
