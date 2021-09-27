@@ -123,7 +123,7 @@ namespace Network
                 {
                     Object.FindObjectOfType<GameManager>().SetMatchStatus(status);
                 }
-                catch (NullReferenceException e)
+                catch (NullReferenceException)
                 {
                     Debug.Log("I'm not ready yet");
                 }

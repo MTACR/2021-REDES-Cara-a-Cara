@@ -21,9 +21,9 @@ namespace Game
         public bool canClick;
         private ChatManager chat;
         private Deck deck;
-        private bool isGuessing;
         private bool myRematch;
         private bool opRematch;
+        public bool isGuessing{ get; private set; }
         public bool matchRunning { get; private set; }
         public bool myTurn { get; private set; }
 
