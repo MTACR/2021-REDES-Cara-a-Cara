@@ -24,8 +24,11 @@ Você deve digitar uma pergunta de sim ou não no chat e clicar no botão de env
 
 # Respondendo
 Ao receber uma pergunta você deve respondê-la colocando o mouse sobre o ponto de interrogação à direita da pergunta e então selecionar dentre uma das três opções:
+
 -Positivo: Responde SIM para a pergunta.
+
 -Negativo: Responde NÃO para a pergunta.
+
 -Rejeitar: Responde que a pergunta não foi clara (ou não se encaixa em uma resposta de sim ou não) e pede para que o adversário a refaça.
 
 # Cartas
@@ -42,5 +45,7 @@ Você pode desistir da partida a qualquer momento clicando no botão GIVE UP.
 
 ## Créditos
 Matheus Isquierdo e William Kolodziejski.
+
 Alunos de Ciência da Computação na Universidade Federal de Pelotas (UFPel).
+
 2021.
